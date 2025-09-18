@@ -42,6 +42,9 @@
         .btn-outline {
             @apply bg-transparent border border-gray-500 text-gray-300 hover:bg-gray-700;
         }
+        .btn-success {
+            @apply bg-green-600 text-white hover:bg-green-500;
+        }
     </style>
 </head>
 <body class="antialiased">
@@ -50,7 +53,7 @@
         <header class="text-center mb-12">
             <h1 class="text-4xl font-extrabold tracking-tight text-white sm:text-5xl">Community Suggestions</h1>
             <p class="mt-4 max-w-2xl mx-auto text-lg text-gray-300">
-                Add your own ideas or vote for the features you want to see most!
+                Load a suggestions file, add your own ideas, and vote for the features you want to see most!
             </p>
             <div class="mt-6">
                 <a href="index.html" class="text-blue-400 hover:text-blue-300 transition-colors">&larr; Back to Home</a>
@@ -58,25 +61,27 @@
         </header>
 
         <main>
-            <!-- Add Suggestion Button -->
-            <section class="mb-12 text-center">
-                 <a href="addsuggestion.html" class="inline-block rounded-md bg-blue-600 px-8 py-3 text-base font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 transition-all duration-300">
-                    Add a New Suggestion
+            <section class="mb-12 flex flex-col sm:flex-row justify-center items-center gap-4">
+                <input type="file" id="file-loader" accept=".txt,.json" class="hidden">
+                <button id="load-from-file-btn" class="btn btn-secondary px-6 py-3 text-base">📂 Load Suggestions From File</button>
+
+                <a href="addsuggestion.html" class="btn btn-primary px-6 py-3 text-base">
+                    + Add a New Suggestion
                 </a>
+                
+                <button id="save-to-file-btn" class="btn btn-success px-6 py-3 text-base" disabled>💾 Save All to File</button>
             </section>
             
-            <div id="no-suggestions-message" class="text-center py-12 hidden">
-                <h2 class="text-xl font-semibold text-gray-400">No suggestions yet!</h2>
-                <p class="mt-2 text-gray-500">Be the first to add one using the button above.</p>
+            <div id="no-suggestions-message" class="text-center py-12">
+                <h2 class="text-xl font-semibold text-gray-400">No suggestions loaded.</h2>
+                <p class="mt-2 text-gray-500">Use the "Load Suggestions From File" button to begin.</p>
             </div>
             
-            <div id="suggestions-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <!-- Suggestions will be dynamically inserted here -->
-            </div>
+            <div id="suggestions-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 hidden">
+                </div>
         </main>
     </div>
 
-    <!-- Edit Modal -->
     <div id="edit-modal" class="modal-overlay hidden">
         <div class="glass-card w-full max-w-lg relative">
             <h3 class="text-xl font-bold text-white mb-4">Edit Suggestion</h3>
@@ -98,11 +103,10 @@
         </div>
     </div>
     
-    <!-- Delete Confirmation Modal -->
     <div id="delete-modal" class="modal-overlay hidden">
         <div class="glass-card w-full max-w-md text-center">
             <h3 class="text-xl font-bold text-white">Are you sure?</h3>
-            <p class="text-gray-300 mt-2">This action cannot be undone. The suggestion will be permanently removed.</p>
+            <p class="text-gray-300 mt-2">This action cannot be undone. You will need to save your changes to a file to make it permanent.</p>
             <div class="mt-6 flex justify-center gap-4">
                 <button id="cancel-delete-btn" class="btn btn-secondary">Cancel</button>
                 <button id="confirm-delete-btn" class="btn btn-danger">Delete Suggestion</button>
@@ -110,7 +114,6 @@
         </div>
     </div>
 
-    <!-- Notification Modal -->
     <div id="notification-modal" class="modal-overlay hidden">
         <div class="glass-card w-full max-w-sm text-center">
             <p id="notification-message" class="text-white text-lg"></p>
@@ -120,8 +123,18 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            // App State (in-memory, not localStorage)
+            let allSuggestions = [];
+            // We still use localStorage for votes and ownership to keep it simple for this example
+            let mySuggestions = JSON.parse(localStorage.getItem('mySuggestions')) || [];
+            let votedSuggestions = JSON.parse(localStorage.getItem('votedSuggestions')) || [];
+
+            // UI Elements
             const suggestionsContainer = document.getElementById('suggestions-container');
             const noSuggestionsMessage = document.getElementById('no-suggestions-message');
+            const fileLoader = document.getElementById('file-loader');
+            const loadBtn = document.getElementById('load-from-file-btn');
+            const saveBtn = document.getElementById('save-to-file-btn');
             
             // Modals
             const editModal = document.getElementById('edit-modal');
@@ -140,6 +153,8 @@
             const confirmDeleteBtn = document.getElementById('confirm-delete-btn');
             let suggestionIdToDelete = null;
 
+            // --- Core Functions ---
+
             function showNotification(message) {
                 document.getElementById('notification-message').textContent = message;
                 notificationModal.classList.remove('hidden');
@@ -148,45 +163,32 @@
                 }, 1500);
             }
 
-            function getSuggestions() {
-                return JSON.parse(localStorage.getItem('pluginSuggestions')) || [];
+            function saveToFile(content, filename) {
+                const blob = new Blob([content], { type: 'application/json' });
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(blob);
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
             }
-            function getMySuggestions() {
-                return JSON.parse(localStorage.getItem('mySuggestions')) || [];
-            }
-            function getVotedSuggestions() {
-                return JSON.parse(localStorage.getItem('votedSuggestions')) || [];
-            }
-
-            function saveSuggestions(suggestions) {
-                localStorage.setItem('pluginSuggestions', JSON.stringify(suggestions));
-            }
-             function saveMySuggestions(mySuggestions) {
-                localStorage.setItem('mySuggestions', JSON.stringify(mySuggestions));
-            }
-            function saveVotedSuggestions(votedSuggestions) {
-                localStorage.setItem('votedSuggestions', JSON.stringify(votedSuggestions));
-            }
-
 
             function renderSuggestions() {
-                const suggestions = getSuggestions();
-                const mySuggestions = getMySuggestions();
-                const votedSuggestions = getVotedSuggestions();
-
-                if (suggestions.length === 0) {
+                if (allSuggestions.length === 0) {
                     noSuggestionsMessage.classList.remove('hidden');
                     suggestionsContainer.classList.add('hidden');
+                    saveBtn.disabled = true;
                     return;
                 }
 
                 noSuggestionsMessage.classList.add('hidden');
                 suggestionsContainer.classList.remove('hidden');
+                saveBtn.disabled = false;
                 
-                suggestions.sort((a, b) => b.votes - a.votes);
+                allSuggestions.sort((a, b) => b.votes - a.votes);
                 suggestionsContainer.innerHTML = '';
 
-                suggestions.forEach(suggestion => {
+                allSuggestions.forEach(suggestion => {
                     const isOwner = mySuggestions.includes(suggestion.id);
                     const hasVoted = votedSuggestions.includes(suggestion.id);
                     
@@ -218,6 +220,41 @@
 
             // --- Event Listeners ---
 
+            loadBtn.addEventListener('click', () => fileLoader.click());
+
+            fileLoader.addEventListener('change', (event) => {
+                const file = event.target.files[0];
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try {
+                        const content = e.target.result;
+                        // Important: The file should contain a JSON array of suggestions.
+                        // If it contains a single object from the previous script, we wrap it in an array.
+                        let parsedData = JSON.parse(content);
+                        if (!Array.isArray(parsedData)) {
+                             parsedData = [parsedData];
+                        }
+                        allSuggestions = parsedData;
+
+                        showNotification(`Loaded ${allSuggestions.length} suggestion(s)!`);
+                        renderSuggestions();
+                    } catch (error) {
+                        showNotification('Error: Invalid file format.');
+                        console.error("Failed to parse file:", error);
+                    }
+                };
+                reader.readAsText(file);
+                fileLoader.value = ''; // Reset for re-uploading the same file
+            });
+
+            saveBtn.addEventListener('click', () => {
+                const fileContent = JSON.stringify(allSuggestions, null, 2);
+                saveToFile(fileContent, 'Storage.txt');
+                showNotification('Suggestions saved to Storage.txt!');
+            });
+            
             suggestionsContainer.addEventListener('click', (e) => {
                 const target = e.target.closest('button');
                 if (!target) return;
@@ -226,23 +263,20 @@
                 
                 // Vote
                 if (target.classList.contains('vote-btn')) {
-                    const suggestions = getSuggestions();
-                    const votedSuggestions = getVotedSuggestions();
                     if (votedSuggestions.includes(id)) return;
-
-                    const suggestion = suggestions.find(s => s.id === id);
+                    const suggestion = allSuggestions.find(s => s.id === id);
                     if (suggestion) {
                         suggestion.votes++;
                         votedSuggestions.push(id);
-                        saveSuggestions(suggestions);
-                        saveVotedSuggestions(votedSuggestions);
+                        localStorage.setItem('votedSuggestions', JSON.stringify(votedSuggestions)); // Keep votes in localStorage
                         renderSuggestions();
+                        showNotification('Vote counted! Remember to save.');
                     }
                 }
 
                 // Edit
                 if (target.classList.contains('edit-btn')) {
-                    const suggestion = getSuggestions().find(s => s.id === id);
+                    const suggestion = allSuggestions.find(s => s.id === id);
                     if (suggestion) {
                         editIdInput.value = suggestion.id;
                         editNameInput.value = suggestion.name;
@@ -262,14 +296,12 @@
             cancelEditBtn.addEventListener('click', () => editModal.classList.add('hidden'));
             editForm.addEventListener('submit', (e) => {
                 e.preventDefault();
-                const suggestions = getSuggestions();
-                const suggestion = suggestions.find(s => s.id === editIdInput.value);
+                const suggestion = allSuggestions.find(s => s.id === editIdInput.value);
                 if (suggestion) {
                     suggestion.name = editNameInput.value;
                     suggestion.description = editDescInput.value;
-                    saveSuggestions(suggestions);
                     editModal.classList.add('hidden');
-                    showNotification('Suggestion updated!');
+                    showNotification('Suggestion updated! Remember to save.');
                     renderSuggestions();
                 }
             });
@@ -277,17 +309,11 @@
             // Delete Modal Logic
             cancelDeleteBtn.addEventListener('click', () => deleteModal.classList.add('hidden'));
             confirmDeleteBtn.addEventListener('click', () => {
-                let suggestions = getSuggestions();
-                let mySuggestions = getMySuggestions();
-
-                suggestions = suggestions.filter(s => s.id !== suggestionIdToDelete);
+                allSuggestions = allSuggestions.filter(s => s.id !== suggestionIdToDelete);
                 mySuggestions = mySuggestions.filter(id => id !== suggestionIdToDelete);
-
-                saveSuggestions(suggestions);
-                saveMySuggestions(mySuggestions);
-
+                localStorage.setItem('mySuggestions', JSON.stringify(mySuggestions)); // Update localStorage for ownership
                 deleteModal.classList.add('hidden');
-                showNotification('Suggestion removed.');
+                showNotification('Suggestion removed! Remember to save.');
                 renderSuggestions();
                 suggestionIdToDelete = null;
             });
@@ -299,4 +325,3 @@
 
 </body>
 </html>
-

@@ -49,7 +49,6 @@
         </header>
 
         <main class="grid grid-cols-1 lg:grid-cols-2 gap-12">
-            <!-- Form Section -->
             <section>
                 <div class="glass-card p-6 h-full">
                     <form id="add-suggestion-form" class="space-y-4 flex flex-col h-full">
@@ -61,12 +60,11 @@
                             <label for="plugin-description" class="block text-sm font-medium leading-6 text-gray-200">Description</label>
                             <textarea id="plugin-description" rows="6" class="mt-2 form-input h-full" placeholder="Describe the core features. What problem does it solve? Why would it be a good fit for the suite?" required></textarea>
                         </div>
-                        <button type="submit" class="btn btn-primary w-full !mt-6 text-base py-3">Submit Idea & Return</button>
+                        <button type="submit" class="btn btn-primary w-full !mt-6 text-base py-3">Submit Idea & Download</button>
                     </form>
                 </div>
             </section>
 
-            <!-- Examples Section -->
             <section>
                 <div class="glass-card p-6">
                     <h2 class="text-2xl font-bold text-white mb-4">Need some inspiration?</h2>
@@ -90,7 +88,6 @@
         </main>
     </div>
     
-    <!-- Notification Modal -->
     <div id="notification-modal" class="modal-overlay hidden">
         <div class="glass-card w-full max-w-sm text-center">
             <p id="notification-message" class="text-white text-lg"></p>
@@ -106,14 +103,33 @@
                 document.getElementById('notification-message').textContent = message;
                 notificationModal.classList.remove('hidden');
             }
+            
+            /**
+             * Creates a text file in the user's browser and prompts them to download it.
+             * @param {string} content The text content to be saved in the file.
+             * @param {string} filename The name of the file to be saved (e.g., 'Storage.txt').
+             */
+            function saveToFile(content, filename) {
+                // Create a blob (a file-like object) from the text content.
+                const blob = new Blob([content], { type: 'text/plain' });
+
+                // Create a temporary anchor element to trigger the download.
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(blob);
+                a.download = filename;
+
+                // Programmatically click the anchor to start the download.
+                document.body.appendChild(a);
+                a.click();
+
+                // Clean up by removing the temporary anchor element.
+                document.body.removeChild(a);
+            }
 
             addForm.addEventListener('submit', (e) => {
                 e.preventDefault();
                 const nameInput = document.getElementById('plugin-name');
                 const descInput = document.getElementById('plugin-description');
-
-                const suggestions = JSON.parse(localStorage.getItem('pluginSuggestions')) || [];
-                const mySuggestions = JSON.parse(localStorage.getItem('mySuggestions')) || [];
 
                 const newSuggestion = {
                     id: `suggestion-${Date.now()}`,
@@ -121,15 +137,16 @@
                     description: descInput.value,
                     votes: 0
                 };
+                
+                // Convert the suggestion object to a string for saving.
+                // We use JSON.stringify for a structured format.
+                const fileContent = JSON.stringify(newSuggestion, null, 2);
 
-                suggestions.push(newSuggestion);
-                mySuggestions.push(newSuggestion.id);
-
-                localStorage.setItem('pluginSuggestions', JSON.stringify(suggestions));
-                localStorage.setItem('mySuggestions', JSON.stringify(mySuggestions));
+                // Call the function to save the content to 'Storage.txt'
+                saveToFile(fileContent, 'Storage.txt');
 
                 addForm.reset();
-                showNotification('Suggestion added! Redirecting...');
+                showNotification('Suggestion saved! Redirecting...');
 
                 setTimeout(() => {
                     window.location.href = 'suggestions.html';
@@ -139,4 +156,3 @@
     </script>
 </body>
 </html>
-
