@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Suggestion - Unreal Essential Suite</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #111827;
+            color: #E5E7EB;
+        }
+        .glass-card {
+            background: rgba(31, 41, 55, 0.5);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+        }
+        .form-input {
+            @apply block w-full rounded-md border-0 bg-white/5 py-2 px-3 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm sm:leading-6 transition-all duration-300;
+        }
+        .modal-overlay {
+            @apply fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50;
+        }
+        .btn {
+            @apply rounded-md px-4 py-2 text-sm font-semibold transition-all duration-300;
+        }
+        .btn-primary {
+            @apply bg-blue-600 text-white hover:bg-blue-500;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+        <header class="text-center mb-12">
+            <h1 class="text-4xl font-extrabold tracking-tight text-white sm:text-5xl">Add a New Suggestion</h1>
+            <p class="mt-4 max-w-2xl mx-auto text-lg text-gray-300">
+                Share your idea with the community. What tool or system would improve your workflow?
+            </p>
+            <div class="mt-6">
+                <a href="suggestions.html" class="text-blue-400 hover:text-blue-300 transition-colors">&larr; Back to All Suggestions</a>
+            </div>
+        </header>
+
+        <main class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+            <!-- Form Section -->
+            <section>
+                <div class="glass-card p-6 h-full">
+                    <form id="add-suggestion-form" class="space-y-4 flex flex-col h-full">
+                        <div>
+                            <label for="plugin-name" class="block text-sm font-medium leading-6 text-gray-200">Suggestion Title</label>
+                            <input type="text" id="plugin-name" class="mt-2 form-input" placeholder="e.g., Modular AI System" required>
+                        </div>
+                        <div class="flex-grow">
+                            <label for="plugin-description" class="block text-sm font-medium leading-6 text-gray-200">Description</label>
+                            <textarea id="plugin-description" rows="6" class="mt-2 form-input h-full" placeholder="Describe the core features. What problem does it solve? Why would it be a good fit for the suite?" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-full !mt-6 text-base py-3">Submit Idea & Return</button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Examples Section -->
+            <section>
+                <div class="glass-card p-6">
+                    <h2 class="text-2xl font-bold text-white mb-4">Need some inspiration?</h2>
+                    <p class="text-gray-400 mb-6">Here are some examples of what makes a great suggestion:</p>
+                    <div class="space-y-4">
+                        <div class="p-4 bg-gray-900/50 rounded-lg border border-gray-700">
+                            <h3 class="font-semibold text-blue-400">Modular AI System</h3>
+                            <p class="text-sm text-gray-300 mt-1">A system for creating AI behaviors using Behavior Trees, but with pre-built, reusable tasks and services for common scenarios like patrol, seek, and combat.</p>
+                        </div>
+                         <div class="p-4 bg-gray-900/50 rounded-lg border border-gray-700">
+                            <h3 class="font-semibold text-blue-400">Data-Driven UI Framework</h3>
+                            <p class="text-sm text-gray-300 mt-1">A plugin to automatically generate and populate UI widgets (like inventory grids or stat sheets) from Data Assets, reducing the need for manual Blueprint wiring.</p>
+                        </div>
+                         <div class="p-4 bg-gray-900/50 rounded-lg border border-gray-700">
+                            <h3 class="font-semibold text-blue-400">Advanced Destructible Environments</h3>
+                            <p class="text-sm text-gray-300 mt-1">A system that simplifies the creation of large-scale destructible objects, optimized for performance and network replication, going beyond the standard Chaos Destruction tools.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+    
+    <!-- Notification Modal -->
+    <div id="notification-modal" class="modal-overlay hidden">
+        <div class="glass-card w-full max-w-sm text-center">
+            <p id="notification-message" class="text-white text-lg"></p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const addForm = document.getElementById('add-suggestion-form');
+            const notificationModal = document.getElementById('notification-modal');
+
+            function showNotification(message) {
+                document.getElementById('notification-message').textContent = message;
+                notificationModal.classList.remove('hidden');
+            }
+
+            addForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const nameInput = document.getElementById('plugin-name');
+                const descInput = document.getElementById('plugin-description');
+
+                const suggestions = JSON.parse(localStorage.getItem('pluginSuggestions')) || [];
+                const mySuggestions = JSON.parse(localStorage.getItem('mySuggestions')) || [];
+
+                const newSuggestion = {
+                    id: `suggestion-${Date.now()}`,
+                    name: nameInput.value,
+                    description: descInput.value,
+                    votes: 0
+                };
+
+                suggestions.push(newSuggestion);
+                mySuggestions.push(newSuggestion.id);
+
+                localStorage.setItem('pluginSuggestions', JSON.stringify(suggestions));
+                localStorage.setItem('mySuggestions', JSON.stringify(mySuggestions));
+
+                addForm.reset();
+                showNotification('Suggestion added! Redirecting...');
+
+                setTimeout(() => {
+                    window.location.href = 'suggestions.html';
+                }, 1500);
+            });
+        });
+    </script>
+</body>
+</html>
+

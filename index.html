@@ -11,14 +11,8 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #111827;
-            color: #E5E7EB; 
-        }
-        .accent-color {
-            color: #3B82F6; 
-        }
-        .bg-accent {
-            background-color: #3B82F6;
+            background-color: #111827; /* bg-gray-900 */
+            color: #E5E7EB; /* text-gray-200 */
         }
         .section-title {
             @apply text-3xl font-bold tracking-tight text-white sm:text-4xl mb-4;
@@ -27,12 +21,18 @@
             @apply text-lg text-gray-300;
         }
         .glass-card {
-            background: rgba(31, 41, 55, 0.5);
+            background: rgba(31, 41, 55, 0.5); /* bg-gray-800 with opacity */
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 0.75rem;
             padding: 1.5rem;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .form-input {
+            @apply block w-full rounded-md border-0 bg-white/5 py-2 px-3 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm sm:leading-6 transition-all duration-300;
+        }
+        .modal-overlay {
+            @apply fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50;
         }
     </style>
 </head>
@@ -42,12 +42,13 @@
         <div class="container mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
                 <div class="flex-shrink-0">
-                    <a href="#" class="text-xl font-bold text-white">Unreal Essential Suite</a>
+                    <a href="index.html" class="text-xl font-bold text-white">Unreal Essential Suite</a>
                 </div>
                 <nav class="hidden md:block">
                     <div class="ml-10 flex items-baseline space-x-4">
                         <a href="#about" class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-300">About</a>
                         <a href="#plugins" class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-300">Plugins</a>
+                        <a href="#suggestions" class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-300">Suggestions</a>
                         <a href="#contact" class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-300">Contact</a>
                     </div>
                 </nav>
@@ -56,7 +57,8 @@
     </header>
 
     <main class="pt-16">
-        <section id="home" class="relative py-24 md:py-32">
+        <!-- Hero Section -->
+        <section id="home" class="relative py-20 md:py-28">
             <div class="absolute inset-0 bg-grid-gray-700/[0.2] [mask-image:linear-gradient(to_bottom,white_5%,transparent_90%)]"></div>
             <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
                 <h1 class="text-4xl font-extrabold tracking-tight text-white sm:text-5xl md:text-6xl">
@@ -71,36 +73,59 @@
             </div>
         </section>
 
-        <section id="about" class="py-16 sm:py-24 bg-gray-900">
+        <!-- About Section -->
+        <section id="about" class="py-12 sm:py-20 bg-gray-900">
             <div class="container mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="text-center">
-                    <h2 class="section-title">Why Unreal Essential Suite?</h2>
-                    <p class="mt-4 max-w-3xl mx-auto section-subtitle">
-                        This toolkit provides out-of-the-box systems that are multiplayer-ready, data-driven, and fully extendable via Blueprints, lowering the barrier for indie developers, students, and studios to create high-quality games.
+                    <h2 class="section-title">Build Better, Faster.</h2>
+                     <p class="mt-4 max-w-3xl mx-auto section-subtitle">
+                        As a solo dev or small studio, your time is your most valuable asset. This toolkit is built on core principles that respect that, helping you create high-quality games without reinventing the wheel. It's professional, reliable, and shows you're serious about your project.
                     </p>
+                </div>
+                <div class="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 text-center">
+                    <div class="flex flex-col items-center">
+                        <div class="flex items-center justify-center h-12 w-12 rounded-md bg-blue-600 text-white"><svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg></div>
+                        <h3 class="mt-4 text-lg font-medium text-white">Modular by Design</h3>
+                        <p class="mt-2 text-base text-gray-400">Each plugin is self-contained. Use only what you need without adding unnecessary bloat to your project.</p>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <div class="flex items-center justify-center h-12 w-12 rounded-md bg-blue-600 text-white"><svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15l-2 5L9 9l5-2 2 5z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 10l.5 2.5 2.5.5" /></svg></div>
+                        <h3 class="mt-4 text-lg font-medium text-white">Blueprint Friendly</h3>
+                        <p class="mt-2 text-base text-gray-400">Exposes core functionality to Blueprints, empowering designers and artists to build gameplay without writing C++.</p>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <div class="flex items-center justify-center h-12 w-12 rounded-md bg-blue-600 text-white"><svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6.002l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.368a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z" /></svg></div>
+                        <h3 class="mt-4 text-lg font-medium text-white">Network Ready</h3>
+                        <p class="mt-2 text-base text-gray-400">All systems are built with multiplayer in mind from the ground up, with replication handled out-of-the-box.</p>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <div class="flex items-center justify-center h-12 w-12 rounded-md bg-blue-600 text-white"><svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></div>
+                        <h3 class="mt-4 text-lg font-medium text-white">Free & Open Source</h3>
+                        <p class="mt-2 text-base text-gray-400">Released under the permissive MIT license. Use it freely in commercial projects and contribute back.</p>
+                    </div>
                 </div>
             </div>
         </section>
         
-        <section id="plugins" class="py-16 sm:py-24">
+        <!-- Plugins Section -->
+        <section id="plugins" class="py-12 sm:py-20">
             <div class="container mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="text-center">
                     <h2 class="section-title">Available Plugins</h2>
                     <p class="mt-4 max-w-3xl mx-auto section-subtitle">
-                        These plugins are available now, fully documented and ready to be integrated into your projects.
+                        Evaluate tools in seconds, not hours. These plugins are built with clear, practical features to help you make informed decisions quickly.
                     </p>
                 </div>
 
                 <div class="mt-12 grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 gap-12">
-                    
                     <div class="glass-card overflow-hidden md:flex md:gap-8 hover:transform hover:-translate-y-2 hover:shadow-2xl hover:shadow-blue-500/20">
                         <div class="md:w-1/2 aspect-video rounded-md overflow-hidden bg-gray-800">
                             <iframe src="https://drive.google.com/file/d/1xRHF_Kcr_6u6GAkXdQFdyr21Jks6z8xJ/preview" class="w-full h-full" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
                         </div>
-                        <div class="mt-6 md:mt-0 md:w-1/2">
+                        <div class="mt-6 md:mt-0 md:w-1/2 flex flex-col justify-center">
                             <h3 class="text-xl font-bold text-white">Character Locomotion System</h3>
-                            <p class="mt-2 text-gray-300">Provides advanced, fully replicated movement mechanics like climbing, vaulting, and proning.</p>
-                            <a href="https://github.com/1SHAMAY1/Plugin-CharacterLocomotionSystem.git" target="_blank" class="mt-4 inline-block rounded-md border border-blue-500 px-3.5 py-2.5 text-sm font-semibold text-blue-400 shadow-sm hover:bg-blue-500 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 transition-all duration-300">View on GitHub</a>
+                            <p class="mt-2 text-gray-300">Provides advanced, fully replicated movement mechanics like climbing, vaulting, and proning. Built on top of UE5's `CharacterMovementComponent`, this data-driven system allows for easy addition of new movement modes and fine-tuning of existing ones.</p>
+                            <a href="https://github.com/1SHAMAY1/Plugin-CharacterLocomotionSystem.git" target="_blank" class="mt-4 inline-block self-start rounded-md border border-blue-500 px-3.5 py-2.5 text-sm font-semibold text-blue-400 shadow-sm hover:bg-blue-500 hover:text-white transition-all duration-300">View on GitHub</a>
                         </div>
                     </div>
 
@@ -108,54 +133,64 @@
                          <div class="md:w-1/2 aspect-video rounded-md overflow-hidden bg-gray-800">
                             <iframe src="https://drive.google.com/file/d/1wx_B7L23L61r-GTvXzo9LitP3IXeH-TE/preview" class="w-full h-full" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
                         </div>
-                        <div class="mt-6 md:mt-0 md:w-1/2">
+                        <div class="mt-6 md:mt-0 md:w-1/2 flex flex-col justify-center">
                             <h3 class="text-xl font-bold text-white">Enhanced Camera System</h3>
-                            <p class="mt-2 text-gray-300">A data-driven manager for creating and blending complex camera behaviors using Data Assets.</p>
-                            <a href="https://github.com/1SHAMAY1/Plugin-EnhancedCameraSystem.git" target="_blank" class="mt-4 inline-block rounded-md border border-blue-500 px-3.5 py-2.5 text-sm font-semibold text-blue-400 shadow-sm hover:bg-blue-500 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 transition-all duration-300">View on GitHub</a>
+                            <p class="mt-2 text-gray-300">A data-driven manager for creating and blending complex camera behaviors. Define camera styles like third-person orbit, procedural shakes, and ADS transitions using Data Assets, and let the system handle smooth, context-aware blending between them.</p>
+                            <a href="https://github.com/1SHAMAY1/Plugin-EnhancedCameraSystem.git" target="_blank" class="mt-4 inline-block self-start rounded-md border border-blue-500 px-3.5 py-2.5 text-sm font-semibold text-blue-400 shadow-sm hover:bg-blue-500 hover:text-white transition-all duration-300">View on GitHub</a>
                         </div>
                     </div>
                 </div>
 
-                <div class="text-center mt-24">
+                <div class="text-center mt-20">
                     <h2 class="section-title">Upcoming Plugins</h2>
                     <p class="mt-4 max-w-3xl mx-auto section-subtitle">
                         The toolkit is actively expanding. Here's what's coming next.
                     </p>
                 </div>
 
-                <div class="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    <div class="glass-card hover:transform hover:-translate-y-2 hover:shadow-2xl hover:shadow-blue-500/20">
-                        <h3 class="text-xl font-bold text-white">Lightweight Ability System</h3>
-                        <p class="mt-2 text-gray-300">A simplified, Blueprint-friendly framework for creating abilities and gameplay effects, inspired by GAS but designed for ease of use.</p>
-                    </div>
-                    <div class="glass-card hover:transform hover:-translate-y-2 hover:shadow-2xl hover:shadow-blue-500/20">
+                <div class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8">
+                     <div class="glass-card hover:transform hover:-translate-y-2 hover:shadow-2xl hover:shadow-blue-500/20">
                         <h3 class="text-xl font-bold text-white">Gameplay Interaction System</h3>
-                        <p class="mt-2 text-gray-300">A flexible system for handling context-aware interactions between characters and the world, such as picking up items or opening doors.</p>
+                        <p class="mt-2 text-gray-300">A flexible system for handling context-aware interactions like picking up items, opening doors, or using terminals.</p>
                     </div>
                      <div class="glass-card hover:transform hover:-translate-y-2 hover:shadow-2xl hover:shadow-blue-500/20">
                         <h3 class="text-xl font-bold text-white">Gameplay Inventory System</h3>
-                        <p class="mt-2 text-gray-300">A robust and replicated inventory and item management system, designed for flexibility and ease of integration.</p>
+                        <p class="mt-2 text-gray-300">A robust and replicated inventory system designed for flexibility and integration with other systems.</p>
+                    </div>
+                    <div class="glass-card hover:transform hover:-translate-y-2 hover:shadow-2xl hover:shadow-blue-500/20">
+                        <h3 class="text-xl font-bold text-white">Lightweight Ability System</h3>
+                        <p class="mt-2 text-gray-300">A simplified, Blueprint-friendly framework for creating abilities, inspired by GAS but designed for ease of use.</p>
                     </div>
                 </div>
-
+            </div>
+        </section>
+        
+        <!-- Suggestions Section -->
+        <section id="suggestions" class="py-12 sm:py-20 bg-gray-900">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <h2 class="section-title">Help Shape the Future</h2>
+                <p class="mt-4 max-w-3xl mx-auto section-subtitle">
+                   Community is essential for growth. Your feedback and ideas directly influence the toolkit's roadmap. Turn your ideas into active contributions and help prioritize what gets built next.
+                </p>
+                <div class="mt-8">
+                    <a href="suggestions.html" class="inline-block rounded-md bg-blue-600 px-8 py-3 text-base font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 transition-all duration-300">
+                        View, Add & Vote on Suggestions
+                    </a>
+                </div>
             </div>
         </section>
     </main>
 
-    <footer id="contact" class="bg-gray-900">
+    <footer id="contact" class="bg-gray-900 border-t border-gray-800">
         <div class="container mx-auto py-12 px-4 sm:px-6 lg:px-8 text-center">
             <h2 class="text-2xl font-bold text-white">Get In Touch</h2>
-            <p class="mt-2 text-lg text-gray-300">
-                For support, collaboration, or questions about the toolkit.
-            </p>
+            <p class="mt-2 text-lg text-gray-300">For support, collaboration, or questions about the toolkit.</p>
             <div class="mt-8 flex justify-center items-center gap-4">
                 <a href="mailto:shankharajdatta2004@gmail.com" class="inline-block text-lg bg-gray-800 text-blue-400 px-6 py-3 rounded-lg hover:bg-gray-700 hover:text-blue-300 transition-all duration-300 transform hover:-translate-y-1">
                     Contact The Developer
                 </a>
             </div>
-            <p class="mt-8 text-center text-xs leading-5 text-gray-500">
-                &copy; 2025 Unreal Essential Suite. Released under the MIT License.
-            </p>
+            <p class="mt-8 text-center text-xs leading-5 text-gray-500">&copy; 2025 Unreal Essential Suite. Released under the MIT License.</p>
         </div>
     </footer>
 

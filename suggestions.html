@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Community Suggestions - Unreal Essential Suite</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #111827;
+            color: #E5E7EB;
+        }
+        .glass-card {
+            background: rgba(31, 41, 55, 0.5);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+        }
+        .form-input {
+            @apply block w-full rounded-md border-0 bg-white/5 py-2 px-3 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm sm:leading-6 transition-all duration-300;
+        }
+        .modal-overlay {
+            @apply fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50;
+        }
+        .btn {
+            @apply rounded-md px-4 py-2 text-sm font-semibold transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed;
+        }
+        .btn-primary {
+            @apply bg-blue-600 text-white hover:bg-blue-500;
+        }
+        .btn-secondary {
+            @apply bg-gray-600 text-white hover:bg-gray-500;
+        }
+        .btn-danger {
+             @apply bg-red-600 text-white hover:bg-red-500;
+        }
+        .btn-outline {
+            @apply bg-transparent border border-gray-500 text-gray-300 hover:bg-gray-700;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+        <header class="text-center mb-12">
+            <h1 class="text-4xl font-extrabold tracking-tight text-white sm:text-5xl">Community Suggestions</h1>
+            <p class="mt-4 max-w-2xl mx-auto text-lg text-gray-300">
+                Add your own ideas or vote for the features you want to see most!
+            </p>
+            <div class="mt-6">
+                <a href="index.html" class="text-blue-400 hover:text-blue-300 transition-colors">&larr; Back to Home</a>
+            </div>
+        </header>
+
+        <main>
+            <!-- Add Suggestion Button -->
+            <section class="mb-12 text-center">
+                 <a href="addsuggestion.html" class="inline-block rounded-md bg-blue-600 px-8 py-3 text-base font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 transition-all duration-300">
+                    Add a New Suggestion
+                </a>
+            </section>
+            
+            <div id="no-suggestions-message" class="text-center py-12 hidden">
+                <h2 class="text-xl font-semibold text-gray-400">No suggestions yet!</h2>
+                <p class="mt-2 text-gray-500">Be the first to add one using the button above.</p>
+            </div>
+            
+            <div id="suggestions-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Suggestions will be dynamically inserted here -->
+            </div>
+        </main>
+    </div>
+
+    <!-- Edit Modal -->
+    <div id="edit-modal" class="modal-overlay hidden">
+        <div class="glass-card w-full max-w-lg relative">
+            <h3 class="text-xl font-bold text-white mb-4">Edit Suggestion</h3>
+            <form id="edit-form" class="space-y-6">
+                <input type="hidden" id="edit-id">
+                <div>
+                    <label for="edit-plugin-name" class="block text-sm font-medium leading-6 text-gray-200">Plugin Name</label>
+                    <input type="text" id="edit-plugin-name" class="mt-2 form-input" required>
+                </div>
+                <div>
+                    <label for="edit-plugin-description" class="block text-sm font-medium leading-6 text-gray-200">Description</label>
+                    <textarea id="edit-plugin-description" rows="4" class="mt-2 form-input" required></textarea>
+                </div>
+                <div class="pt-2 flex gap-4">
+                    <button type="button" id="cancel-edit-btn" class="btn btn-secondary w-full">Cancel</button>
+                    <button type="submit" class="btn btn-primary w-full">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Delete Confirmation Modal -->
+    <div id="delete-modal" class="modal-overlay hidden">
+        <div class="glass-card w-full max-w-md text-center">
+            <h3 class="text-xl font-bold text-white">Are you sure?</h3>
+            <p class="text-gray-300 mt-2">This action cannot be undone. The suggestion will be permanently removed.</p>
+            <div class="mt-6 flex justify-center gap-4">
+                <button id="cancel-delete-btn" class="btn btn-secondary">Cancel</button>
+                <button id="confirm-delete-btn" class="btn btn-danger">Delete Suggestion</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Modal -->
+    <div id="notification-modal" class="modal-overlay hidden">
+        <div class="glass-card w-full max-w-sm text-center">
+            <p id="notification-message" class="text-white text-lg"></p>
+        </div>
+    </div>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const suggestionsContainer = document.getElementById('suggestions-container');
+            const noSuggestionsMessage = document.getElementById('no-suggestions-message');
+            
+            // Modals
+            const editModal = document.getElementById('edit-modal');
+            const deleteModal = document.getElementById('delete-modal');
+            const notificationModal = document.getElementById('notification-modal');
+
+            // Edit Modal Elements
+            const editForm = document.getElementById('edit-form');
+            const editIdInput = document.getElementById('edit-id');
+            const editNameInput = document.getElementById('edit-plugin-name');
+            const editDescInput = document.getElementById('edit-plugin-description');
+            const cancelEditBtn = document.getElementById('cancel-edit-btn');
+            
+            // Delete Modal Elements
+            const cancelDeleteBtn = document.getElementById('cancel-delete-btn');
+            const confirmDeleteBtn = document.getElementById('confirm-delete-btn');
+            let suggestionIdToDelete = null;
+
+            function showNotification(message) {
+                document.getElementById('notification-message').textContent = message;
+                notificationModal.classList.remove('hidden');
+                setTimeout(() => {
+                    notificationModal.classList.add('hidden');
+                }, 1500);
+            }
+
+            function getSuggestions() {
+                return JSON.parse(localStorage.getItem('pluginSuggestions')) || [];
+            }
+            function getMySuggestions() {
+                return JSON.parse(localStorage.getItem('mySuggestions')) || [];
+            }
+            function getVotedSuggestions() {
+                return JSON.parse(localStorage.getItem('votedSuggestions')) || [];
+            }
+
+            function saveSuggestions(suggestions) {
+                localStorage.setItem('pluginSuggestions', JSON.stringify(suggestions));
+            }
+             function saveMySuggestions(mySuggestions) {
+                localStorage.setItem('mySuggestions', JSON.stringify(mySuggestions));
+            }
+            function saveVotedSuggestions(votedSuggestions) {
+                localStorage.setItem('votedSuggestions', JSON.stringify(votedSuggestions));
+            }
+
+
+            function renderSuggestions() {
+                const suggestions = getSuggestions();
+                const mySuggestions = getMySuggestions();
+                const votedSuggestions = getVotedSuggestions();
+
+                if (suggestions.length === 0) {
+                    noSuggestionsMessage.classList.remove('hidden');
+                    suggestionsContainer.classList.add('hidden');
+                    return;
+                }
+
+                noSuggestionsMessage.classList.add('hidden');
+                suggestionsContainer.classList.remove('hidden');
+                
+                suggestions.sort((a, b) => b.votes - a.votes);
+                suggestionsContainer.innerHTML = '';
+
+                suggestions.forEach(suggestion => {
+                    const isOwner = mySuggestions.includes(suggestion.id);
+                    const hasVoted = votedSuggestions.includes(suggestion.id);
+                    
+                    const card = document.createElement('div');
+                    card.className = 'glass-card flex flex-col justify-between';
+                    card.innerHTML = `
+                        <div>
+                            <h3 class="text-xl font-bold text-white break-words">${suggestion.name}</h3>
+                            <p class="mt-2 text-gray-300 break-words">${suggestion.description}</p>
+                        </div>
+                        <div class="mt-6">
+                            <div class="flex justify-between items-center mb-4">
+                                <span class="text-lg font-bold text-blue-400">${suggestion.votes} Votes</span>
+                                <button data-id="${suggestion.id}" class="vote-btn btn ${hasVoted ? 'btn-secondary' : 'btn-primary'}" ${hasVoted ? 'disabled' : ''}>
+                                    ${hasVoted ? 'Voted' : 'Vote 👍'}
+                                </button>
+                            </div>
+                            ${isOwner ? `
+                            <div class="pt-4 border-t border-gray-700 flex gap-2">
+                                <button data-id="${suggestion.id}" class="edit-btn btn btn-outline w-full">Edit</button>
+                                <button data-id="${suggestion.id}" class="remove-btn btn btn-outline w-full">Remove</button>
+                            </div>
+                            ` : ''}
+                        </div>
+                    `;
+                    suggestionsContainer.appendChild(card);
+                });
+            }
+
+            // --- Event Listeners ---
+
+            suggestionsContainer.addEventListener('click', (e) => {
+                const target = e.target.closest('button');
+                if (!target) return;
+
+                const id = target.dataset.id;
+                
+                // Vote
+                if (target.classList.contains('vote-btn')) {
+                    const suggestions = getSuggestions();
+                    const votedSuggestions = getVotedSuggestions();
+                    if (votedSuggestions.includes(id)) return;
+
+                    const suggestion = suggestions.find(s => s.id === id);
+                    if (suggestion) {
+                        suggestion.votes++;
+                        votedSuggestions.push(id);
+                        saveSuggestions(suggestions);
+                        saveVotedSuggestions(votedSuggestions);
+                        renderSuggestions();
+                    }
+                }
+
+                // Edit
+                if (target.classList.contains('edit-btn')) {
+                    const suggestion = getSuggestions().find(s => s.id === id);
+                    if (suggestion) {
+                        editIdInput.value = suggestion.id;
+                        editNameInput.value = suggestion.name;
+                        editDescInput.value = suggestion.description;
+                        editModal.classList.remove('hidden');
+                    }
+                }
+
+                // Remove
+                if (target.classList.contains('remove-btn')) {
+                    suggestionIdToDelete = id;
+                    deleteModal.classList.remove('hidden');
+                }
+            });
+
+            // Edit Modal Logic
+            cancelEditBtn.addEventListener('click', () => editModal.classList.add('hidden'));
+            editForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const suggestions = getSuggestions();
+                const suggestion = suggestions.find(s => s.id === editIdInput.value);
+                if (suggestion) {
+                    suggestion.name = editNameInput.value;
+                    suggestion.description = editDescInput.value;
+                    saveSuggestions(suggestions);
+                    editModal.classList.add('hidden');
+                    showNotification('Suggestion updated!');
+                    renderSuggestions();
+                }
+            });
+
+            // Delete Modal Logic
+            cancelDeleteBtn.addEventListener('click', () => deleteModal.classList.add('hidden'));
+            confirmDeleteBtn.addEventListener('click', () => {
+                let suggestions = getSuggestions();
+                let mySuggestions = getMySuggestions();
+
+                suggestions = suggestions.filter(s => s.id !== suggestionIdToDelete);
+                mySuggestions = mySuggestions.filter(id => id !== suggestionIdToDelete);
+
+                saveSuggestions(suggestions);
+                saveMySuggestions(mySuggestions);
+
+                deleteModal.classList.add('hidden');
+                showNotification('Suggestion removed.');
+                renderSuggestions();
+                suggestionIdToDelete = null;
+            });
+            
+            // Initial render
+            renderSuggestions();
+        });
+    </script>
+
+</body>
+</html>
+
