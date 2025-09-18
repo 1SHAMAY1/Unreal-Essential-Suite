@@ -8,43 +8,20 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
+    
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #111827;
-            color: #E5E7EB;
-        }
-        .glass-card {
-            background: rgba(31, 41, 55, 0.5);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 0.75rem;
-            padding: 1.5rem;
-        }
-        .form-input {
-            @apply block w-full rounded-md border-0 bg-white/5 py-2 px-3 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm sm:leading-6 transition-all duration-300;
-        }
-        .modal-overlay {
-            @apply fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50;
-        }
-        .btn {
-            @apply rounded-md px-4 py-2 text-sm font-semibold transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed;
-        }
-        .btn-primary {
-            @apply bg-blue-600 text-white hover:bg-blue-500;
-        }
-        .btn-secondary {
-            @apply bg-gray-600 text-white hover:bg-gray-500;
-        }
-        .btn-danger {
-             @apply bg-red-600 text-white hover:bg-red-500;
-        }
-        .btn-outline {
-            @apply bg-transparent border border-gray-500 text-gray-300 hover:bg-gray-700;
-        }
-        .btn-success {
-            @apply bg-green-600 text-white hover:bg-green-500;
-        }
+        body { font-family: 'Inter', sans-serif; background-color: #111827; color: #E5E7EB; }
+        .glass-card { background: rgba(31, 41, 55, 0.5); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 0.75rem; padding: 1.5rem; }
+        .form-input { @apply block w-full rounded-md border-0 bg-white/5 py-2 px-3 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm sm:leading-6 transition-all duration-300; }
+        .modal-overlay { @apply fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50; }
+        .btn { @apply rounded-md px-4 py-2 text-sm font-semibold transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed; }
+        .btn-primary { @apply bg-blue-600 text-white hover:bg-blue-500; }
+        .btn-secondary { @apply bg-gray-600 text-white hover:bg-gray-500; }
+        .btn-danger { @apply bg-red-600 text-white hover:bg-red-500; }
+        .btn-outline { @apply bg-transparent border border-gray-500 text-gray-300 hover:bg-gray-700; }
     </style>
 </head>
 <body class="antialiased">
@@ -53,7 +30,7 @@
         <header class="text-center mb-12">
             <h1 class="text-4xl font-extrabold tracking-tight text-white sm:text-5xl">Community Suggestions</h1>
             <p class="mt-4 max-w-2xl mx-auto text-lg text-gray-300">
-                Load a suggestions file, add your own ideas, and vote for the features you want to see most!
+                Add your own ideas, and vote for the features you want to see most! Changes are saved in real-time.
             </p>
             <div class="mt-6">
                 <a href="index.html" class="text-blue-400 hover:text-blue-300 transition-colors">&larr; Back to Home</a>
@@ -62,19 +39,13 @@
 
         <main>
             <section class="mb-12 flex flex-col sm:flex-row justify-center items-center gap-4">
-                <input type="file" id="file-loader" accept=".txt,.json" class="hidden">
-                <button id="load-from-file-btn" class="btn btn-secondary px-6 py-3 text-base">📂 Load Suggestions From File</button>
-
                 <a href="addsuggestion.html" class="btn btn-primary px-6 py-3 text-base">
                     + Add a New Suggestion
                 </a>
-                
-                <button id="save-to-file-btn" class="btn btn-success px-6 py-3 text-base" disabled>💾 Save All to File</button>
             </section>
             
             <div id="no-suggestions-message" class="text-center py-12">
-                <h2 class="text-xl font-semibold text-gray-400">No suggestions loaded.</h2>
-                <p class="mt-2 text-gray-500">Use the "Load Suggestions From File" button to begin.</p>
+                <h2 class="text-xl font-semibold text-gray-400">Loading suggestions from database...</h2>
             </div>
             
             <div id="suggestions-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 hidden">
@@ -88,7 +59,7 @@
             <form id="edit-form" class="space-y-6">
                 <input type="hidden" id="edit-id">
                 <div>
-                    <label for="edit-plugin-name" class="block text-sm font-medium leading-6 text-gray-200">Plugin Name</label>
+                    <label for="edit-plugin-name" class="block text-sm font-medium leading-6 text-gray-200">Suggestion Title</label>
                     <input type="text" id="edit-plugin-name" class="mt-2 form-input" required>
                 </div>
                 <div>
@@ -102,96 +73,78 @@
             </form>
         </div>
     </div>
-    
     <div id="delete-modal" class="modal-overlay hidden">
         <div class="glass-card w-full max-w-md text-center">
             <h3 class="text-xl font-bold text-white">Are you sure?</h3>
-            <p class="text-gray-300 mt-2">This action cannot be undone. You will need to save your changes to a file to make it permanent.</p>
+            <p class="text-gray-300 mt-2">This action is permanent and cannot be undone.</p>
             <div class="mt-6 flex justify-center gap-4">
                 <button id="cancel-delete-btn" class="btn btn-secondary">Cancel</button>
                 <button id="confirm-delete-btn" class="btn btn-danger">Delete Suggestion</button>
             </div>
         </div>
     </div>
-
     <div id="notification-modal" class="modal-overlay hidden">
         <div class="glass-card w-full max-w-sm text-center">
             <p id="notification-message" class="text-white text-lg"></p>
         </div>
     </div>
 
-
     <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyAAzQSwyZWyox9IPNuo9P3YCbtbr1br9Yc",
+            authDomain: "unrealessentialsuite.firebaseapp.com",
+            projectId: "unrealessentialsuite",
+            databaseURL: "https://unrealessentialsuite-default-rtdb.firebaseio.com",
+            storageBucket: "unrealessentialsuite.firebasestorage.app",
+            messagingSenderId: "927719479992",
+            appId: "1:927719479992:web:102cebb37dbd3ca2f9724d",
+            measurementId: "G-95L8F8RQ6T"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+        const suggestionsRef = db.ref('suggestions');
+
         document.addEventListener('DOMContentLoaded', () => {
-            // App State (in-memory, not localStorage)
             let allSuggestions = [];
-            // We still use localStorage for votes and ownership to keep it simple for this example
             let mySuggestions = JSON.parse(localStorage.getItem('mySuggestions')) || [];
             let votedSuggestions = JSON.parse(localStorage.getItem('votedSuggestions')) || [];
 
-            // UI Elements
             const suggestionsContainer = document.getElementById('suggestions-container');
             const noSuggestionsMessage = document.getElementById('no-suggestions-message');
-            const fileLoader = document.getElementById('file-loader');
-            const loadBtn = document.getElementById('load-from-file-btn');
-            const saveBtn = document.getElementById('save-to-file-btn');
             
-            // Modals
             const editModal = document.getElementById('edit-modal');
             const deleteModal = document.getElementById('delete-modal');
             const notificationModal = document.getElementById('notification-modal');
-
-            // Edit Modal Elements
             const editForm = document.getElementById('edit-form');
             const editIdInput = document.getElementById('edit-id');
             const editNameInput = document.getElementById('edit-plugin-name');
             const editDescInput = document.getElementById('edit-plugin-description');
             const cancelEditBtn = document.getElementById('cancel-edit-btn');
-            
-            // Delete Modal Elements
             const cancelDeleteBtn = document.getElementById('cancel-delete-btn');
             const confirmDeleteBtn = document.getElementById('confirm-delete-btn');
-            let suggestionIdToDelete = null;
-
-            // --- Core Functions ---
+            let suggestionIdToAction = null;
 
             function showNotification(message) {
                 document.getElementById('notification-message').textContent = message;
                 notificationModal.classList.remove('hidden');
-                setTimeout(() => {
-                    notificationModal.classList.add('hidden');
-                }, 1500);
-            }
-
-            function saveToFile(content, filename) {
-                const blob = new Blob([content], { type: 'application/json' });
-                const a = document.createElement('a');
-                a.href = URL.createObjectURL(blob);
-                a.download = filename;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
+                setTimeout(() => notificationModal.classList.add('hidden'), 1500);
             }
 
             function renderSuggestions() {
                 if (allSuggestions.length === 0) {
+                    noSuggestionsMessage.innerHTML = `<h2 class="text-xl font-semibold text-gray-400">No suggestions yet!</h2><p class="mt-2 text-gray-500">Be the first to add one using the button above.</p>`;
                     noSuggestionsMessage.classList.remove('hidden');
                     suggestionsContainer.classList.add('hidden');
-                    saveBtn.disabled = true;
                     return;
                 }
-
                 noSuggestionsMessage.classList.add('hidden');
                 suggestionsContainer.classList.remove('hidden');
-                saveBtn.disabled = false;
-                
                 allSuggestions.sort((a, b) => b.votes - a.votes);
                 suggestionsContainer.innerHTML = '';
-
                 allSuggestions.forEach(suggestion => {
                     const isOwner = mySuggestions.includes(suggestion.id);
                     const hasVoted = votedSuggestions.includes(suggestion.id);
-                    
                     const card = document.createElement('div');
                     card.className = 'glass-card flex flex-col justify-between';
                     card.innerHTML = `
@@ -218,64 +171,34 @@
                 });
             }
 
-            // --- Event Listeners ---
-
-            loadBtn.addEventListener('click', () => fileLoader.click());
-
-            fileLoader.addEventListener('change', (event) => {
-                const file = event.target.files[0];
-                if (!file) return;
-
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    try {
-                        const content = e.target.result;
-                        // Important: The file should contain a JSON array of suggestions.
-                        // If it contains a single object from the previous script, we wrap it in an array.
-                        let parsedData = JSON.parse(content);
-                        if (!Array.isArray(parsedData)) {
-                             parsedData = [parsedData];
-                        }
-                        allSuggestions = parsedData;
-
-                        showNotification(`Loaded ${allSuggestions.length} suggestion(s)!`);
-                        renderSuggestions();
-                    } catch (error) {
-                        showNotification('Error: Invalid file format.');
-                        console.error("Failed to parse file:", error);
-                    }
-                };
-                reader.readAsText(file);
-                fileLoader.value = ''; // Reset for re-uploading the same file
+            suggestionsRef.on('value', (snapshot) => {
+                const data = snapshot.val();
+                const suggestionsArray = [];
+                if (data) {
+                    Object.keys(data).forEach(key => {
+                        suggestionsArray.push({ id: key, ...data[key] });
+                    });
+                }
+                allSuggestions = suggestionsArray;
+                renderSuggestions();
             });
 
-            saveBtn.addEventListener('click', () => {
-                const fileContent = JSON.stringify(allSuggestions, null, 2);
-                saveToFile(fileContent, 'Storage.txt');
-                showNotification('Suggestions saved to Storage.txt!');
-            });
-            
             suggestionsContainer.addEventListener('click', (e) => {
                 const target = e.target.closest('button');
                 if (!target) return;
-
                 const id = target.dataset.id;
                 
-                // Vote
                 if (target.classList.contains('vote-btn')) {
                     if (votedSuggestions.includes(id)) return;
-                    const suggestion = allSuggestions.find(s => s.id === id);
-                    if (suggestion) {
-                        suggestion.votes++;
-                        votedSuggestions.push(id);
-                        localStorage.setItem('votedSuggestions', JSON.stringify(votedSuggestions)); // Keep votes in localStorage
-                        renderSuggestions();
-                        showNotification('Vote counted! Remember to save.');
-                    }
-                }
+                    
+                    // ATOMIC INCREMENT: This is the safe way to update a counter.
+                    // It tells the Firebase server to add 1 to the current value.
+                    db.ref(`suggestions/${id}/votes`).set(firebase.database.ServerValue.increment(1));
 
-                // Edit
-                if (target.classList.contains('edit-btn')) {
+                    votedSuggestions.push(id);
+                    localStorage.setItem('votedSuggestions', JSON.stringify(votedSuggestions));
+
+                } else if (target.classList.contains('edit-btn')) {
                     const suggestion = allSuggestions.find(s => s.id === id);
                     if (suggestion) {
                         editIdInput.value = suggestion.id;
@@ -283,45 +206,37 @@
                         editDescInput.value = suggestion.description;
                         editModal.classList.remove('hidden');
                     }
-                }
-
-                // Remove
-                if (target.classList.contains('remove-btn')) {
-                    suggestionIdToDelete = id;
+                } else if (target.classList.contains('remove-btn')) {
+                    suggestionIdToAction = id;
                     deleteModal.classList.remove('hidden');
                 }
             });
 
-            // Edit Modal Logic
             cancelEditBtn.addEventListener('click', () => editModal.classList.add('hidden'));
             editForm.addEventListener('submit', (e) => {
                 e.preventDefault();
-                const suggestion = allSuggestions.find(s => s.id === editIdInput.value);
-                if (suggestion) {
-                    suggestion.name = editNameInput.value;
-                    suggestion.description = editDescInput.value;
-                    editModal.classList.add('hidden');
-                    showNotification('Suggestion updated! Remember to save.');
-                    renderSuggestions();
-                }
+                const idToUpdate = editIdInput.value;
+                const updatedData = {
+                    name: editNameInput.value,
+                    description: editDescInput.value
+                };
+                db.ref(`suggestions/${idToUpdate}`).update(updatedData);
+                editModal.classList.add('hidden');
+                showNotification('Suggestion updated!');
             });
 
-            // Delete Modal Logic
             cancelDeleteBtn.addEventListener('click', () => deleteModal.classList.add('hidden'));
             confirmDeleteBtn.addEventListener('click', () => {
-                allSuggestions = allSuggestions.filter(s => s.id !== suggestionIdToDelete);
-                mySuggestions = mySuggestions.filter(id => id !== suggestionIdToDelete);
-                localStorage.setItem('mySuggestions', JSON.stringify(mySuggestions)); // Update localStorage for ownership
-                deleteModal.classList.add('hidden');
-                showNotification('Suggestion removed! Remember to save.');
-                renderSuggestions();
-                suggestionIdToDelete = null;
+                if (suggestionIdToAction) {
+                    db.ref(`suggestions/${suggestionIdToAction}`).remove();
+                    mySuggestions = mySuggestions.filter(id => id !== suggestionIdToAction);
+                    localStorage.setItem('mySuggestions', JSON.stringify(mySuggestions));
+                    deleteModal.classList.add('hidden');
+                    showNotification('Suggestion removed.');
+                    suggestionIdToAction = null;
+                }
             });
-            
-            // Initial render
-            renderSuggestions();
         });
     </script>
-
 </body>
 </html>

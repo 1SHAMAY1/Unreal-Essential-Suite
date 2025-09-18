@@ -8,6 +8,10 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
+    
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -60,7 +64,7 @@
                             <label for="plugin-description" class="block text-sm font-medium leading-6 text-gray-200">Description</label>
                             <textarea id="plugin-description" rows="6" class="mt-2 form-input h-full" placeholder="Describe the core features. What problem does it solve? Why would it be a good fit for the suite?" required></textarea>
                         </div>
-                        <button type="submit" class="btn btn-primary w-full !mt-6 text-base py-3">Submit Idea & Download</button>
+                        <button type="submit" class="btn btn-primary w-full !mt-6 text-base py-3">Submit Idea</button>
                     </form>
                 </div>
             </section>
@@ -95,6 +99,23 @@
     </div>
 
     <script>
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAAzQSwyZWyox9IPNuo9P3YCbtbr1br9Yc",
+            authDomain: "unrealessentialsuite.firebaseapp.com",
+            projectId: "unrealessentialsuite",
+            databaseURL: "https://unrealessentialsuite-default-rtdb.firebaseio.com",
+            storageBucket: "unrealessentialsuite.firebasestorage.app",
+            messagingSenderId: "927719479992",
+            appId: "1:927719479992:web:102cebb37dbd3ca2f9724d",
+            measurementId: "G-95L8F8RQ6T"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+        const suggestionsRef = db.ref('suggestions');
+
         document.addEventListener('DOMContentLoaded', () => {
             const addForm = document.getElementById('add-suggestion-form');
             const notificationModal = document.getElementById('notification-modal');
@@ -104,49 +125,31 @@
                 notificationModal.classList.remove('hidden');
             }
             
-            /**
-             * Creates a text file in the user's browser and prompts them to download it.
-             * @param {string} content The text content to be saved in the file.
-             * @param {string} filename The name of the file to be saved (e.g., 'Storage.txt').
-             */
-            function saveToFile(content, filename) {
-                // Create a blob (a file-like object) from the text content.
-                const blob = new Blob([content], { type: 'text/plain' });
-
-                // Create a temporary anchor element to trigger the download.
-                const a = document.createElement('a');
-                a.href = URL.createObjectURL(blob);
-                a.download = filename;
-
-                // Programmatically click the anchor to start the download.
-                document.body.appendChild(a);
-                a.click();
-
-                // Clean up by removing the temporary anchor element.
-                document.body.removeChild(a);
-            }
-
             addForm.addEventListener('submit', (e) => {
                 e.preventDefault();
                 const nameInput = document.getElementById('plugin-name');
                 const descInput = document.getElementById('plugin-description');
 
+                // 1. Create the new suggestion object
                 const newSuggestion = {
-                    id: `suggestion-${Date.now()}`,
                     name: nameInput.value,
                     description: descInput.value,
-                    votes: 0
+                    votes: 0 // New suggestions always start with 0 votes
                 };
                 
-                // Convert the suggestion object to a string for saving.
-                // We use JSON.stringify for a structured format.
-                const fileContent = JSON.stringify(newSuggestion, null, 2);
+                // 2. Push the object to the Firebase database.
+                // Firebase's push() method automatically generates a safe, unique ID.
+                const newSuggestionRef = suggestionsRef.push(newSuggestion);
 
-                // Call the function to save the content to 'Storage.txt'
-                saveToFile(fileContent, 'Storage.txt');
+                // 3. Save the unique ID to the user's browser (localStorage).
+                // This lets us show "Edit" and "Delete" buttons only to the person who created it.
+                let mySuggestions = JSON.parse(localStorage.getItem('mySuggestions')) || [];
+                mySuggestions.push(newSuggestionRef.key); // .key gets the unique ID from Firebase
+                localStorage.setItem('mySuggestions', JSON.stringify(mySuggestions));
 
+                // 4. Reset the form and show feedback to the user.
                 addForm.reset();
-                showNotification('Suggestion saved! Redirecting...');
+                showNotification('Suggestion added! Redirecting...');
 
                 setTimeout(() => {
                     window.location.href = 'suggestions.html';
