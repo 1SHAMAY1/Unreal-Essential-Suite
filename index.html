@@ -6,263 +6,450 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Unreal Essential Suite - Open-Source UE5 Toolkit</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        gold: {
+                            50: '#FBF8E6',
+                            100: '#F7F1C8',
+                            200: '#EFE18E',
+                            300: '#E6D15E',
+                            400: '#DCC13B',
+                            500: '#D4AF37', /* Metallic Gold Base */
+                            600: '#AA8C2C',
+                            700: '#856D22',
+                            800: '#63511D',
+                            900: '#463917',
+                        },
+                        black: {
+                            DEFAULT: '#000000',
+                            900: '#050505',
+                            800: '#0A0A0A',
+                            700: '#121212',
+                        }
+                    },
+                    backgroundImage: {
+                        'metallic-gradient': 'linear-gradient(135deg, #BF953F 0%, #FCF6BA 25%, #B38728 50%, #FBF5B7 75%, #AA771C 100%)',
+                        'metallic-text': 'linear-gradient(to right, #BF953F, #FCF6BA, #B38728, #FBF5B7, #AA771C)',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        tech: ['Rajdhani', 'sans-serif'], /* Hypothetical tech font if loaded, formatted for Inter fallback */
+                    }
+                }
+            }
+        }
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
-    <style>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Rajdhani:wght@500;600;700&display=swap"
+        rel="stylesheet">
+    <style type="text/tailwindcss">
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #111827;
-            color: #E5E7EB;
+            @apply bg-black text-gray-200;
+        }
+
+        h1, h2, h3, .tech-font {
+            font-family: 'Rajdhani', sans-serif;
+            text-transform: uppercase;
         }
 
         .section-title {
-            @apply text-3xl font-bold tracking-tight text-white sm:text-4xl mb-4;
+            @apply text-4xl md:text-5xl font-bold tracking-wider text-transparent bg-clip-text bg-metallic-text mb-2;
         }
 
         .section-subtitle {
-            @apply text-lg text-gray-300;
+            @apply text-lg text-gray-400 font-light tracking-wide;
         }
 
-        .glass-card {
-            background: rgba(31, 41, 55, 0.5);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 0.75rem;
-            padding: 1.5rem;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        /* Chamfered Card / Button Logic */
+        .chamfered {
+            clip-path: polygon(
+                12px 0, 100% 0, 
+                100% calc(100% - 12px), calc(100% - 12px) 100%, 
+                0 100%, 0 12px
+            );
         }
 
-        .form-input {
-            @apply block w-full rounded-md border-0 bg-white/5 py-2 px-3 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm sm:leading-6 transition-all duration-300;
+        .chamfered-border {
+            position: relative;
+            background: #0A0A0A;
+            z-index: 1;
+        }
+        
+        /* The border effect via pseudo-element */
+        .chamfered-border::before {
+            content: '';
+            position: absolute;
+            inset: -1px;
+            background: linear-gradient(45deg, #856D22, #D4AF37, #856D22);
+            z-index: -1;
+            clip-path: polygon(
+                12px 0, 100% 0, 
+                100% calc(100% - 12px), calc(100% - 12px) 100%, 
+                0 100%, 0 12px
+            );
+            transition: all 0.3s ease;
+            opacity: 0.6;
+        }
+
+        .chamfered-border:hover::before {
+            opacity: 1;
+            filter: brightness(1.3);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            height: 6px;
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #050505;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #63511D;
+            border-radius: 0;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #D4AF37;
         }
 
         .modal-overlay {
-            @apply fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50;
+            @apply fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50;
+        }
+        
+        .animate-on-scroll {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .animate-on-scroll.visible {
+            opacity: 1;
+            transform: translateY(0);
         }
     </style>
 </head>
 
-<body class="antialiased">
+<body class="antialiased overflow-x-hidden selection:bg-gold-500 selection:text-black">
 
-    <header class="fixed top-0 left-0 right-0 z-50 bg-gray-900/50 backdrop-blur-md border-b border-gray-800">
+    <!-- Navigation -->
+    <header class="fixed top-0 left-0 right-0 z-50 bg-black/80 backdrop-blur-lg border-b border-white/5">
         <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-16">
-                <div class="flex-shrink-0">
-                    <a href="index.html" class="text-xl font-bold text-white">Unreal Essential Suite</a>
+            <div class="flex items-center justify-between h-20">
+                <div class="flex-shrink-0 flex items-center gap-2">
+                    <div class="w-2 h-8 bg-gradient-to-b from-gold-300 to-gold-600"></div>
+                    <a href="index.html" class="text-2xl font-bold tracking-widest text-white uppercase font-tech">
+                        Unreal <span class="text-gold-400">Essential</span>
+                    </a>
                 </div>
                 <nav class="hidden md:block">
-                    <div class="ml-10 flex items-baseline space-x-4">
+                    <div class="ml-10 flex items-baseline space-x-8">
                         <a href="#about"
-                            class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-300">About</a>
+                            class="text-gray-400 hover:text-gold-400 px-3 py-2 text-sm font-bold uppercase tracking-widest transition-colors duration-300">About</a>
                         <a href="#plugins"
-                            class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-300">Plugins</a>
-
+                            class="text-gray-400 hover:text-gold-400 px-3 py-2 text-sm font-bold uppercase tracking-widest transition-colors duration-300">Plugins</a>
                         <a href="#contact"
-                            class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-300">Contact</a>
+                            class="text-gray-400 hover:text-gold-400 px-3 py-2 text-sm font-bold uppercase tracking-widest transition-colors duration-300">Contact</a>
                     </div>
                 </nav>
             </div>
         </div>
     </header>
 
-    <main class="pt-16">
-        <section id="home" class="relative py-20 md:py-32 flex items-center justify-center min-h-[80vh]">
-            <div
-                class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 brightness-100 contrast-150 mix-blend-overlay">
+    <main>
+        <!-- Hero Section -->
+        <section id="home" class="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden">
+            <!-- Background Elements -->
+            <div class="absolute inset-0 z-0">
+                <div
+                    class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10 mix-blend-overlay">
+                </div>
+                <div class="absolute inset-0 bg-gradient-to-b from-black via-black/90 to-black"></div>
+                <!-- Tech Grid overlay (CSS generated) -->
+                <div class="absolute inset-0 opacity-10"
+                    style="background-image: linear-gradient(#333 1px, transparent 1px), linear-gradient(90deg, #333 1px, transparent 1px); background-size: 40px 40px; mask-image: radial-gradient(circle, black, transparent 80%);">
+                </div>
             </div>
-            <div class="absolute inset-0 bg-gradient-to-b from-transparent via-blue-900/10 to-[#111827]"></div>
-            <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
-                <div class="animate-on-scroll">
+
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+                <div class="animate-on-scroll flex flex-col items-center">
+                    <div
+                        class="inline-block mb-4 px-4 py-1 border border-gold-500/30 bg-gold-500/5 text-gold-300 text-xs font-bold tracking-[0.2em] uppercase rounded-sm backdrop-blur-sm">
+                        v1.0 Release Available
+                    </div>
                     <h1
-                        class="text-5xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-500 to-indigo-500 sm:text-6xl md:text-7xl drop-shadow-lg">
-                        Unreal Essential Suite
+                        class="text-6xl sm:text-7xl md:text-9xl font-black tracking-tighter text-transparent bg-clip-text bg-metallic-text drop-shadow-lg mb-6 leading-tight">
+                        UNREAL<br>ESSENTIAL
                     </h1>
-                    <p class="mt-4 max-w-md mx-auto text-xl text-blue-300 font-medium md:mt-6 md:text-2xl">
-                        An Open-Source UE5 Toolkit
+                    <p
+                        class="mt-2 max-w-2xl mx-auto text-xl md:text-2xl text-gray-400 font-light tracking-wide border-t border-b border-white/5 py-4">
+                        The Professional Open-Source Toolkit for UE5
                     </p>
-                    <p class="mt-8 max-w-2xl mx-auto text-lg leading-8 text-gray-300">
-                        A modular, MIT-licensed plugin collection designed to accelerate prototyping and empower
-                        developers to build polished, network-ready gameplay systems.
-                    </p>
-                    <div class="mt-10 flex justify-center gap-6">
+
+                    <div class="mt-10 flex flex-col sm:flex-row gap-6 justify-center w-full max-w-lg mx-auto">
                         <a href="#plugins"
-                            class="rounded-full bg-blue-600 px-8 py-3.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 transition-all duration-300 hover:scale-105 active:scale-95">
-                            Explore Plugins
+                            class="chamfered group relative inline-flex items-center justify-center px-8 py-4 bg-gold-600 font-bold text-black uppercase tracking-widest transition-all hover:bg-gold-400 hover:scale-105 active:scale-95">
+                            <span class="relative z-10">Deploy Plugins</span>
+                            <div class="absolute inset-0 bg-white/20 group-hover:bg-white/40 transition-colors"></div>
                         </a>
                         <a href="https://github.com/1SHAMAY1/Unreal-Essential-Suite" target="_blank"
-                            class="rounded-full bg-white/10 px-8 py-3.5 text-sm font-semibold text-white hover:bg-white/20 ring-1 ring-inset ring-white/20 transition-all duration-300 hover:scale-105 active:scale-95">
-                            GitHub Repository
+                            class="chamfered relative inline-flex items-center justify-center px-8 py-4 bg-transparent border border-white/20 font-bold text-white uppercase tracking-widest transition-all hover:border-gold-500 hover:text-gold-400 hover:bg-gold-500/10">
+                            GitHub Repo
                         </a>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section id="about" class="py-12 sm:py-24 bg-[#0B0F19]">
+        <!-- About / Features -->
+        <section id="about" class="py-24 bg-black relative border-t border-white/5">
             <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="text-center animate-on-scroll">
-                    <h2 class="section-title">Build Better, Faster.</h2>
-                    <p class="mt-4 max-w-3xl mx-auto section-subtitle">
-                        As a solo dev or small studio, your time is your most valuable asset. This toolkit is built on
-                        core principles that respect that, helping you create high-quality games without reinventing the
-                        wheel. It's professional, reliable, and shows you're serious about your project.
-                    </p>
+                <div class="text-center animate-on-scroll mb-16">
+                    <h2 class="section-title">Core Principles</h2>
+                    <p class="section-subtitle">Engineered for reliability, modularity, and speed.</p>
                 </div>
-                <div class="mt-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 text-center">
-                    <div class="flex flex-col items-center animate-on-scroll delay-100">
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <!-- Feature 1 -->
+                    <div class="chamfered-border p-8 group animate-on-scroll delay-100">
                         <div
-                            class="flex items-center justify-center h-16 w-16 rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-700 text-white shadow-lg shadow-blue-500/30 transform transition-transform hover:scale-110 duration-300">
-                            <svg class="h-8 w-8" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                stroke="currentColor" aria-hidden="true">
+                            class="h-12 w-12 bg-gold-500/10 border border-gold-500/30 flex items-center justify-center mb-6 group-hover:bg-gold-500 group-hover:text-black transition-all">
+                            <svg class="h-6 w-6 text-gold-500 group-hover:text-black" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
                             </svg>
                         </div>
-                        <h3 class="mt-6 text-xl font-bold text-white">Modular by Design</h3>
-                        <p class="mt-3 text-base text-gray-400">Each plugin is self-contained. Use only what you need
-                            without adding unnecessary bloat to your project.</p>
+                        <h3 class="text-xl font-bold text-white mb-2 group-hover:text-gold-400 transition-colors">
+                            Modular Design</h3>
+                        <p class="text-sm text-gray-500 leading-relaxed">Zero bloat. Import only the plugins your
+                            project requires.</p>
                     </div>
-                    <div class="flex flex-col items-center animate-on-scroll delay-200">
+
+                    <!-- Feature 2 -->
+                    <div class="chamfered-border p-8 group animate-on-scroll delay-200">
                         <div
-                            class="flex items-center justify-center h-16 w-16 rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-700 text-white shadow-lg shadow-blue-500/30 transform transition-transform hover:scale-110 duration-300">
-                            <svg class="h-8 w-8" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                stroke="currentColor" aria-hidden="true">
+                            class="h-12 w-12 bg-gold-500/10 border border-gold-500/30 flex items-center justify-center mb-6 group-hover:bg-gold-500 group-hover:text-black transition-all">
+                            <svg class="h-6 w-6 text-gold-500 group-hover:text-black" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M15 15l-2 5L9 9l5-2 2 5z" />
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M7 10l.5 2.5 2.5.5" />
                             </svg>
                         </div>
-                        <h3 class="mt-6 text-xl font-bold text-white">Blueprint Friendly</h3>
-                        <p class="mt-3 text-base text-gray-400">Exposes core functionality to Blueprints, empowering
-                            designers and artists to build gameplay without writing C++.</p>
+                        <h3 class="text-xl font-bold text-white mb-2 group-hover:text-gold-400 transition-colors">
+                            Blueprint Ready</h3>
+                        <p class="text-sm text-gray-500 leading-relaxed">Exposes complex C++ logic to Designers via
+                            intuitive nodes.</p>
                     </div>
-                    <div class="flex flex-col items-center animate-on-scroll delay-300">
+
+                    <!-- Feature 3 -->
+                    <div class="chamfered-border p-8 group animate-on-scroll delay-300">
                         <div
-                            class="flex items-center justify-center h-16 w-16 rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-700 text-white shadow-lg shadow-blue-500/30 transform transition-transform hover:scale-110 duration-300">
-                            <svg class="h-8 w-8" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                stroke="currentColor" aria-hidden="true">
+                            class="h-12 w-12 bg-gold-500/10 border border-gold-500/30 flex items-center justify-center mb-6 group-hover:bg-gold-500 group-hover:text-black transition-all">
+                            <svg class="h-6 w-6 text-gold-500 group-hover:text-black" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6.002l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.368a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z" />
                             </svg>
                         </div>
-                        <h3 class="mt-6 text-xl font-bold text-white">Network Ready</h3>
-                        <p class="mt-3 text-base text-gray-400">All systems are built with multiplayer in mind from the
-                            ground up, with replication handled out-of-the-box.</p>
+                        <h3 class="text-xl font-bold text-white mb-2 group-hover:text-gold-400 transition-colors">Net
+                            Code</h3>
+                        <p class="text-sm text-gray-500 leading-relaxed">Replciation handled natively. Multiplayer ready
+                            out-of-the-box.</p>
                     </div>
-                    <div class="flex flex-col items-center animate-on-scroll delay-400">
+
+                    <!-- Feature 4 -->
+                    <div class="chamfered-border p-8 group animate-on-scroll delay-400">
                         <div
-                            class="flex items-center justify-center h-16 w-16 rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-700 text-white shadow-lg shadow-blue-500/30 transform transition-transform hover:scale-110 duration-300">
-                            <svg class="h-8 w-8" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                stroke="currentColor" aria-hidden="true">
+                            class="h-12 w-12 bg-gold-500/10 border border-gold-500/30 flex items-center justify-center mb-6 group-hover:bg-gold-500 group-hover:text-black transition-all">
+                            <svg class="h-6 w-6 text-gold-500 group-hover:text-black" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
                         </div>
-                        <h3 class="mt-6 text-xl font-bold text-white">Free & Open Source</h3>
-                        <p class="mt-3 text-base text-gray-400">Released under the permissive MIT license. Use it freely
-                            in commercial projects and contribute back.</p>
+                        <h3 class="text-xl font-bold text-white mb-2 group-hover:text-gold-400 transition-colors">MIT
+                            License</h3>
+                        <p class="text-sm text-gray-500 leading-relaxed">Free for commercial use. Open source and
+                            community driven.</p>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section id="plugins" class="py-12 sm:py-20">
+        <!-- Horizontal Showcase Section -->
+        <section id="plugins" class="py-24 bg-black relative border-t border-white/5 overflow-hidden">
+            <div
+                class="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-gold-900/5 to-transparent pointer-events-none">
+            </div>
+
+            <div
+                class="container mx-auto px-4 sm:px-6 lg:px-8 mb-12 flex flex-col md:flex-row items-end justify-between gap-6 animate-on-scroll">
+                <div>
+                    <h2 class="section-title">Plugin Modules</h2>
+                    <p class="section-subtitle max-w-xl">Production-ready systems to accelerate your workflow.</p>
+                </div>
+                <div class="hidden md:flex gap-2">
+                    <span class="text-xs font-mono text-gray-600 uppercase tracking-widest">Scroll to explore ></span>
+                </div>
+            </div>
+
+            <!-- Horizontal Carousel -->
+            <div
+                class="w-full overflow-x-auto pb-12 px-4 sm:px-6 lg:px-8 snap-x snap-mandatory flex gap-8 items-stretch scrollbar-hide">
+                <!-- Spacer for left padding -->
+                <div class="shrink-0 w-0 md:w-0"></div>
+
+                <!-- Showcase Card 1 -->
+                <div
+                    class="snap-center shrink-0 w-[85vw] md:w-[900px] chamfered-border bg-black group relative flex flex-col md:flex-row h-[500px] overflow-hidden">
+                    <!-- Video Area -->
+                    <div class="md:w-2/3 h-64 md:h-full relative bg-gray-900 border-r border-white/5">
+                        <iframe src="https://drive.google.com/file/d/1xRHF_Kcr_6u6GAkXdQFdyr21Jks6z8xJ/preview"
+                            class="absolute inset-0 w-full h-full opacity-60 group-hover:opacity-100 transition-opacity duration-500"
+                            frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                        <div
+                            class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent md:hidden">
+                        </div>
+                        <div
+                            class="absolute bottom-4 left-4 bg-black/80 backdrop-blur px-3 py-1 text-xs font-tech text-gold-400 border border-gold-500/30 uppercase tracking-widest">
+                            Preview
+                        </div>
+                    </div>
+                    <!-- Content Area -->
+                    <div class="md:w-1/3 p-8 flex flex-col justify-between bg-black/50 backdrop-blur-sm relative z-10">
+                        <div>
+                            <h3 class="text-3xl font-bold text-white mb-2 leading-none">Locomotion<br><span
+                                    class="text-gold-500">System</span></h3>
+                            <div class="w-12 h-1 bg-gold-600 mb-6"></div>
+                            <p class="text-gray-400 text-sm leading-relaxed mb-6">
+                                Advanced, fully replicated movement controller. Supports climbing, vaulting, sliding,
+                                and prone states out of the box. Derived efficiently from the native
+                                CharacterMovementComponent.
+                            </p>
+                            <ul class="text-xs text-gray-500 font-mono space-y-2 mb-8">
+                                <li class="flex items-center"><span class="w-1.5 h-1.5 bg-gold-500 mr-2"></span>Network
+                                    Replicated</li>
+                                <li class="flex items-center"><span class="w-1.5 h-1.5 bg-gold-500 mr-2"></span>Data
+                                    Driven</li>
+                                <li class="flex items-center"><span class="w-1.5 h-1.5 bg-gold-500 mr-2"></span>Motion
+                                    Warping</li>
+                            </ul>
+                        </div>
+                        <a href="https://github.com/1SHAMAY1/Plugin-CharacterLocomotionSystem.git" target="_blank"
+                            class="inline-block w-full text-center py-3 border border-white/20 text-white font-bold uppercase tracking-wider hover:bg-gold-600 hover:border-gold-600 hover:text-black transition-all text-xs">
+                            View Source
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Showcase Card 2 -->
+                <div
+                    class="snap-center shrink-0 w-[85vw] md:w-[900px] chamfered-border bg-black group relative flex flex-col md:flex-row h-[500px] overflow-hidden">
+                    <!-- Video Area -->
+                    <div class="md:w-2/3 h-64 md:h-full relative bg-gray-900 border-r border-white/5">
+                        <iframe src="https://drive.google.com/file/d/1wx_B7L23L61r-GTvXzo9LitP3IXeH-TE/preview"
+                            class="absolute inset-0 w-full h-full opacity-60 group-hover:opacity-100 transition-opacity duration-500"
+                            frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                        <div
+                            class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent md:hidden">
+                        </div>
+                        <div
+                            class="absolute bottom-4 left-4 bg-black/80 backdrop-blur px-3 py-1 text-xs font-tech text-gold-400 border border-gold-500/30 uppercase tracking-widest">
+                            Preview
+                        </div>
+                    </div>
+                    <!-- Content Area -->
+                    <div class="md:w-1/3 p-8 flex flex-col justify-between bg-black/50 backdrop-blur-sm relative z-10">
+                        <div>
+                            <h3 class="text-3xl font-bold text-white mb-2 leading-none">Enhanced<br><span
+                                    class="text-gold-500">Camera</span></h3>
+                            <div class="w-12 h-1 bg-gold-600 mb-6"></div>
+                            <p class="text-gray-400 text-sm leading-relaxed mb-6">
+                                A robust camera manager for blending complex behaviors. Design shakes, orbit lags, and
+                                transitions using simple Data Assets.
+                            </p>
+                            <ul class="text-xs text-gray-500 font-mono space-y-2 mb-8">
+                                <li class="flex items-center"><span class="w-1.5 h-1.5 bg-gold-500 mr-2"></span>Context
+                                    Blending</li>
+                                <li class="flex items-center"><span class="w-1.5 h-1.5 bg-gold-500 mr-2"></span>Modifier
+                                    Stack</li>
+                                <li class="flex items-center"><span
+                                        class="w-1.5 h-1.5 bg-gold-500 mr-2"></span>Sequencer Friendly</li>
+                            </ul>
+                        </div>
+                        <a href="https://github.com/1SHAMAY1/Plugin-EnhancedCameraSystem.git" target="_blank"
+                            class="inline-block w-full text-center py-3 border border-white/20 text-white font-bold uppercase tracking-wider hover:bg-gold-600 hover:border-gold-600 hover:text-black transition-all text-xs">
+                            View Source
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Spacer for right padding -->
+                <div class="shrink-0 w-0 md:w-0"></div>
+            </div>
+        </section>
+
+        <!-- Upcoming Section (Grid) -->
+        <section class="py-24 bg-black border-t border-white/5">
             <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="text-center">
-                    <h2 class="section-title">Available Plugins</h2>
-                    <p class="mt-4 max-w-3xl mx-auto section-subtitle">
-                        Evaluate tools in seconds, not hours. These plugins are built with clear, practical features to
-                        help you make informed decisions quickly.
-                    </p>
+                <div class="flex items-center gap-4 mb-12">
+                    <h2 class="section-title text-3xl">In Development</h2>
+                    <div class="h-px flex-grow bg-white/10"></div>
                 </div>
 
-                <div class="mt-12 grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 gap-12">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Roadmap Item 1 -->
                     <div
-                        class="glass-card overflow-hidden md:flex md:gap-8 hover:transform hover:-translate-y-2 hover:shadow-2xl hover:shadow-blue-500/20">
-                        <div class="md:w-1/2 aspect-video rounded-md overflow-hidden bg-gray-800">
-                            <iframe src="https://drive.google.com/file/d/1xRHF_Kcr_6u6GAkXdQFdyr21Jks6z8xJ/preview"
-                                class="w-full h-full" frameborder="0" allow="autoplay; encrypted-media"
-                                allowfullscreen></iframe>
-                        </div>
-                        <div class="mt-6 md:mt-0 md:w-1/2 flex flex-col justify-center">
-                            <h3 class="text-xl font-bold text-white">Character Locomotion System</h3>
-                            <p class="mt-2 text-gray-300">Provides advanced, fully replicated movement mechanics like
-                                climbing, vaulting, and proning. Built on top of UE5's `CharacterMovementComponent`,
-                                this data-driven system allows for easy addition of new movement modes and fine-tuning
-                                of existing ones.</p>
-                            <a href="https://github.com/1SHAMAY1/Plugin-CharacterLocomotionSystem.git" target="_blank"
-                                class="mt-4 inline-block self-start rounded-md border border-blue-500 px-3.5 py-2.5 text-sm font-semibold text-blue-400 shadow-sm hover:bg-blue-500 hover:text-white transition-all duration-300">View
-                                on GitHub</a>
-                        </div>
+                        class="p-6 border border-white/5 hover:border-gold-500/30 bg-white/5 hover:bg-white/10 transition-all group">
+                        <div class="text-gold-500 font-mono text-xs mb-2 opacity-50">#003</div>
+                        <h4 class="text-xl font-bold text-white mb-2 font-tech">Interaction System</h4>
+                        <p class="text-gray-400 text-sm">Context-aware interactables for doors, items, and world
+                            objects.</p>
                     </div>
-
+                    <!-- Roadmap Item 2 -->
                     <div
-                        class="glass-card overflow-hidden md:flex md:flex-row-reverse md:gap-8 hover:transform hover:-translate-y-2 hover:shadow-2xl hover:shadow-blue-500/20">
-                        <div class="md:w-1/2 aspect-video rounded-md overflow-hidden bg-gray-800">
-                            <iframe src="https://drive.google.com/file/d/1wx_B7L23L61r-GTvXzo9LitP3IXeH-TE/preview"
-                                class="w-full h-full" frameborder="0" allow="autoplay; encrypted-media"
-                                allowfullscreen></iframe>
-                        </div>
-                        <div class="mt-6 md:mt-0 md:w-1/2 flex flex-col justify-center">
-                            <h3 class="text-xl font-bold text-white">Enhanced Camera System</h3>
-                            <p class="mt-2 text-gray-300">A data-driven manager for creating and blending complex camera
-                                behaviors. Define camera styles like third-person orbit, procedural shakes, and ADS
-                                transitions using Data Assets, and let the system handle smooth, context-aware blending
-                                between them.</p>
-                            <a href="https://github.com/1SHAMAY1/Plugin-EnhancedCameraSystem.git" target="_blank"
-                                class="mt-4 inline-block self-start rounded-md border border-blue-500 px-3.5 py-2.5 text-sm font-semibold text-blue-400 shadow-sm hover:bg-blue-500 hover:text-white transition-all duration-300">View
-                                on GitHub</a>
-                        </div>
+                        class="p-6 border border-white/5 hover:border-gold-500/30 bg-white/5 hover:bg-white/10 transition-all group">
+                        <div class="text-gold-500 font-mono text-xs mb-2 opacity-50">#004</div>
+                        <h4 class="text-xl font-bold text-white mb-2 font-tech">Inventory Core</h4>
+                        <p class="text-gray-400 text-sm">Grid-based or slot-based container logic with full replication
+                            support.</p>
                     </div>
-                </div>
-
-                <div class="text-center mt-20">
-                    <h2 class="section-title">Upcoming Plugins</h2>
-                    <p class="mt-4 max-w-3xl mx-auto section-subtitle">
-                        The toolkit is actively expanding. Here's what's coming next.
-                    </p>
-                </div>
-
-                <div class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <!-- Roadmap Item 3 -->
                     <div
-                        class="glass-card hover:transform hover:-translate-y-2 hover:shadow-2xl hover:shadow-blue-500/20">
-                        <h3 class="text-xl font-bold text-white">Gameplay Interaction System</h3>
-                        <p class="mt-2 text-gray-300">A flexible system for handling context-aware interactions like
-                            picking up items, opening doors, or using terminals.</p>
-                    </div>
-                    <div
-                        class="glass-card hover:transform hover:-translate-y-2 hover:shadow-2xl hover:shadow-blue-500/20">
-                        <h3 class="text-xl font-bold text-white">Gameplay Inventory System</h3>
-                        <p class="mt-2 text-gray-300">A robust and replicated inventory system designed for flexibility
-                            and integration with other systems.</p>
-                    </div>
-                    <div
-                        class="glass-card hover:transform hover:-translate-y-2 hover:shadow-2xl hover:shadow-blue-500/20">
-                        <h3 class="text-xl font-bold text-white">Lightweight Ability System</h3>
-                        <p class="mt-2 text-gray-300">A simplified, Blueprint-friendly framework for creating abilities,
-                            inspired by GAS but designed for ease of use.</p>
+                        class="p-6 border border-white/5 hover:border-gold-500/30 bg-white/5 hover:bg-white/10 transition-all group">
+                        <div class="text-gold-500 font-mono text-xs mb-2 opacity-50">#005</div>
+                        <h4 class="text-xl font-bold text-white mb-2 font-tech">Ability Framework</h4>
+                        <p class="text-gray-400 text-sm">Lightweight GAS alternative for quick prototyping.</p>
                     </div>
                 </div>
             </div>
         </section>
-
 
     </main>
 
-    <footer id="contact" class="bg-gray-900 border-t border-gray-800">
-        <div class="container mx-auto py-12 px-4 sm:px-6 lg:px-8 text-center">
-            <h2 class="text-2xl font-bold text-white">Get In Touch</h2>
-            <p class="mt-2 text-lg text-gray-300">For support, collaboration, or questions about the toolkit.</p>
-            <div class="mt-8 flex justify-center items-center gap-4">
+    <footer id="contact" class="bg-black border-t border-white/10 py-16">
+        <div class="container mx-auto px-4 text-center">
+            <h2 class="text-3xl font-black text-white uppercase tracking-widest mb-8 font-tech">Start Building</h2>
+            <div class="flex justify-center gap-6 mb-12">
                 <a href="mailto:shankharajdatta2004@gmail.com"
-                    class="inline-block text-lg bg-gray-800 text-blue-400 px-6 py-3 rounded-lg hover:bg-gray-700 hover:text-blue-300 transition-all duration-300 transform hover:-translate-y-1">
-                    Contact The Developer
-                </a>
+                    class="text-gray-400 hover:text-gold-400 uppercase tracking-widest text-sm font-bold transition-colors">Email</a>
+                <span class="text-gray-700">/</span>
+                <a href="https://github.com/1SHAMAY1"
+                    class="text-gray-400 hover:text-gold-400 uppercase tracking-widest text-sm font-bold transition-colors">GitHub</a>
+                <span class="text-gray-700">/</span>
+                <a href="#"
+                    class="text-gray-400 hover:text-gold-400 uppercase tracking-widest text-sm font-bold transition-colors">Discord</a>
             </div>
-            <p class="mt-8 text-center text-xs leading-5 text-gray-500">&copy; 2025 Unreal Essential Suite. Released
-                under the MIT License.</p>
+            <p class="text-gray-600 text-xs uppercase tracking-widest">
+                &copy; 2025 Unreal Essential Suite<br>MIT License
+            </p>
         </div>
     </footer>
 
@@ -271,14 +458,12 @@
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
-                        entry.target.classList.add('opacity-100', 'translate-y-0');
-                        entry.target.classList.remove('opacity-0', 'translate-y-10');
+                        entry.target.classList.add('visible');
                     }
                 });
             }, { threshold: 0.1 });
 
             document.querySelectorAll('.animate-on-scroll').forEach((el) => {
-                el.classList.add('opacity-0', 'translate-y-10', 'transition-all', 'duration-700', 'ease-out');
                 observer.observe(el);
             });
         });
