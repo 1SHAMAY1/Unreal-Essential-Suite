@@ -1,851 +1,920 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="en" class="h-full overflow-hidden select-none">
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Unreal Essential Suite - Modular Unreal Engine 5 Plugins</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Unreal Essential Suite - 3D Modular Architecture</title>
     
-    <!-- SEO & Open Graph Meta Tags -->
-    <meta name="description" content="Production-ready, modular UE5 C++ & Blueprint plugins for locomotion, camera, quests, interaction, inventory, CommonUI, and asset linting.">
-    <meta name="keywords" content="Unreal Engine 5, UE5 Plugins, Locomotion, CommonUI, Inventory System, Quest System, Game Development, Open Source">
+    <!-- SEO & Social Meta Tags -->
+    <meta name="description" content="Minimalist 3D developer showcase for Unreal Essential Suite: 7 production-grade, modular C++ & Blueprint plugins for Unreal Engine 5.">
+    <meta name="keywords" content="Unreal Engine 5, UE5, 3D, WebGL, CommonUI, Locomotion, Quests, Inventory, Interaction, Open Source">
     <meta name="author" content="Shankharaj Datta">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://1shamay1.github.io/Unreal-Essential-Suite/">
-    <meta property="og:title" content="Unreal Essential Suite - Modular Open-Source UE5 Toolkit">
-    <meta property="og:description" content="7 production-ready Unreal Engine 5 plugins with pre-compiled Win64 binaries and clean C++ architecture.">
+    <meta property="og:title" content="Unreal Essential Suite - 3D Architecture Hub">
+    <meta property="og:description" content="Explore 7 production-ready Unreal Engine 5 plugins in an interactive 3D WebGL constellation.">
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Unreal Essential Suite - Modular UE5 Toolkit">
-    <meta name="twitter:description" content="Build better games with 7 production-grade, network-replicated UE5 modules.">
+    <meta name="twitter:title" content="Unreal Essential Suite - 3D Architecture Hub">
+    <meta name="twitter:description" content="Explore 7 production-ready Unreal Engine 5 plugins in an interactive 3D WebGL constellation.">
 
-    <!-- Fonts: Space Grotesk (Display), Plus Jakarta Sans (Body), JetBrains Mono (Code/Telemetry) -->
+    <!-- Fonts: Space Grotesk (Display) & JetBrains Mono (Code/HUD) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 
-    <!-- Tailwind CSS CDN -->
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        obsidian: {
-                            DEFAULT: '#08090D',
-                            surface: '#11131A',
-                            hover: '#171A24',
-                            elevated: '#1D212E',
-                        },
-                        amber: {
-                            forge: '#F59E0B',
-                            light: '#FBBF24',
-                            glow: 'rgba(245, 158, 11, 0.15)',
-                        },
-                        cyan: {
-                            tech: '#06B6D4',
-                            glow: 'rgba(6, 182, 212, 0.15)',
-                        },
-                        emerald: {
-                            status: '#10B981',
+                        mono: {
+                            950: '#000000',
+                            900: '#070709',
+                            850: '#0D0E12',
+                            800: '#14161C',
+                            700: '#232630',
+                            600: '#3A3F4D',
+                            500: '#646B7C',
+                            400: '#949BAA',
+                            300: '#CBD0DC',
+                            100: '#F1F3F7',
+                            white: '#FFFFFF',
                         }
                     },
                     fontFamily: {
                         display: ['"Space Grotesk"', 'sans-serif'],
-                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
                         mono: ['"JetBrains Mono"', 'monospace'],
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
                     }
                 }
             }
         }
     </script>
 
+    <!-- Three.js CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
     <style>
         :root {
-            --bg-base: #08090D;
-            --bg-surface: #11131A;
-            --border-subtle: rgba(255, 255, 255, 0.08);
-            --border-hover: rgba(245, 158, 11, 0.35);
-            --accent-gold: #F59E0B;
+            --bg-base: #000000;
         }
 
         body {
             background-color: var(--bg-base);
-            color: #94A3B8;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background-image: 
-                radial-gradient(circle at 50% 0%, rgba(245, 158, 11, 0.06) 0%, transparent 60%),
-                radial-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-            background-size: 100% 100%, 28px 28px;
+            color: #FFFFFF;
+            font-family: 'Space Grotesk', sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            height: 100dvh;
+            width: 100vw;
         }
 
-        /* Subtle focus ring */
-        a:focus-visible, button:focus-visible, input:focus-visible {
-            outline: 2px solid var(--accent-gold);
-            outline-offset: 2px;
+        /* 3D WebGL Canvas Layer */
+        #webgl-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            cursor: grab;
+        }
+        #webgl-canvas:active {
+            cursor: grabbing;
         }
 
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #08090D;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #1E2230;
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #F59E0B;
+        /* Scanline Overlay Effect for technical game engine look */
+        .scanlines {
+            background: linear-gradient(
+                rgba(255, 255, 255, 0) 50%, 
+                rgba(0, 0, 0, 0.25) 50%
+            );
+            background-size: 100% 4px;
+            pointer-events: none;
         }
 
-        /* Card Architecture */
-        .plugin-card {
-            background: rgba(17, 19, 26, 0.75);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 14px;
-            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        /* Telemetry Drawer Animation */
+        #telemetry-drawer {
+            transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
         }
-        .plugin-card:hover {
-            border-color: rgba(245, 158, 11, 0.45);
-            box-shadow: 0 16px 36px -10px rgba(0, 0, 0, 0.6), 0 0 24px -4px rgba(245, 158, 11, 0.12);
-            transform: translateY(-2px);
-        }
-
-        .telemetry-chip {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 11px;
-            padding: 3px 8px;
-            border-radius: 6px;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            background: rgba(255, 255, 255, 0.03);
-            color: #94A3B8;
-        }
-
-        .filter-btn.active {
-            background-color: #F59E0B;
-            color: #08090D;
-            border-color: #F59E0B;
-            font-weight: 600;
-        }
-
-        /* Toast feedback */
-        #toast {
-            visibility: hidden;
+        #telemetry-drawer.drawer-closed {
+            transform: translateX(100%);
             opacity: 0;
-            transition: opacity 0.2s ease, transform 0.2s ease;
-            transform: translateY(10px);
+            pointer-events: none;
         }
-        #toast.show {
-            visibility: visible;
+        #telemetry-drawer.drawer-open {
+            transform: translateX(0);
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* Bottom Dock Buttons */
+        .dock-item {
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .dock-item.active {
+            background-color: #FFFFFF;
+            color: #000000;
+            border-color: #FFFFFF;
+            box-shadow: 0 0 16px rgba(255, 255, 255, 0.3);
+        }
+
+        /* Monochromatic Pill */
+        .mono-pill {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            padding: 2px 7px;
+            border-radius: 4px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.04);
+            color: #A1A1AA;
+            letter-spacing: 0.04em;
+        }
+
+        /* Custom Scrollbar inside Drawer only */
+        .drawer-scroll::-webkit-scrollbar {
+            width: 4px;
+        }
+        .drawer-scroll::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .drawer-scroll::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+        }
+
+        /* Toast Feedback */
+        #toast {
+            transition: opacity 0.2s ease, transform 0.2s ease;
+        }
+        #toast.toast-hidden {
+            opacity: 0;
+            transform: translateY(16px);
+            pointer-events: none;
+        }
+        #toast.toast-visible {
             opacity: 1;
             transform: translateY(0);
+            pointer-events: auto;
         }
     </style>
 </head>
 
-<body class="selection:bg-amber-forge/30 selection:text-white antialiased min-h-screen flex flex-col justify-between">
+<body class="relative flex flex-col justify-between overflow-hidden select-none bg-black">
 
-    <!-- Top Navigation Bar -->
-    <header class="sticky top-0 z-50 bg-[#08090D]/85 backdrop-blur-md border-b border-white/5">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-16">
-                <!-- Brand Logo & Title -->
-                <a href="index.html" class="flex items-center gap-3 group">
-                    <div class="w-8 h-8 rounded-lg bg-amber-forge/10 border border-amber-forge/30 flex items-center justify-center text-amber-forge transition-colors group-hover:bg-amber-forge group-hover:text-black">
-                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
-                        </svg>
-                    </div>
-                    <div class="flex flex-col">
-                        <span class="font-display font-bold text-white text-base tracking-tight leading-none group-hover:text-amber-forge transition-colors">
-                            Unreal Essential Suite
-                        </span>
-                        <span class="font-mono text-[10px] text-gray-500 tracking-wider">
-                            v1.0 &bull; 7 MODULES
-                        </span>
-                    </div>
-                </a>
+    <!-- WebGL Canvas (Background 3D) -->
+    <canvas id="webgl-canvas"></canvas>
 
-                <!-- Navigation Links -->
-                <nav class="hidden md:flex items-center gap-6 text-sm font-medium">
-                    <a href="#suite" class="text-gray-400 hover:text-white transition-colors">Plugins</a>
-                    <a href="#architecture" class="text-gray-400 hover:text-white transition-colors">Architecture</a>
-                    <a href="#quickstart" class="text-gray-400 hover:text-white transition-colors">Installation</a>
-                    <a href="https://github.com/1SHAMAY1/Unreal-Essential-Suite" target="_blank"
-                        class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-white/5 border border-white/10 text-white hover:bg-amber-forge hover:text-black hover:border-amber-forge transition-all duration-200 text-xs font-mono">
-                        <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
-                            <path fill-rule="evenodd" clip-rule="evenodd"
-                                d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" />
-                        </svg>
-                        <span>GitHub Suite</span>
-                    </a>
-                </nav>
+    <!-- Scanline Subtle Grid Overlay -->
+    <div class="scanlines absolute inset-0 z-10 pointer-events-none opacity-40"></div>
+
+    <!-- Background Vignette -->
+    <div class="absolute inset-0 z-10 pointer-events-none bg-[radial-gradient(circle_at_center,transparent_40%,rgba(0,0,0,0.85)_100%)]"></div>
+
+    <!-- ==================== HUD HEADER (TOP) ==================== -->
+    <header class="relative z-20 w-full px-5 py-4 flex items-center justify-between border-b border-white/10 bg-black/60 backdrop-blur-md">
+        <!-- Logo & Suite Identity -->
+        <div class="flex items-center gap-3.5">
+            <div class="w-8 h-8 border border-white flex items-center justify-center font-mono font-bold text-xs bg-white text-black">
+                UE
             </div>
+            <div>
+                <div class="flex items-center gap-2">
+                    <span class="font-display font-bold text-sm tracking-tight text-white uppercase">
+                        Unreal Essential Suite
+                    </span>
+                    <span class="font-mono text-[9px] px-1.5 py-0.5 border border-white/20 text-white/70">
+                        v1.0
+                    </span>
+                </div>
+                <div class="font-mono text-[10px] text-mono-400 tracking-wider">
+                    7 PRODUCTION MODULES &bull; 3D CONSTELLATION
+                </div>
+            </div>
+        </div>
+
+        <!-- Center 3D Controls -->
+        <div class="hidden sm:flex items-center gap-2 font-mono text-[11px] text-mono-400">
+            <button id="toggle-orbit-btn" class="px-2.5 py-1 border border-white/15 bg-white/5 hover:bg-white hover:text-black transition-colors rounded-sm flex items-center gap-1.5">
+                <span class="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span>
+                <span>AUTO-ORBIT: ON</span>
+            </button>
+            <button id="reset-cam-btn" class="px-2.5 py-1 border border-white/15 bg-white/5 hover:bg-white hover:text-black transition-colors rounded-sm">
+                RESET VIEW
+            </button>
+        </div>
+
+        <!-- Right Suite Links -->
+        <div class="flex items-center gap-3 font-mono text-xs">
+            <a href="https://github.com/1SHAMAY1/Unreal-Essential-Suite" target="_blank"
+                class="px-3 py-1.5 border border-white text-white hover:bg-white hover:text-black transition-all duration-150 flex items-center gap-1.5 font-medium tracking-tight">
+                <span>GITHUB SUITE</span>
+                <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
+            </a>
         </div>
     </header>
 
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
+    <!-- ==================== CENTRAL 3D INTERACTION HINT ==================== -->
+    <div id="interaction-hint" class="absolute top-20 left-6 z-20 pointer-events-none transition-opacity duration-500 font-mono text-[11px] text-mono-400 flex flex-col gap-1 max-w-xs">
+        <div class="flex items-center gap-2 text-white font-semibold tracking-wider">
+            <span class="inline-block w-1 h-3 bg-white"></span>
+            INTERACTIVE 3D MESH
+        </div>
+        <p class="text-[10px] text-mono-500 leading-normal">
+            Drag to rotate orbital plane &bull; Scroll to zoom &bull; Click any 3D node or dock button to inspect technical specifications.
+        </p>
+    </div>
 
-        <!-- Hero Section -->
-        <section class="text-center max-w-4xl mx-auto mb-16">
-            <!-- Engine Capability Badge -->
-            <div class="inline-flex items-center gap-2.5 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-mono text-gray-300 mb-6">
-                <span class="w-2 h-2 rounded-full bg-emerald-status animate-pulse"></span>
-                <span>Unreal Engine 5.3 &ndash; 5.5 | 5.8+ Production Ready</span>
-            </div>
+    <!-- Active Node 3D Screen Crosshair Tag (Tracks 3D Cursor) -->
+    <div id="node-hover-tag" class="absolute z-30 pointer-events-none opacity-0 transition-opacity duration-150 font-mono text-[10px] bg-black/90 text-white border border-white/40 px-2.5 py-1 shadow-2xl backdrop-blur-sm -translate-x-1/2 -translate-y-12">
+        <span id="hover-tag-text">NODE</span>
+    </div>
 
-            <!-- Primary Headline -->
-            <h1 class="font-display text-4xl sm:text-5xl md:text-6xl font-bold text-white tracking-tight leading-[1.1] mb-6">
-                Modular Gameplay Frameworks for Unreal Engine 5
-            </h1>
-
-            <!-- Technical Subtitle -->
-            <p class="text-base sm:text-lg text-gray-400 font-normal leading-relaxed max-w-2xl mx-auto mb-8">
-                Seven production-grade, network-replicated C++ & Blueprint plugins. Decoupled architecture, zero-tick event routing, and pre-compiled Win64 editor binaries.
-            </p>
-
-            <!-- Quick Action Buttons -->
-            <div class="flex flex-wrap items-center justify-center gap-3">
-                <a href="#suite" class="px-5 py-2.5 rounded-lg bg-amber-forge text-black font-semibold text-sm hover:bg-amber-light transition-all duration-200">
-                    Explore 7 Modules
-                </a>
-                <a href="#quickstart" class="px-5 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white font-medium text-sm hover:bg-white/10 hover:border-white/20 transition-all duration-200">
-                    Installation Guide
-                </a>
-                <a href="https://github.com/1SHAMAY1/Unreal-Essential-Suite" target="_blank" class="px-4 py-2.5 rounded-lg bg-transparent text-gray-400 hover:text-white text-sm font-mono flex items-center gap-1.5 transition-colors">
-                    <span>MIT Licensed</span>
-                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                    </svg>
-                </a>
-            </div>
-        </section>
-
-        <!-- Interactive Filter & Live Search Toolbar -->
-        <section id="suite" class="mb-8 pt-4">
-            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 rounded-xl bg-obsidian-surface border border-white/5 mb-6">
-                <!-- Category Tabs -->
-                <div class="flex flex-wrap items-center gap-1.5" id="category-filters">
-                    <button class="filter-btn active px-3 py-1.5 rounded-md text-xs font-mono transition-colors border border-transparent" data-filter="all">
-                        All Modules <span class="opacity-70">(7)</span>
-                    </button>
-                    <button class="filter-btn px-3 py-1.5 rounded-md text-xs font-mono text-gray-400 hover:text-white hover:bg-white/5 transition-colors border border-transparent" data-filter="gameplay">
-                        Core Gameplay <span class="opacity-70">(3)</span>
-                    </button>
-                    <button class="filter-btn px-3 py-1.5 rounded-md text-xs font-mono text-gray-400 hover:text-white hover:bg-white/5 transition-colors border border-transparent" data-filter="movement-camera">
-                        Movement & Camera <span class="opacity-70">(2)</span>
-                    </button>
-                    <button class="filter-btn px-3 py-1.5 rounded-md text-xs font-mono text-gray-400 hover:text-white hover:bg-white/5 transition-colors border border-transparent" data-filter="ui">
-                        UI Architecture <span class="opacity-70">(1)</span>
-                    </button>
-                    <button class="filter-btn px-3 py-1.5 rounded-md text-xs font-mono text-gray-400 hover:text-white hover:bg-white/5 transition-colors border border-transparent" data-filter="tools">
-                        Studio Tools <span class="opacity-70">(1)</span>
-                    </button>
+    <!-- ==================== TELEMETRY DRAWER (SLIDE-IN) ==================== -->
+    <aside id="telemetry-drawer" class="drawer-closed absolute top-0 right-0 bottom-0 z-40 w-full sm:w-[440px] bg-black/95 backdrop-blur-xl border-l border-white/15 flex flex-col justify-between shadow-[0_0_50px_rgba(0,0,0,0.9)]">
+        <!-- Drawer Header -->
+        <div class="p-6 border-b border-white/10 flex items-start justify-between">
+            <div>
+                <div class="flex items-center gap-2 mb-1.5">
+                    <span id="drawer-engine-badge" class="font-mono text-[10px] px-2 py-0.5 border border-white text-white font-semibold uppercase">
+                        UE 5.8+
+                    </span>
+                    <span id="drawer-category" class="font-mono text-[10px] text-mono-400 uppercase tracking-wider">
+                        Core Gameplay
+                    </span>
                 </div>
-
-                <!-- Instant Search Input -->
-                <div class="relative w-full md:w-72">
-                    <input type="text" id="plugin-search" placeholder="Filter by keyword or tag..."
-                        class="w-full bg-[#08090D] border border-white/10 rounded-lg px-3.5 py-1.5 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-amber-forge transition-colors font-mono">
-                    <svg class="w-3.5 h-3.5 text-gray-500 absolute right-3 top-2.5 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                    </svg>
-                </div>
-            </div>
-
-            <!-- Active Results Counter -->
-            <div class="flex items-center justify-between text-xs font-mono text-gray-500 px-1 mb-4">
-                <span>SHOWING <span id="visible-count" class="text-white font-semibold">7</span> OF 7 PLUGINS</span>
-                <span class="hidden sm:inline">PRE-COMPILED WIN64 BINARIES INCLUDED</span>
-            </div>
-        </section>
-
-        <!-- Plugins Showcase Grid -->
-        <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-20" id="plugins-container">
-
-            <!-- Card 1: Character Locomotion System -->
-            <article class="plugin-card p-6 flex flex-col justify-between" data-category="movement-camera" data-engine="5.3-5.5" data-search="locomotion character movement parkour climbing mantle sliding cmc replication 5.3 5.4 5.5">
-                <div>
-                    <div class="flex items-center justify-between gap-2 mb-4">
-                        <div class="w-9 h-9 rounded-lg bg-amber-forge/10 border border-amber-forge/30 flex items-center justify-center text-amber-forge">
-                            <!-- Locomotion Icon -->
-                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                            </svg>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <span class="telemetry-chip text-amber-forge border-amber-forge/30 bg-amber-forge/5">UE 5.3 &ndash; 5.5</span>
-                            <span class="telemetry-chip text-emerald-400 border-emerald-500/20">v1.0</span>
-                        </div>
-                    </div>
-
-                    <h3 class="font-display text-lg font-bold text-white mb-1">
-                        Plugin-CharacterLocomotionSystem
-                    </h3>
-                    <p class="font-mono text-xs text-amber-forge/80 mb-3">
-                        Parkour & Networked Traversal Component
-                    </p>
-                    <p class="text-xs text-gray-400 leading-relaxed mb-4">
-                        Full networked movement component derived from <code class="text-white">UCharacterMovementComponent</code>. Supports automated 3-point trace vaulting, mantle, high climbing, sliding, and prone with client prediction.
-                    </p>
-
-                    <!-- Telemetry Pills -->
-                    <div class="flex flex-wrap gap-1.5 mb-6">
-                        <span class="telemetry-chip">CMC Native</span>
-                        <span class="telemetry-chip">Motion Warping</span>
-                        <span class="telemetry-chip">Client Prediction</span>
-                        <span class="telemetry-chip">Data Assets</span>
-                    </div>
-                </div>
-
-                <!-- Action Toolbar -->
-                <div class="pt-4 border-t border-white/5 flex items-center justify-between gap-2">
-                    <button onclick="copyClone('https://github.com/1SHAMAY1/Plugin-CharacterLocomotionSystem.git', this)" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white text-xs font-mono transition-colors">
-                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                        </svg>
-                        <span>Clone</span>
-                    </button>
-                    <div class="flex items-center gap-2">
-                        <a href="locomotion.html" class="px-3 py-1.5 rounded-md bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white text-xs font-medium transition-colors">
-                            Demo
-                        </a>
-                        <a href="https://github.com/1SHAMAY1/Plugin-CharacterLocomotionSystem" target="_blank" class="px-3 py-1.5 rounded-md bg-amber-forge text-black hover:bg-amber-light font-semibold text-xs transition-colors flex items-center gap-1">
-                            GitHub
-                            <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                            </svg>
-                        </a>
-                    </div>
-                </div>
-            </article>
-
-            <!-- Card 2: Enhanced Camera System -->
-            <article class="plugin-card p-6 flex flex-col justify-between" data-category="movement-camera" data-engine="5.3" data-search="camera stack modifiers shakes fov sequencer cinematic ecs 5.3">
-                <div>
-                    <div class="flex items-center justify-between gap-2 mb-4">
-                        <div class="w-9 h-9 rounded-lg bg-amber-forge/10 border border-amber-forge/30 flex items-center justify-center text-amber-forge">
-                            <!-- Camera Icon -->
-                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                            </svg>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <span class="telemetry-chip text-amber-forge border-amber-forge/30 bg-amber-forge/5">UE 5.3</span>
-                            <span class="telemetry-chip text-emerald-400 border-emerald-500/20">v1.0</span>
-                        </div>
-                    </div>
-
-                    <h3 class="font-display text-lg font-bold text-white mb-1">
-                        Plugin-EnhancedCameraSystem
-                    </h3>
-                    <p class="font-mono text-xs text-amber-forge/80 mb-3">
-                        Data-Driven Camera Modifier Stack
-                    </p>
-                    <p class="text-xs text-gray-400 leading-relaxed mb-4">
-                        Modular camera modifier stack architecture. Dynamically layer camera behaviors, procedural FOV zoom blending, responsive collision dampening, and procedural shakes without tight coupling.
-                    </p>
-
-                    <!-- Telemetry Pills -->
-                    <div class="flex flex-wrap gap-1.5 mb-6">
-                        <span class="telemetry-chip">Modifier Stack</span>
-                        <span class="telemetry-chip">FOV Blending</span>
-                        <span class="telemetry-chip">Occlusion Dampening</span>
-                        <span class="telemetry-chip">Sequencer Ready</span>
-                    </div>
-                </div>
-
-                <!-- Action Toolbar -->
-                <div class="pt-4 border-t border-white/5 flex items-center justify-between gap-2">
-                    <button onclick="copyClone('https://github.com/1SHAMAY1/Plugin-EnhancedCameraSystem.git', this)" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white text-xs font-mono transition-colors">
-                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                        </svg>
-                        <span>Clone</span>
-                    </button>
-                    <div class="flex items-center gap-2">
-                        <a href="camera.html" class="px-3 py-1.5 rounded-md bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white text-xs font-medium transition-colors">
-                            Demo
-                        </a>
-                        <a href="https://github.com/1SHAMAY1/Plugin-EnhancedCameraSystem" target="_blank" class="px-3 py-1.5 rounded-md bg-amber-forge text-black hover:bg-amber-light font-semibold text-xs transition-colors flex items-center gap-1">
-                            GitHub
-                            <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                            </svg>
-                        </a>
-                    </div>
-                </div>
-            </article>
-
-            <!-- Card 3: Gameplay Quest Framework -->
-            <article class="plugin-card p-6 flex flex-col justify-between" data-category="gameplay" data-engine="5.8" data-search="quest objectives state machine gameplaytags tags zero-tick persistence tests 5.8 5.8+ gqf">
-                <div>
-                    <div class="flex items-center justify-between gap-2 mb-4">
-                        <div class="w-9 h-9 rounded-lg bg-cyan-tech/10 border border-cyan-tech/30 flex items-center justify-center text-cyan-tech">
-                            <!-- Quest Icon -->
-                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <span class="telemetry-chip text-cyan-tech border-cyan-tech/30 bg-cyan-tech/5">UE 5.8+</span>
-                            <span class="telemetry-chip text-emerald-400 border-emerald-500/20">33 Tests Pass</span>
-                        </div>
-                    </div>
-
-                    <h3 class="font-display text-lg font-bold text-white mb-1">
-                        Plugin-GameplayQuestFramework
-                    </h3>
-                    <p class="font-mono text-xs text-cyan-tech/80 mb-3">
-                        Zero-Tick Tag Quest State Machine
-                    </p>
-                    <p class="text-xs text-gray-400 leading-relaxed mb-4">
-                        Event-driven, zero-tick quest engine. Subscribes directly to hierarchical GameplayTags via an inverted tag index. Includes dual JSON/binary persistence, co-op sharing policies, and Slate debug HUD.
-                    </p>
-
-                    <!-- Telemetry Pills -->
-                    <div class="flex flex-wrap gap-1.5 mb-6">
-                        <span class="telemetry-chip">Zero-Tick Tags</span>
-                        <span class="telemetry-chip">FFastArray</span>
-                        <span class="telemetry-chip">JSON & Binary Save</span>
-                        <span class="telemetry-chip">33 Tests (100%)</span>
-                    </div>
-                </div>
-
-                <!-- Action Toolbar -->
-                <div class="pt-4 border-t border-white/5 flex items-center justify-between gap-2">
-                    <button onclick="copyClone('https://github.com/1SHAMAY1/Plugin-GameplayQuestFramework.git', this)" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white text-xs font-mono transition-colors">
-                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                        </svg>
-                        <span>Clone</span>
-                    </button>
-                    <a href="https://github.com/1SHAMAY1/Plugin-GameplayQuestFramework" target="_blank" class="px-3 py-1.5 rounded-md bg-cyan-tech text-black hover:bg-cyan-400 font-semibold text-xs transition-colors flex items-center gap-1">
-                        View GitHub
-                        <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                        </svg>
-                    </a>
-                </div>
-            </article>
-
-            <!-- Card 4: Gameplay Interaction Framework -->
-            <article class="plugin-card p-6 flex flex-col justify-between" data-category="gameplay" data-engine="5.8" data-search="interaction interactable lock repnotify server authority hold anti-cheat 5.8 5.8+ gif">
-                <div>
-                    <div class="flex items-center justify-between gap-2 mb-4">
-                        <div class="w-9 h-9 rounded-lg bg-cyan-tech/10 border border-cyan-tech/30 flex items-center justify-center text-cyan-tech">
-                            <!-- Interaction Icon -->
-                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" />
-                            </svg>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <span class="telemetry-chip text-cyan-tech border-cyan-tech/30 bg-cyan-tech/5">UE 5.8+</span>
-                            <span class="telemetry-chip text-emerald-400 border-emerald-500/20">40 Tests Pass</span>
-                        </div>
-                    </div>
-
-                    <h3 class="font-display text-lg font-bold text-white mb-1">
-                        Plugin-GameplayInteractionFramework
-                    </h3>
-                    <p class="font-mono text-xs text-cyan-tech/80 mb-3">
-                        Authoritative RepNotify Interaction Core
-                    </p>
-                    <p class="text-xs text-gray-400 leading-relaxed mb-4">
-                        Server-authoritative interaction framework built with atomic contention locks, rolling ChangeCounters (zero Multicast RPCs), anti-speedhack hold verification, and cross-level persistence.
-                    </p>
-
-                    <!-- Telemetry Pills -->
-                    <div class="flex flex-wrap gap-1.5 mb-6">
-                        <span class="telemetry-chip">RepNotify Locks</span>
-                        <span class="telemetry-chip">Anti-Cheat Timing</span>
-                        <span class="telemetry-chip">3-Phase Commit</span>
-                        <span class="telemetry-chip">40 Tests (100%)</span>
-                    </div>
-                </div>
-
-                <!-- Action Toolbar -->
-                <div class="pt-4 border-t border-white/5 flex items-center justify-between gap-2">
-                    <button onclick="copyClone('https://github.com/1SHAMAY1/Plugin-GameplayInteractionFramework.git', this)" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white text-xs font-mono transition-colors">
-                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                        </svg>
-                        <span>Clone</span>
-                    </button>
-                    <a href="https://github.com/1SHAMAY1/Plugin-GameplayInteractionFramework" target="_blank" class="px-3 py-1.5 rounded-md bg-cyan-tech text-black hover:bg-cyan-400 font-semibold text-xs transition-colors flex items-center gap-1">
-                        View GitHub
-                        <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                        </svg>
-                    </a>
-                </div>
-            </article>
-
-            <!-- Card 5: Gameplay Inventory Framework -->
-            <article class="plugin-card p-6 flex flex-col justify-between" data-category="gameplay" data-engine="5.8" data-search="inventory item equipment ffastarray mass massentity container loot 5.8 5.8+">
-                <div>
-                    <div class="flex items-center justify-between gap-2 mb-4">
-                        <div class="w-9 h-9 rounded-lg bg-cyan-tech/10 border border-cyan-tech/30 flex items-center justify-center text-cyan-tech">
-                            <!-- Inventory Icon -->
-                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-                            </svg>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <span class="telemetry-chip text-cyan-tech border-cyan-tech/30 bg-cyan-tech/5">UE 5.8+</span>
-                            <span class="telemetry-chip text-emerald-400 border-emerald-500/20">13 Tests Pass</span>
-                        </div>
-                    </div>
-
-                    <h3 class="font-display text-lg font-bold text-white mb-1">
-                        Plugin-GameplayInventoryFramework
-                    </h3>
-                    <p class="font-mono text-xs text-cyan-tech/80 mb-3">
-                        FFastArray & MassEntity Replicated Loot
-                    </p>
-                    <p class="text-xs text-gray-400 leading-relaxed mb-4">
-                        Data-driven fragment inventory and equipment orchestrator. Replicates dirty-delta slices via <code class="text-white">FFastArraySerializer</code>, features dynamic parameter bags, and includes MassEntity ground loot structs.
-                    </p>
-
-                    <!-- Telemetry Pills -->
-                    <div class="flex flex-wrap gap-1.5 mb-6">
-                        <span class="telemetry-chip">FFastArray Net</span>
-                        <span class="telemetry-chip">Fragment Defs</span>
-                        <span class="telemetry-chip">MassEntity Drops</span>
-                        <span class="telemetry-chip">13 Tests (100%)</span>
-                    </div>
-                </div>
-
-                <!-- Action Toolbar -->
-                <div class="pt-4 border-t border-white/5 flex items-center justify-between gap-2">
-                    <button onclick="copyClone('https://github.com/1SHAMAY1/Plugin-GameplayInventoryFramework.git', this)" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white text-xs font-mono transition-colors">
-                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                        </svg>
-                        <span>Clone</span>
-                    </button>
-                    <a href="https://github.com/1SHAMAY1/Plugin-GameplayInventoryFramework" target="_blank" class="px-3 py-1.5 rounded-md bg-cyan-tech text-black hover:bg-cyan-400 font-semibold text-xs transition-colors flex items-center gap-1">
-                        View GitHub
-                        <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                        </svg>
-                    </a>
-                </div>
-            </article>
-
-            <!-- Card 6: Common Frontend UI -->
-            <article class="plugin-card p-6 flex flex-col justify-between" data-category="ui" data-engine="5.8" data-search="commonui ui frontend settings registry key remapping loading screen slate 5.8 5.8+">
-                <div>
-                    <div class="flex items-center justify-between gap-2 mb-4">
-                        <div class="w-9 h-9 rounded-lg bg-cyan-tech/10 border border-cyan-tech/30 flex items-center justify-center text-cyan-tech">
-                            <!-- UI Icon -->
-                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" />
-                            </svg>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <span class="telemetry-chip text-cyan-tech border-cyan-tech/30 bg-cyan-tech/5">UE 5.8+</span>
-                            <span class="telemetry-chip text-amber-forge border-amber-forge/30 bg-amber-forge/5">CommonUI</span>
-                        </div>
-                    </div>
-
-                    <h3 class="font-display text-lg font-bold text-white mb-1">
-                        Plugin-CommonFrontendUI
-                    </h3>
-                    <p class="font-mono text-xs text-cyan-tech/80 mb-3">
-                        CommonUI Frontend & Loading Subsystem
-                    </p>
-                    <p class="text-xs text-gray-400 leading-relaxed mb-4">
-                        Layered CommonUI stack architecture with dynamic Settings Registry (sliders, toggles, dropdowns, dependencies), interactive Enhanced Input key remapping, and zero-hitch Slate loading screens.
-                    </p>
-
-                    <!-- Telemetry Pills -->
-                    <div class="flex flex-wrap gap-1.5 mb-6">
-                        <span class="telemetry-chip">Stack Routing</span>
-                        <span class="telemetry-chip">Settings Registry</span>
-                        <span class="telemetry-chip">Key Remapping</span>
-                        <span class="telemetry-chip">Slate Loading</span>
-                    </div>
-                </div>
-
-                <!-- Action Toolbar -->
-                <div class="pt-4 border-t border-white/5 flex items-center justify-between gap-2">
-                    <button onclick="copyClone('https://github.com/1SHAMAY1/Plugin-CommonFrontendUI.git', this)" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white text-xs font-mono transition-colors">
-                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                        </svg>
-                        <span>Clone</span>
-                    </button>
-                    <a href="https://github.com/1SHAMAY1/Plugin-CommonFrontendUI" target="_blank" class="px-3 py-1.5 rounded-md bg-cyan-tech text-black hover:bg-cyan-400 font-semibold text-xs transition-colors flex items-center gap-1">
-                        View GitHub
-                        <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                        </svg>
-                    </a>
-                </div>
-            </article>
-
-            <!-- Card 7: Validate All Assets (Full Width Accent) -->
-            <article class="plugin-card p-6 md:col-span-2 lg:col-span-3 flex flex-col md:flex-row md:items-center justify-between gap-6" data-category="tools" data-engine="5.3-5.5" data-search="validate assets linting audit references renaming missing collision editor utility 5.3 5.4 5.5">
-                <div class="max-w-2xl">
-                    <div class="flex items-center gap-3 mb-3">
-                        <div class="w-9 h-9 rounded-lg bg-amber-forge/10 border border-amber-forge/30 flex items-center justify-center text-amber-forge shrink-0">
-                            <!-- Validator Icon -->
-                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
-                            </svg>
-                        </div>
-                        <div>
-                            <div class="flex items-center gap-2">
-                                <h3 class="font-display text-lg font-bold text-white">Plugin-ValidateAllAssets</h3>
-                                <span class="telemetry-chip text-amber-forge border-amber-forge/30 bg-amber-forge/5">UE 5.3 &ndash; 5.5</span>
-                            </div>
-                            <span class="font-mono text-xs text-amber-forge/80">Automated Studio Asset Audit & Linter</span>
-                        </div>
-                    </div>
-                    <p class="text-xs text-gray-400 leading-relaxed mb-4">
-                        One-click Editor Utility that recursively scans your <code class="text-white">/Game</code> content directory via <code class="text-white">IAssetRegistry</code>. Detects broken dependencies, missing collisions, unlinked textures, and enforces naming conventions with automated safe in-place renaming.
-                    </p>
-                    <div class="flex flex-wrap gap-1.5">
-                        <span class="telemetry-chip">1-Click Auto-Fix</span>
-                        <span class="telemetry-chip">AssetRegistry Query</span>
-                        <span class="telemetry-chip">Prefix / Suffix Enforcement</span>
-                        <span class="telemetry-chip">CI Cook Safety</span>
-                    </div>
-                </div>
-
-                <div class="flex flex-row md:flex-col items-center md:items-end justify-between gap-3 shrink-0 pt-4 md:pt-0 border-t md:border-t-0 border-white/5">
-                    <button onclick="copyClone('https://github.com/1SHAMAY1/Plugin-ValidateAllAssets.git', this)" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white text-xs font-mono transition-colors">
-                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                        </svg>
-                        <span>Clone</span>
-                    </button>
-                    <a href="https://github.com/1SHAMAY1/Plugin-ValidateAllAssets" target="_blank" class="px-4 py-2 rounded-lg bg-amber-forge text-black hover:bg-amber-light font-semibold text-xs transition-colors flex items-center gap-1.5">
-                        <span>View on GitHub</span>
-                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                        </svg>
-                    </a>
-                </div>
-            </article>
-
-        </section>
-
-        <!-- Interactive Architecture Section -->
-        <section id="architecture" class="mb-20 p-8 rounded-2xl bg-obsidian-surface border border-white/5">
-            <div class="max-w-3xl mb-8">
-                <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-md bg-cyan-tech/10 text-cyan-tech text-xs font-mono mb-3 border border-cyan-tech/20">
-                    ENGINE ARCHITECTURE
-                </div>
-                <h2 class="font-display text-2xl sm:text-3xl font-bold text-white mb-2">
-                    Built for Separation of Concerns
+                <h2 id="drawer-title" class="font-display text-xl font-bold text-white tracking-tight leading-snug">
+                    Plugin-Name
                 </h2>
-                <p class="text-sm text-gray-400 leading-relaxed">
-                    Unlike monolithic marketplace packs, every module in Unreal Essential Suite runs on independent lifecycle hooks. Enable only the modules your game requires without pulling unwanted dependencies into your cooked builds.
+            </div>
+            <!-- Close Button -->
+            <button id="close-drawer-btn" class="w-8 h-8 border border-white/20 hover:border-white text-mono-400 hover:text-white flex items-center justify-center font-mono text-xs transition-colors shrink-0">
+                ✕
+            </button>
+        </div>
+
+        <!-- Drawer Scrollable Content -->
+        <div class="p-6 overflow-y-auto drawer-scroll space-y-6 flex-1 text-xs">
+            <!-- Technical Description -->
+            <div>
+                <div class="font-mono text-[10px] text-mono-500 uppercase tracking-widest mb-2">
+                    01 / OVERVIEW
+                </div>
+                <p id="drawer-desc" class="text-mono-300 font-sans leading-relaxed text-xs">
+                    Technical description will appear here.
                 </p>
             </div>
 
-            <!-- Architecture Diagram Grid -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div class="p-5 rounded-xl bg-[#08090D] border border-white/5">
-                    <div class="font-mono text-xs text-amber-forge mb-1">01 / TRAVERSAL & PERSPECTIVE</div>
-                    <h3 class="font-display text-base font-bold text-white mb-2">Locomotion & Camera</h3>
-                    <p class="text-xs text-gray-400 leading-relaxed">
-                        Extends native <code class="text-white">UCharacterMovementComponent</code> with 3-point trace vaulting, sliding, and mantle, paired with a stackable modifier camera pipeline.
-                    </p>
+            <!-- Architectural Telemetry Pills -->
+            <div>
+                <div class="font-mono text-[10px] text-mono-500 uppercase tracking-widest mb-2.5">
+                    02 / ARCHITECTURAL PILLARS
                 </div>
-                <div class="p-5 rounded-xl bg-[#08090D] border border-white/5">
-                    <div class="font-mono text-xs text-cyan-tech mb-1">02 / STATE & REPLICATION</div>
-                    <h3 class="font-display text-base font-bold text-white mb-2">Quests, Interaction & Loot</h3>
-                    <p class="text-xs text-gray-400 leading-relaxed">
-                        Zero-tick tag event dispatch, atomic contention locks, and <code class="text-white">FFastArraySerializer</code> dirty-delta net serialization. Built for high-tickrate servers.
-                    </p>
-                </div>
-                <div class="p-5 rounded-xl bg-[#08090D] border border-white/5">
-                    <div class="font-mono text-xs text-emerald-400 mb-1">03 / PRESENTATION & INTEGRITY</div>
-                    <h3 class="font-display text-base font-bold text-white mb-2">CommonUI & Asset QA</h3>
-                    <p class="text-xs text-gray-400 leading-relaxed">
-                        Data-driven settings registry, gamepad navigation, zero-hitch Slate map transitions, and automated asset registry auditing before packaging.
-                    </p>
-                </div>
-            </div>
-        </section>
-
-        <!-- Quickstart Terminal Section -->
-        <section id="quickstart" class="mb-16 p-8 rounded-2xl bg-[#08090D] border border-white/10">
-            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-6">
-                <div>
-                    <h2 class="font-display text-xl sm:text-2xl font-bold text-white mb-1">Quick Installation</h2>
-                    <p class="text-xs text-gray-400">Clone directly into your project's <code class="text-white font-mono">Plugins/</code> folder.</p>
-                </div>
-                <div class="flex items-center gap-2">
-                    <button onclick="setTerminalSnippet('5.8', this)" class="term-tab active px-3 py-1 rounded bg-amber-forge text-black text-xs font-mono font-semibold">
-                        UE 5.8+ Plugins
-                    </button>
-                    <button onclick="setTerminalSnippet('legacy', this)" class="term-tab px-3 py-1 rounded bg-white/5 text-gray-400 hover:text-white text-xs font-mono">
-                        UE 5.3 &ndash; 5.5 Plugins
-                    </button>
+                <div id="drawer-pills" class="flex flex-wrap gap-1.5">
+                    <!-- Dynamic Pills -->
                 </div>
             </div>
 
-            <!-- Terminal Box -->
-            <div class="relative bg-black rounded-xl p-4 font-mono text-xs text-gray-300 border border-white/10 overflow-x-auto">
-                <div class="flex items-center justify-between mb-3 text-gray-500 border-b border-white/5 pb-2">
-                    <div class="flex items-center gap-1.5">
-                        <span class="w-2.5 h-2.5 rounded-full bg-red-500/80"></span>
-                        <span class="w-2.5 h-2.5 rounded-full bg-yellow-500/80"></span>
-                        <span class="w-2.5 h-2.5 rounded-full bg-green-500/80"></span>
-                        <span class="ml-2 text-[10px] text-gray-500">bash &bull; bash/zsh</span>
+            <!-- Terminal Clone Command -->
+            <div>
+                <div class="font-mono text-[10px] text-mono-500 uppercase tracking-widest mb-2">
+                    03 / INSTALLATION (GIT)
+                </div>
+                <div class="bg-[#070709] border border-white/10 p-3 rounded font-mono text-[11px] text-mono-300 relative group">
+                    <div class="truncate text-white select-all" id="drawer-clone-cmd">
+                        git clone https://github.com/...
                     </div>
-                    <button onclick="copySnippetText(this)" class="inline-flex items-center gap-1 text-[11px] text-amber-forge hover:text-amber-light">
-                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <button id="drawer-copy-btn" class="mt-2.5 w-full py-1.5 border border-white/20 hover:border-white hover:bg-white hover:text-black font-mono text-[10px] text-white transition-all flex items-center justify-center gap-1.5">
+                        <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
                         </svg>
-                        <span>Copy snippet</span>
+                        <span id="drawer-copy-label">COPY CLONE COMMAND</span>
                     </button>
                 </div>
-                <pre id="terminal-content" class="leading-relaxed text-gray-300"><code><span class="text-gray-500"># Navigate to your project's Plugins folder:</span>
-cd YourProject/Plugins
-
-<span class="text-gray-500"># Clone any UE 5.8+ module directly into Plugins:</span>
-git clone https://github.com/1SHAMAY1/Plugin-GameplayQuestFramework.git
-git clone https://github.com/1SHAMAY1/Plugin-GameplayInteractionFramework.git
-git clone https://github.com/1SHAMAY1/Plugin-GameplayInventoryFramework.git
-git clone https://github.com/1SHAMAY1/Plugin-CommonFrontendUI.git</code></pre>
             </div>
-        </section>
+        </div>
 
-    </main>
+        <!-- Drawer Footer Actions -->
+        <div class="p-6 border-t border-white/10 bg-black flex items-center gap-3">
+            <a id="drawer-demo-btn" href="#" class="hidden flex-1 py-2.5 border border-white/30 text-white hover:bg-white/10 font-mono text-xs font-semibold text-center transition-colors">
+                INTERACTIVE DEMO
+            </a>
+            <a id="drawer-github-btn" href="#" target="_blank" class="flex-1 py-2.5 bg-white text-black hover:bg-mono-100 font-mono text-xs font-semibold text-center transition-colors flex items-center justify-center gap-1.5">
+                <span>VIEW REPOSITORY</span>
+                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
+            </a>
+        </div>
+    </aside>
 
-    <!-- Global Toast Notification -->
-    <div id="toast" class="fixed bottom-6 right-6 z-50 flex items-center gap-2 px-4 py-2.5 rounded-lg bg-amber-forge text-black font-semibold text-xs shadow-2xl pointer-events-none">
-        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
-        </svg>
-        <span id="toast-msg">Copied to clipboard!</span>
-    </div>
+    <!-- ==================== BOTTOM HUD DOCK ==================== -->
+    <footer class="relative z-20 w-full px-4 py-3 bg-black/80 backdrop-blur-md border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-3">
+        <!-- Module Selector Dock (7 Items) -->
+        <div class="flex items-center gap-1.5 overflow-x-auto max-w-full pb-1 sm:pb-0" id="module-dock">
+            <!-- Populated Dynamically or Hardcoded -->
+            <button class="dock-item px-3 py-1.5 border border-white/15 bg-black hover:border-white font-mono text-[11px] tracking-tight transition-all text-mono-300 whitespace-nowrap" data-module="cls">
+                [CLS] LOCOMOTION
+            </button>
+            <button class="dock-item px-3 py-1.5 border border-white/15 bg-black hover:border-white font-mono text-[11px] tracking-tight transition-all text-mono-300 whitespace-nowrap" data-module="ecs">
+                [ECS] CAMERA
+            </button>
+            <button class="dock-item px-3 py-1.5 border border-white/15 bg-black hover:border-white font-mono text-[11px] tracking-tight transition-all text-mono-300 whitespace-nowrap" data-module="gqf">
+                [GQF] QUESTS
+            </button>
+            <button class="dock-item px-3 py-1.5 border border-white/15 bg-black hover:border-white font-mono text-[11px] tracking-tight transition-all text-mono-300 whitespace-nowrap" data-module="gif">
+                [GIF] INTERACTION
+            </button>
+            <button class="dock-item px-3 py-1.5 border border-white/15 bg-black hover:border-white font-mono text-[11px] tracking-tight transition-all text-mono-300 whitespace-nowrap" data-module="invf">
+                [INVF] INVENTORY
+            </button>
+            <button class="dock-item px-3 py-1.5 border border-white/15 bg-black hover:border-white font-mono text-[11px] tracking-tight transition-all text-mono-300 whitespace-nowrap" data-module="cfui">
+                [CFUI] FRONTEND
+            </button>
+            <button class="dock-item px-3 py-1.5 border border-white/15 bg-black hover:border-white font-mono text-[11px] tracking-tight transition-all text-mono-300 whitespace-nowrap" data-module="vaa">
+                [VAA] VALIDATOR
+            </button>
+        </div>
 
-    <!-- Footer -->
-    <footer class="border-t border-white/5 bg-[#08090D] py-8 mt-12">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono text-gray-500">
-            <div>
-                &copy; 2026 Unreal Essential Suite. Engineered by <a href="https://www.linkedin.com/in/shankharaj-datta-45921a28a/" target="_blank" class="text-white hover:text-amber-forge transition-colors underline decoration-white/20">Shankharaj Datta</a>.
-            </div>
-            <div class="flex items-center gap-6">
-                <a href="https://github.com/1SHAMAY1/Unreal-Essential-Suite/blob/master/LICENSE" class="hover:text-white transition-colors">MIT License</a>
-                <a href="https://github.com/1SHAMAY1/Unreal-Essential-Suite" target="_blank" class="hover:text-white transition-colors">GitHub Repository</a>
-            </div>
+        <!-- Telemetry Status Line -->
+        <div class="hidden md:flex items-center gap-4 font-mono text-[10px] text-mono-500 whitespace-nowrap">
+            <span>RENDER: WEBGL 60FPS</span>
+            <span>&bull;</span>
+            <span>SHANKHARAJ DATTA &copy; 2026</span>
         </div>
     </footer>
 
-    <!-- Interactive Client Script -->
+    <!-- Copy Toast Feedback -->
+    <div id="toast" class="toast-hidden fixed bottom-16 left-1/2 -translate-x-1/2 z-50 px-4 py-2 bg-white text-black font-mono text-xs font-semibold shadow-2xl border border-white flex items-center gap-2">
+        <span class="w-1.5 h-1.5 bg-black"></span>
+        <span id="toast-text">CLONE COMMAND COPIED</span>
+    </div>
+
+    <!-- ==================== 3D ENGINE SCRIPT ==================== -->
     <script>
-        // Category and Search Filtering
-        const filterButtons = document.querySelectorAll('.filter-btn');
-        const searchInput = document.getElementById('plugin-search');
-        const cards = document.querySelectorAll('.plugin-card');
-        const visibleCountSpan = document.getElementById('visible-count');
+        // Module Data Dictionary
+        const MODULE_REGISTRY = {
+            cls: {
+                id: 'cls',
+                index: 0,
+                code: 'CLS',
+                name: 'Plugin-CharacterLocomotionSystem',
+                category: 'Movement & Parkour',
+                engine: 'UE 5.3 \u2013 5.5',
+                desc: 'Production-ready, network-replicated movement component derived directly from UCharacterMovementComponent. Features automated 3-point trace vaulting, mantle, high climbing, sliding, and tactical prone with client-side root motion prediction.',
+                pills: ['CMC Native', 'Motion Warping', 'Client Prediction', 'Data Assets', 'Pre-Compiled Win64'],
+                cloneUrl: 'https://github.com/1SHAMAY1/Plugin-CharacterLocomotionSystem.git',
+                repoUrl: 'https://github.com/1SHAMAY1/Plugin-CharacterLocomotionSystem',
+                demoUrl: 'locomotion.html',
+                meshColor: 0xFFFFFF
+            },
+            ecs: {
+                id: 'ecs',
+                index: 1,
+                code: 'ECS',
+                name: 'Plugin-EnhancedCameraSystem',
+                category: 'Dynamic Camera Stack',
+                engine: 'UE 5.3',
+                desc: 'Modular, data-driven camera modifier pipeline. Layer camera behaviors, procedural FOV zoom blending, responsive collision dampening, and procedural shakes via modular modifiers without hard actor references.',
+                pills: ['Modifier Stack', 'FOV Blending', 'Occlusion Dampening', 'Sequencer Ready', 'Pre-Compiled Win64'],
+                cloneUrl: 'https://github.com/1SHAMAY1/Plugin-EnhancedCameraSystem.git',
+                repoUrl: 'https://github.com/1SHAMAY1/Plugin-EnhancedCameraSystem',
+                demoUrl: 'camera.html',
+                meshColor: 0xCCCCCC
+            },
+            gqf: {
+                id: 'gqf',
+                index: 2,
+                code: 'GQF',
+                name: 'Plugin-GameplayQuestFramework',
+                category: 'Quest State Machine',
+                engine: 'UE 5.8+',
+                desc: 'Zero-tick event-driven quest engine powered by native Gameplay Tags. Subscribes directly to hierarchical tags via an inverted tag index. Includes dual JSON/binary persistence, co-op sharing policies, and 33 automated tests.',
+                pills: ['Zero-Tick Tags', 'FFastArray Net', 'JSON & Binary Save', '33 Tests (100%)', 'Zero RPCs'],
+                cloneUrl: 'https://github.com/1SHAMAY1/Plugin-GameplayQuestFramework.git',
+                repoUrl: 'https://github.com/1SHAMAY1/Plugin-GameplayQuestFramework',
+                demoUrl: null,
+                meshColor: 0xFFFFFF
+            },
+            gif: {
+                id: 'gif',
+                index: 3,
+                code: 'GIF',
+                name: 'Plugin-GameplayInteractionFramework',
+                category: 'Contextual Interaction',
+                engine: 'UE 5.8+',
+                desc: 'Server-authoritative interaction framework built with atomic contention locks, rolling ChangeCounters (zero Multicast RPCs), anti-speedhack hold verification, and cross-level persistence for seamless map travel.',
+                pills: ['RepNotify Locks', 'Anti-Cheat Timing', '3-Phase Commit', '40 Tests (100%)', 'Zero-Tick Sweep'],
+                cloneUrl: 'https://github.com/1SHAMAY1/Plugin-GameplayInteractionFramework.git',
+                repoUrl: 'https://github.com/1SHAMAY1/Plugin-GameplayInteractionFramework',
+                demoUrl: null,
+                meshColor: 0xEEEEEE
+            },
+            invf: {
+                id: 'invf',
+                index: 4,
+                code: 'INVF',
+                name: 'Plugin-GameplayInventoryFramework',
+                category: 'Replicated Inventory',
+                engine: 'UE 5.8+',
+                desc: 'Data-driven fragment inventory and equipment orchestrator. Replicates dirty-delta slices via FFastArraySerializer, features dynamic parameter bags, and includes MassEntity ground loot structs for battle-royale density.',
+                pills: ['FFastArray Net', 'Fragment Defs', 'MassEntity Drops', '13 Tests (100%)', 'Spatial Index'],
+                cloneUrl: 'https://github.com/1SHAMAY1/Plugin-GameplayInventoryFramework.git',
+                repoUrl: 'https://github.com/1SHAMAY1/Plugin-GameplayInventoryFramework',
+                demoUrl: null,
+                meshColor: 0xDDDDDD
+            },
+            cfui: {
+                id: 'cfui',
+                index: 5,
+                code: 'CFUI',
+                name: 'Plugin-CommonFrontendUI',
+                category: 'CommonUI Navigation',
+                engine: 'UE 5.8+',
+                desc: 'Layered CommonUI stack architecture with dynamic Settings Registry (sliders, toggles, dropdowns, dependencies), interactive Enhanced Input key remapping, and zero-hitch Slate loading screens.',
+                pills: ['CommonUI Native', 'Settings Registry', 'Key Remap', 'Slate Loading', 'Async Actions'],
+                cloneUrl: 'https://github.com/1SHAMAY1/Plugin-CommonFrontendUI.git',
+                repoUrl: 'https://github.com/1SHAMAY1/Plugin-CommonFrontendUI',
+                demoUrl: null,
+                meshColor: 0xFFFFFF
+            },
+            vaa: {
+                id: 'vaa',
+                index: 6,
+                code: 'VAA',
+                name: 'Plugin-ValidateAllAssets',
+                category: 'Studio Asset Linter',
+                engine: 'UE 5.3 \u2013 5.5',
+                desc: 'One-click Editor Utility that recursively scans your /Game content directory via IAssetRegistry. Detects broken dependencies, missing collisions, unlinked textures, and enforces naming conventions with automated safe renaming.',
+                pills: ['1-Click Auto-Fix', 'AssetRegistry Audit', 'Prefix Enforcement', 'CI Cook Safety', 'Pre-Compiled Win64'],
+                cloneUrl: 'https://github.com/1SHAMAY1/Plugin-ValidateAllAssets.git',
+                repoUrl: 'https://github.com/1SHAMAY1/Plugin-ValidateAllAssets',
+                demoUrl: null,
+                meshColor: 0xCCCCCC
+            }
+        };
 
-        let currentFilter = 'all';
-        let searchQuery = '';
+        const MODULE_KEYS = Object.keys(MODULE_REGISTRY);
 
-        function updateCardVisibility() {
-            let visibleCount = 0;
-            cards.forEach(card => {
-                const category = card.getAttribute('data-category');
-                const searchData = (card.getAttribute('data-search') || '').toLowerCase();
-                const cardText = card.innerText.toLowerCase();
+        // Three.js Scene Variables
+        let scene, camera, renderer;
+        let orbitGroup, coreMesh, coreHalo;
+        let nodeMeshes = [];
+        let particles;
+        let raycaster, mouse;
+        let isDragging = false;
+        let previousMousePosition = { x: 0, y: 0 };
+        let autoRotate = true;
+        let activeModuleId = null;
+        let hoveredNode = null;
+        let targetCameraPosition = new THREE.Vector3(0, 7, 20);
+        let targetLookAt = new THREE.Vector3(0, 0, 0);
 
-                const matchesCategory = currentFilter === 'all' || category === currentFilter;
-                const matchesSearch = !searchQuery || searchData.includes(searchQuery) || cardText.includes(searchQuery);
+        function initThree() {
+            const canvas = document.getElementById('webgl-canvas');
+            const width = window.innerWidth;
+            const height = window.innerHeight;
 
-                if (matchesCategory && matchesSearch) {
-                    card.style.display = 'flex';
-                    visibleCount++;
-                } else {
-                    card.style.display = 'none';
-                }
+            // Scene
+            scene = new THREE.Scene();
+            scene.fog = new THREE.FogExp2(0x000000, 0.025);
+
+            // Camera
+            camera = new THREE.PerspectiveCamera(50, width / height, 0.1, 1000);
+            camera.position.set(0, 7, 20);
+
+            // Renderer
+            renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
+            renderer.setSize(width, height);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+            // Central Orbit Group
+            orbitGroup = new THREE.Group();
+            scene.add(orbitGroup);
+
+            // --- Unreal Central Core ---
+            const coreGeo = new THREE.IcosahedronGeometry(2.0, 1);
+            const coreMat = new THREE.MeshBasicMaterial({
+                color: 0xFFFFFF,
+                wireframe: true,
+                transparent: true,
+                opacity: 0.35
             });
-            visibleCountSpan.textContent = visibleCount;
+            coreMesh = new THREE.Mesh(coreGeo, coreMat);
+            orbitGroup.add(coreMesh);
+
+            // Core Halo Ring
+            const haloGeo = new THREE.TorusGeometry(3.2, 0.02, 16, 100);
+            const haloMat = new THREE.MeshBasicMaterial({
+                color: 0xFFFFFF,
+                transparent: true,
+                opacity: 0.2
+            });
+            coreHalo = new THREE.Mesh(haloGeo, haloMat);
+            coreHalo.rotation.x = Math.PI / 2;
+            orbitGroup.add(coreHalo);
+
+            // Orbital Guide Rings (Thin Wire Circles)
+            [7.5, 10.5].forEach(radius => {
+                const ringGeo = new THREE.BufferGeometry();
+                const points = [];
+                for (let i = 0; i <= 128; i++) {
+                    const theta = (i / 128) * Math.PI * 2;
+                    points.push(new THREE.Vector3(Math.cos(theta) * radius, 0, Math.sin(theta) * radius));
+                }
+                ringGeo.setFromPoints(points);
+                const ringMat = new THREE.LineBasicMaterial({ color: 0xFFFFFF, transparent: true, opacity: 0.08 });
+                const ring = new THREE.Line(ringGeo, ringMat);
+                orbitGroup.add(ring);
+            });
+
+            // --- 7 Orbiting Plugin Nodes ---
+            const orbitRadius = 9.5;
+            const nodeCount = MODULE_KEYS.length;
+
+            MODULE_KEYS.forEach((key, index) => {
+                const mod = MODULE_REGISTRY[key];
+                const angle = (index / nodeCount) * Math.PI * 2;
+                const yOffset = Math.sin(index * 1.8) * 1.8;
+
+                const nodeGroup = new THREE.Group();
+                nodeGroup.position.set(
+                    Math.cos(angle) * orbitRadius,
+                    yOffset,
+                    Math.sin(angle) * orbitRadius
+                );
+
+                // Geometric Solid Inner Mesh
+                const innerGeo = new THREE.OctahedronGeometry(0.7, 0);
+                const innerMat = new THREE.MeshBasicMaterial({
+                    color: 0x0A0A0A,
+                });
+                const innerMesh = new THREE.Mesh(innerGeo, innerMat);
+
+                // Wireframe Outer Cage
+                const wireGeo = new THREE.OctahedronGeometry(0.9, 0);
+                const wireMat = new THREE.MeshBasicMaterial({
+                    color: 0xFFFFFF,
+                    wireframe: true,
+                    transparent: true,
+                    opacity: 0.5
+                });
+                const wireMesh = new THREE.Mesh(wireGeo, wireMat);
+
+                // Interactive Hitbox Sphere
+                const hitGeo = new THREE.SphereGeometry(1.2, 12, 12);
+                const hitMat = new THREE.MeshBasicMaterial({ visible: false });
+                const hitMesh = new THREE.Mesh(hitGeo, hitMat);
+                hitMesh.userData = { moduleId: key };
+
+                nodeGroup.add(innerMesh);
+                nodeGroup.add(wireMesh);
+                nodeGroup.add(hitMesh);
+
+                // Connecting Filament Line to Core
+                const lineGeo = new THREE.BufferGeometry().setFromPoints([
+                    new THREE.Vector3(0, 0, 0),
+                    nodeGroup.position.clone()
+                ]);
+                const lineMat = new THREE.LineBasicMaterial({ color: 0xFFFFFF, transparent: true, opacity: 0.06 });
+                const filament = new THREE.Line(lineGeo, lineMat);
+                orbitGroup.add(filament);
+
+                nodeGroup.userData = {
+                    moduleId: key,
+                    wireMesh: wireMesh,
+                    baseY: yOffset,
+                    initialPosition: nodeGroup.position.clone()
+                };
+
+                orbitGroup.add(nodeGroup);
+                nodeMeshes.push(hitMesh);
+            });
+
+            // --- Background Dust Particles ---
+            const particleCount = 700;
+            const particleGeo = new THREE.BufferGeometry();
+            const particlePos = new Float32Array(particleCount * 3);
+
+            for (let i = 0; i < particleCount * 3; i += 3) {
+                particlePos[i] = (Math.random() - 0.5) * 80;
+                particlePos[i + 1] = (Math.random() - 0.5) * 50;
+                particlePos[i + 2] = (Math.random() - 0.5) * 80;
+            }
+            particleGeo.setAttribute('position', new THREE.BufferAttribute(particlePos, 3));
+            const particleMat = new THREE.PointsMaterial({
+                color: 0xFFFFFF,
+                size: 0.12,
+                transparent: true,
+                opacity: 0.4
+            });
+            particles = new THREE.Points(particleGeo, particleMat);
+            scene.add(particles);
+
+            // Raycaster & Mouse
+            raycaster = new THREE.Raycaster();
+            mouse = new THREE.Vector2();
+
+            // Event Listeners
+            setupEventListeners(canvas);
+
+            // Start Render Loop
+            animate();
         }
 
-        filterButtons.forEach(btn => {
-            btn.addEventListener('click', () => {
-                filterButtons.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                currentFilter = btn.getAttribute('data-filter');
-                updateCardVisibility();
+        function setupEventListeners(canvas) {
+            window.addEventListener('resize', onWindowResize);
+
+            // Drag Rotation on Canvas
+            canvas.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                previousMousePosition = { x: e.clientX, y: e.clientY };
             });
-        });
 
-        searchInput.addEventListener('input', (e) => {
-            searchQuery = e.target.value.trim().toLowerCase();
-            updateCardVisibility();
-        });
+            window.addEventListener('mouseup', () => {
+                isDragging = false;
+            });
 
-        // Clipboard Copy Helper
-        function showToast(message) {
+            window.addEventListener('mousemove', (e) => {
+                const rect = canvas.getBoundingClientRect();
+                mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+                mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+
+                if (isDragging) {
+                    const deltaX = e.clientX - previousMousePosition.x;
+                    const deltaY = e.clientY - previousMousePosition.y;
+
+                    orbitGroup.rotation.y += deltaX * 0.005;
+                    orbitGroup.rotation.x += deltaY * 0.003;
+                    orbitGroup.rotation.x = Math.max(-0.6, Math.min(0.6, orbitGroup.rotation.x));
+
+                    previousMousePosition = { x: e.clientX, y: e.clientY };
+                }
+
+                // Check Hover on Nodes
+                checkRaycastHover(e);
+            });
+
+            // Touch Support for Mobile
+            canvas.addEventListener('touchstart', (e) => {
+                if (e.touches.length === 1) {
+                    isDragging = true;
+                    previousMousePosition = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+                }
+            }, { passive: true });
+
+            window.addEventListener('touchend', () => {
+                isDragging = false;
+            });
+
+            canvas.addEventListener('touchmove', (e) => {
+                if (isDragging && e.touches.length === 1) {
+                    const deltaX = e.touches[0].clientX - previousMousePosition.x;
+                    const deltaY = e.touches[0].clientY - previousMousePosition.y;
+
+                    orbitGroup.rotation.y += deltaX * 0.007;
+                    orbitGroup.rotation.x += deltaY * 0.004;
+                    orbitGroup.rotation.x = Math.max(-0.6, Math.min(0.6, orbitGroup.rotation.x));
+
+                    previousMousePosition = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+                }
+            }, { passive: true });
+
+            // Wheel Zooming
+            canvas.addEventListener('wheel', (e) => {
+                targetCameraPosition.z += e.deltaY * 0.015;
+                targetCameraPosition.z = Math.max(12, Math.min(30, targetCameraPosition.z));
+            }, { passive: true });
+
+            // Click Raycasting
+            canvas.addEventListener('click', (e) => {
+                raycaster.setFromCamera(mouse, camera);
+                const intersects = raycaster.intersectObjects(nodeMeshes);
+
+                if (intersects.length > 0) {
+                    const moduleId = intersects[0].object.userData.moduleId;
+                    selectModule(moduleId);
+                }
+            });
+
+            // Toggle Auto-Orbit Button
+            const toggleOrbitBtn = document.getElementById('toggle-orbit-btn');
+            toggleOrbitBtn.addEventListener('click', () => {
+                autoRotate = !autoRotate;
+                toggleOrbitBtn.innerHTML = autoRotate 
+                    ? '<span class="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span><span>AUTO-ORBIT: ON</span>' 
+                    : '<span class="w-1.5 h-1.5 rounded-full bg-mono-500"></span><span>AUTO-ORBIT: OFF</span>';
+            });
+
+            // Reset Camera View Button
+            document.getElementById('reset-cam-btn').addEventListener('click', () => {
+                deselectModule();
+                targetCameraPosition.set(0, 7, 20);
+                targetLookAt.set(0, 0, 0);
+                orbitGroup.rotation.set(0, 0, 0);
+            });
+
+            // Dock Button Click Handlers
+            document.querySelectorAll('.dock-item').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const modId = btn.getAttribute('data-module');
+                    selectModule(modId);
+                });
+            });
+
+            // Drawer Close Button
+            document.getElementById('close-drawer-btn').addEventListener('click', () => {
+                deselectModule();
+            });
+
+            // Copy Clone Command in Drawer
+            document.getElementById('drawer-copy-btn').addEventListener('click', () => {
+                const cloneText = document.getElementById('drawer-clone-cmd').innerText;
+                navigator.clipboard.writeText(cloneText);
+                showToast('CLONE COMMAND COPIED');
+                const label = document.getElementById('drawer-copy-label');
+                label.textContent = 'COPIED TO CLIPBOARD!';
+                setTimeout(() => {
+                    label.textContent = 'COPY CLONE COMMAND';
+                }, 2000);
+            });
+        }
+
+        function checkRaycastHover(e) {
+            const hoverTag = document.getElementById('node-hover-tag');
+            const hoverText = document.getElementById('hover-tag-text');
+
+            raycaster.setFromCamera(mouse, camera);
+            const intersects = raycaster.intersectObjects(nodeMeshes);
+
+            if (intersects.length > 0) {
+                const moduleId = intersects[0].object.userData.moduleId;
+                const mod = MODULE_REGISTRY[moduleId];
+                hoveredNode = intersects[0].object;
+
+                hoverText.textContent = `[${mod.code}] ${mod.name}`;
+                hoverTag.style.left = `${e.clientX}px`;
+                hoverTag.style.top = `${e.clientY}px`;
+                hoverTag.style.opacity = '1';
+                document.body.style.cursor = 'pointer';
+            } else {
+                hoveredNode = null;
+                hoverTag.style.opacity = '0';
+                document.body.style.cursor = 'default';
+            }
+        }
+
+        function onWindowResize() {
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+            camera.aspect = width / height;
+            camera.updateProjectionMatrix();
+            renderer.setSize(width, height);
+        }
+
+        // ==================== SELECTION LOGIC ====================
+        function selectModule(moduleId) {
+            activeModuleId = moduleId;
+            const mod = MODULE_REGISTRY[moduleId];
+            if (!mod) return;
+
+            // Highlight Dock Item
+            document.querySelectorAll('.dock-item').forEach(btn => {
+                if (btn.getAttribute('data-module') === moduleId) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+
+            // Populate Drawer Data
+            document.getElementById('drawer-title').textContent = mod.name;
+            document.getElementById('drawer-category').textContent = mod.category;
+            document.getElementById('drawer-engine-badge').textContent = mod.engine;
+            document.getElementById('drawer-desc').textContent = mod.desc;
+            document.getElementById('drawer-clone-cmd').textContent = `git clone ${mod.cloneUrl}`;
+            document.getElementById('drawer-github-btn').href = mod.repoUrl;
+
+            // Optional Demo Button
+            const demoBtn = document.getElementById('drawer-demo-btn');
+            if (mod.demoUrl) {
+                demoBtn.href = mod.demoUrl;
+                demoBtn.classList.remove('hidden');
+            } else {
+                demoBtn.classList.add('hidden');
+            }
+
+            // Populate Telemetry Pills
+            const pillsContainer = document.getElementById('drawer-pills');
+            pillsContainer.innerHTML = '';
+            mod.pills.forEach(p => {
+                const span = document.createElement('span');
+                span.className = 'mono-pill';
+                span.textContent = p;
+                pillsContainer.appendChild(span);
+            });
+
+            // Open Drawer
+            const drawer = document.getElementById('telemetry-drawer');
+            drawer.classList.remove('drawer-closed');
+            drawer.classList.add('drawer-open');
+
+            // Adjust Camera Target to frame 3D node nicely
+            const nodeGroup = orbitGroup.children.find(child => child.userData && child.userData.moduleId === moduleId);
+            if (nodeGroup) {
+                const worldPos = new THREE.Vector3();
+                nodeGroup.getWorldPosition(worldPos);
+
+                // Position camera offset to view node with space on the right for drawer
+                targetLookAt.copy(worldPos);
+                targetCameraPosition.set(worldPos.x * 1.3, worldPos.y + 2, worldPos.z * 1.3 + 8);
+            }
+        }
+
+        function deselectModule() {
+            activeModuleId = null;
+            document.querySelectorAll('.dock-item').forEach(btn => btn.classList.remove('active'));
+
+            const drawer = document.getElementById('telemetry-drawer');
+            drawer.classList.remove('drawer-open');
+            drawer.classList.add('drawer-closed');
+
+            // Reset camera target
+            targetCameraPosition.set(0, 7, 20);
+            targetLookAt.set(0, 0, 0);
+        }
+
+        function showToast(msg) {
             const toast = document.getElementById('toast');
-            const toastMsg = document.getElementById('toast-msg');
-            toastMsg.textContent = message;
-            toast.classList.add('show');
+            document.getElementById('toast-text').textContent = msg;
+            toast.classList.remove('toast-hidden');
+            toast.classList.add('toast-visible');
             setTimeout(() => {
-                toast.classList.remove('show');
+                toast.classList.remove('toast-visible');
+                toast.classList.add('toast-hidden');
             }, 2200);
         }
 
-        function copyClone(url, btn) {
-            navigator.clipboard.writeText(`git clone ${url}`);
-            showToast('Clone command copied to clipboard!');
-            const originalText = btn.innerHTML;
-            btn.innerHTML = `
-                <svg class="w-3.5 h-3.5 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                </svg>
-                <span class="text-white">Copied!</span>
-            `;
-            setTimeout(() => {
-                btn.innerHTML = originalText;
-            }, 1800);
-        }
+        // ==================== ANIMATION LOOP ====================
+        let clock = new THREE.Clock();
 
-        function copySnippetText(btn) {
-            const snippet = document.getElementById('terminal-content').innerText;
-            navigator.clipboard.writeText(snippet);
-            showToast('Snippet copied to clipboard!');
-        }
+        function animate() {
+            requestAnimationFrame(animate);
 
-        function setTerminalSnippet(type, btn) {
-            document.querySelectorAll('.term-tab').forEach(t => {
-                t.classList.remove('active', 'bg-amber-forge', 'text-black', 'font-semibold');
-                t.classList.add('bg-white/5', 'text-gray-400');
-            });
-            btn.classList.add('active', 'bg-amber-forge', 'text-black', 'font-semibold');
-            btn.classList.remove('bg-white/5', 'text-gray-400');
+            const elapsedTime = clock.getElapsedTime();
 
-            const contentEl = document.getElementById('terminal-content');
-            if (type === '5.8') {
-                contentEl.innerHTML = `<code><span class="text-gray-500"># Navigate to your project's Plugins folder:</span>
-cd YourProject/Plugins
+            // Core rotations
+            if (coreMesh) coreMesh.rotation.y = elapsedTime * 0.15;
+            if (coreHalo) coreHalo.rotation.z = -elapsedTime * 0.1;
 
-<span class="text-gray-500"># Clone any UE 5.8+ module directly into Plugins:</span>
-git clone https://github.com/1SHAMAY1/Plugin-GameplayQuestFramework.git
-git clone https://github.com/1SHAMAY1/Plugin-GameplayInteractionFramework.git
-git clone https://github.com/1SHAMAY1/Plugin-GameplayInventoryFramework.git
-git clone https://github.com/1SHAMAY1/Plugin-CommonFrontendUI.git</code>`;
-            } else {
-                contentEl.innerHTML = `<code><span class="text-gray-500"># For UE 5.3 &ndash; 5.5 modules, clone and copy the engine folder:</span>
-git clone https://github.com/1SHAMAY1/Plugin-CharacterLocomotionSystem.git
-git clone https://github.com/1SHAMAY1/Plugin-EnhancedCameraSystem.git
-git clone https://github.com/1SHAMAY1/Plugin-ValidateAllAssets.git
-
-<span class="text-gray-500"># Example: Copy the 5.3 folder into your Plugins/ directory:</span>
-cp -r Plugin-CharacterLocomotionSystem/5.3/CharacterLocomotionSystem YourProject/Plugins/</code>`;
+            // Slow Auto-Orbit when not dragging and drawer closed
+            if (autoRotate && !isDragging && !activeModuleId) {
+                orbitGroup.rotation.y += 0.002;
             }
+
+            // Node bobbing and idle rotation
+            orbitGroup.children.forEach(child => {
+                if (child.userData && child.userData.wireMesh) {
+                    const isSelected = child.userData.moduleId === activeModuleId;
+                    const isHovered = hoveredNode && hoveredNode.userData.moduleId === child.userData.moduleId;
+
+                    // Idle spinning of wire cages
+                    child.userData.wireMesh.rotation.y += isSelected ? 0.04 : 0.015;
+                    child.userData.wireMesh.rotation.x += isSelected ? 0.02 : 0.008;
+
+                    // Subtle vertical floating wave
+                    child.position.y = child.userData.baseY + Math.sin(elapsedTime * 1.5 + child.userData.initialPosition.x) * 0.25;
+
+                    // Scale adjustment on hover or selection
+                    const targetScale = isSelected ? 1.4 : (isHovered ? 1.25 : 1.0);
+                    child.scale.lerp(new THREE.Vector3(targetScale, targetScale, targetScale), 0.1);
+
+                    // Opacity highlighting
+                    child.userData.wireMesh.material.opacity = isSelected ? 1.0 : (isHovered ? 0.85 : 0.45);
+                }
+            });
+
+            // Smooth Camera Interpolation (Damping)
+            camera.position.lerp(targetCameraPosition, 0.04);
+            const currentLookAt = new THREE.Vector3();
+            camera.getWorldDirection(currentLookAt);
+            camera.lookAt(targetLookAt);
+
+            // Particle drift
+            if (particles) {
+                particles.rotation.y = elapsedTime * 0.02;
+            }
+
+            renderer.render(scene, camera);
         }
+
+        // Initialize on load
+        window.addEventListener('DOMContentLoaded', initThree);
     </script>
 </body>
 
