@@ -181,18 +181,18 @@
             <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-16 pt-8 border-t border-border-subtle font-mono">
                 <div class="p-4 rounded bg-surface-0/60 border border-border-subtle">
                     <div class="text-2xl sm:text-3xl font-bold font-display text-white mb-1">7</div>
-                    <div class="text-xs text-text-muted uppercase tracking-wider">Independent Modules</div>
+                    <div class="text-xs text-text-muted uppercase tracking-wider">Independent Plugins</div>
                     <div class="text-[11px] text-text-secondary mt-1">Pre-compiled Win64 Included</div>
                 </div>
                 <div class="p-4 rounded bg-surface-0/60 border border-border-subtle">
                     <div class="text-2xl sm:text-3xl font-bold font-display text-engine-emerald mb-1">86</div>
                     <div class="text-xs text-text-muted uppercase tracking-wider">Automated Tests</div>
-                    <div class="text-[11px] text-text-secondary mt-1">100% Headless Pass Rate</div>
+                    <div class="text-[11px] text-text-secondary mt-1">40 Interaction &middot; 33 Quest &middot; 13 Inv</div>
                 </div>
                 <div class="p-4 rounded bg-surface-0/60 border border-border-subtle">
-                    <div class="text-2xl sm:text-3xl font-bold font-display text-white mb-1">Zero</div>
-                    <div class="text-xs text-text-muted uppercase tracking-wider">Multicast RPC Flooding</div>
-                    <div class="text-[11px] text-text-secondary mt-1">FFastArray & RepNotify</div>
+                    <div class="text-2xl sm:text-3xl font-bold font-display text-white mb-1">100%</div>
+                    <div class="text-xs text-text-muted uppercase tracking-wider">Pure C++ Architecture</div>
+                    <div class="text-[11px] text-text-secondary mt-1">Zero Asset Bloat &middot; Modular Subsystems</div>
                 </div>
                 <div class="p-4 rounded bg-surface-0/60 border border-border-subtle">
                     <div class="text-2xl sm:text-3xl font-bold font-display text-white mb-1">MIT</div>
@@ -638,9 +638,9 @@
                             <td class="p-4 sm:px-6 text-white"><strong>Zero-Tick</strong> inverted tag routing in <strong>UGameplayQuestEventSubsystem</strong>.</td>
                         </tr>
                         <tr>
-                            <td class="p-4 sm:px-6 font-semibold text-white">Network Replication</td>
+                            <td class="p-4 sm:px-6 font-semibold text-white">Framework Replication</td>
                             <td class="p-4 sm:px-6 text-zinc-400">High-frequency NetMulticast RPC storms; packet loss on late joiners.</td>
-                            <td class="p-4 sm:px-6 text-white"><strong>FFastArraySerializer</strong> struct dirty-deltas + client <strong>RepNotify</strong> rolling counters.</td>
+                            <td class="p-4 sm:px-6 text-white"><strong>FFastArraySerializer</strong> struct dirty-deltas + client <strong>RepNotify</strong> rolling counters (Zero Multicast).</td>
                         </tr>
                         <tr>
                             <td class="p-4 sm:px-6 font-semibold text-white">Concurrent Interactions</td>
@@ -651,6 +651,11 @@
                             <td class="p-4 sm:px-6 font-semibold text-white">Item Data & Ground Loot</td>
                             <td class="p-4 sm:px-6 text-zinc-400">Monolithic item classes; frame drops rendering hundreds of world actors.</td>
                             <td class="p-4 sm:px-6 text-white">Polymorphic <strong>UInventoryItemFragment</strong> DataAssets + <strong>MassEntity ECS</strong> ground loot structs.</td>
+                        </tr>
+                        <tr>
+                            <td class="p-4 sm:px-6 font-semibold text-white">Frontend UI & Settings</td>
+                            <td class="p-4 sm:px-6 text-zinc-400">Hardcoded UMG menus; hitching loading screens; manual key rebinds.</td>
+                            <td class="p-4 sm:px-6 text-white">Decoupled <strong>CommonUI</strong> activatable stacks, dynamic <strong>Settings Registry</strong>, and zero-hitch Slate loading screens.</td>
                         </tr>
                         <tr>
                             <td class="p-4 sm:px-6 font-semibold text-white">Asset Hygiene & Linting</td>
