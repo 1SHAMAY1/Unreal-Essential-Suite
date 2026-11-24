@@ -1,27 +1,25 @@
 <!DOCTYPE html>
-<html lang="en" class="h-full overflow-hidden select-none">
+<html lang="en" class="scroll-smooth">
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Unreal Essential Suite - 3D Modular Architecture</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unreal Essential Suite - Production C++ Frameworks for UE5</title>
     
-    <!-- SEO & Social Meta Tags -->
-    <meta name="description" content="Minimalist 3D developer showcase for Unreal Essential Suite: 7 production-grade, modular C++ & Blueprint plugins for Unreal Engine 5.">
-    <meta name="keywords" content="Unreal Engine 5, UE5, 3D, WebGL, CommonUI, Locomotion, Quests, Inventory, Interaction, Open Source">
+    <!-- SEO & Metadata -->
+    <meta name="description" content="7 production-grade, network-replicated C++ gameplay frameworks for Unreal Engine 5.3 - 5.8+. Zero-tick architecture, 86 passing tests, and pre-compiled Win64 binaries.">
+    <meta name="keywords" content="Unreal Engine 5, UE5, C++, Gameplay Frameworks, CommonUI, Locomotion, Quests, Inventory, Interaction, Replication, FFastArray">
     <meta name="author" content="Shankharaj Datta">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://1shamay1.github.io/Unreal-Essential-Suite/">
-    <meta property="og:title" content="Unreal Essential Suite - 3D Architecture Hub">
-    <meta property="og:description" content="Explore 7 production-ready Unreal Engine 5 plugins in an interactive 3D WebGL constellation.">
+    <meta property="og:title" content="Unreal Essential Suite - Production C++ Frameworks for UE5">
+    <meta property="og:description" content="Production-ready, authoritative Unreal Engine 5 plugins with zero asset bloat and strict server authority.">
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Unreal Essential Suite - 3D Architecture Hub">
-    <meta name="twitter:description" content="Explore 7 production-ready Unreal Engine 5 plugins in an interactive 3D WebGL constellation.">
 
-    <!-- Fonts: Space Grotesk (Display) & JetBrains Mono (Code/HUD) -->
+    <!-- Fonts: Space Grotesk (Display), JetBrains Mono (Code/Telemetry), Plus Jakarta Sans (Body) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -30,892 +28,1141 @@
             theme: {
                 extend: {
                     colors: {
-                        mono: {
-                            950: '#000000',
-                            900: '#070709',
-                            850: '#0D0E12',
-                            800: '#14161C',
-                            700: '#232630',
-                            600: '#3A3F4D',
-                            500: '#646B7C',
-                            400: '#949BAA',
-                            300: '#CBD0DC',
-                            100: '#F1F3F7',
-                            white: '#FFFFFF',
+                        void: '#050507',
+                        surface: {
+                            0: '#0C0E14',
+                            1: '#12151F',
+                            2: '#191D2B',
+                            3: '#22283A'
+                        },
+                        border: {
+                            subtle: 'rgba(255, 255, 255, 0.08)',
+                            medium: 'rgba(255, 255, 255, 0.16)',
+                            bold: 'rgba(255, 255, 255, 0.32)'
+                        },
+                        text: {
+                            primary: '#FFFFFF',
+                            secondary: '#9DA4B5',
+                            muted: '#5E6578'
+                        },
+                        engine: {
+                            blue: '#3B82F6',
+                            emerald: '#22C55E',
+                            amber: '#F59E0B'
                         }
                     },
                     fontFamily: {
                         display: ['"Space Grotesk"', 'sans-serif'],
                         mono: ['"JetBrains Mono"', 'monospace'],
-                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif']
                     }
                 }
             }
         }
     </script>
 
-    <!-- Three.js CDN -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-
     <style>
         :root {
-            --bg-base: #000000;
+            color-scheme: dark;
         }
 
         body {
-            background-color: var(--bg-base);
+            background-color: #050507;
             color: #FFFFFF;
-            font-family: 'Space Grotesk', sans-serif;
-            overflow: hidden;
-            height: 100vh;
-            height: 100dvh;
-            width: 100vw;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            text-rendering: optimizeLegibility;
+            -webkit-font-smoothing: antialiased;
         }
 
-        /* 3D WebGL Canvas Layer */
-        #webgl-canvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-            cursor: grab;
-        }
-        #webgl-canvas:active {
-            cursor: grabbing;
+        /* Subtle technical engineering grid */
+        .tech-grid {
+            background-size: 40px 40px;
+            background-image: 
+                linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
         }
 
-        /* Scanline Overlay Effect for technical game engine look */
-        .scanlines {
-            background: linear-gradient(
-                rgba(255, 255, 255, 0) 50%, 
-                rgba(0, 0, 0, 0.25) 50%
-            );
-            background-size: 100% 4px;
-            pointer-events: none;
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
         }
-
-        /* Telemetry Drawer Animation */
-        #telemetry-drawer {
-            transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+        ::-webkit-scrollbar-track {
+            background: #050507;
         }
-        #telemetry-drawer.drawer-closed {
-            transform: translateX(100%);
-            opacity: 0;
-            pointer-events: none;
-        }
-        #telemetry-drawer.drawer-open {
-            transform: translateX(0);
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        /* Bottom Dock Buttons */
-        .dock-item {
-            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        .dock-item.active {
-            background-color: #FFFFFF;
-            color: #000000;
-            border-color: #FFFFFF;
-            box-shadow: 0 0 16px rgba(255, 255, 255, 0.3);
-        }
-
-        /* Monochromatic Pill */
-        .mono-pill {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 10px;
-            padding: 2px 7px;
+        ::-webkit-scrollbar-thumb {
+            background: #191D2B;
             border-radius: 4px;
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            background: rgba(255, 255, 255, 0.04);
-            color: #A1A1AA;
-            letter-spacing: 0.04em;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #22283A;
         }
 
-        /* Custom Scrollbar inside Drawer only */
-        .drawer-scroll::-webkit-scrollbar {
-            width: 4px;
-        }
-        .drawer-scroll::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        .drawer-scroll::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 2px;
-        }
-
-        /* Toast Feedback */
-        #toast {
-            transition: opacity 0.2s ease, transform 0.2s ease;
-        }
-        #toast.toast-hidden {
-            opacity: 0;
-            transform: translateY(16px);
-            pointer-events: none;
-        }
-        #toast.toast-visible {
-            opacity: 1;
-            transform: translateY(0);
-            pointer-events: auto;
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
         }
     </style>
 </head>
 
-<body class="relative flex flex-col justify-between overflow-hidden select-none bg-black">
+<body class="min-h-screen bg-void text-white selection:bg-white selection:text-black">
 
-    <!-- WebGL Canvas (Background 3D) -->
-    <canvas id="webgl-canvas"></canvas>
-
-    <!-- Scanline Subtle Grid Overlay -->
-    <div class="scanlines absolute inset-0 z-10 pointer-events-none opacity-40"></div>
-
-    <!-- Background Vignette -->
-    <div class="absolute inset-0 z-10 pointer-events-none bg-[radial-gradient(circle_at_center,transparent_40%,rgba(0,0,0,0.85)_100%)]"></div>
-
-    <!-- ==================== HUD HEADER (TOP) ==================== -->
-    <header class="relative z-20 w-full px-5 py-4 flex items-center justify-between border-b border-white/10 bg-black/60 backdrop-blur-md">
-        <!-- Logo & Suite Identity -->
-        <div class="flex items-center gap-3.5">
-            <div class="w-8 h-8 border border-white flex items-center justify-center font-mono font-bold text-xs bg-white text-black">
-                UE
+    <!-- Top Navigation Bar -->
+    <header class="sticky top-0 z-40 w-full border-b border-border-subtle bg-void/90 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <a href="index.html" class="flex items-center gap-2 group">
+                    <span class="w-2.5 h-2.5 bg-white rounded-none group-hover:rotate-45 transition-transform duration-300"></span>
+                    <span class="font-display font-bold text-base tracking-tight text-white">UNREAL ESSENTIAL SUITE</span>
+                </a>
+                <span class="hidden sm:inline-block font-mono text-xs px-2 py-0.5 rounded border border-border-subtle text-text-muted bg-surface-0">
+                    UE 5.3 – 5.8+
+                </span>
             </div>
-            <div>
-                <div class="flex items-center gap-2">
-                    <span class="font-display font-bold text-sm tracking-tight text-white uppercase">
-                        Unreal Essential Suite
-                    </span>
-                    <span class="font-mono text-[9px] px-1.5 py-0.5 border border-white/20 text-white/70">
-                        v1.0
-                    </span>
-                </div>
-                <div class="font-mono text-[10px] text-mono-400 tracking-wider">
-                    7 PRODUCTION MODULES &bull; 3D CONSTELLATION
-                </div>
-            </div>
-        </div>
 
-        <!-- Center 3D Controls -->
-        <div class="hidden sm:flex items-center gap-2 font-mono text-[11px] text-mono-400">
-            <button id="toggle-orbit-btn" class="px-2.5 py-1 border border-white/15 bg-white/5 hover:bg-white hover:text-black transition-colors rounded-sm flex items-center gap-1.5">
-                <span class="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span>
-                <span>AUTO-ORBIT: ON</span>
-            </button>
-            <button id="reset-cam-btn" class="px-2.5 py-1 border border-white/15 bg-white/5 hover:bg-white hover:text-black transition-colors rounded-sm">
-                RESET VIEW
-            </button>
-        </div>
-
-        <!-- Right Suite Links -->
-        <div class="flex items-center gap-3 font-mono text-xs">
-            <a href="https://github.com/1SHAMAY1/Unreal-Essential-Suite" target="_blank"
-                class="px-3 py-1.5 border border-white text-white hover:bg-white hover:text-black transition-all duration-150 flex items-center gap-1.5 font-medium tracking-tight">
-                <span>GITHUB SUITE</span>
-                <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                </svg>
-            </a>
+            <nav class="flex items-center gap-2 sm:gap-4 font-mono text-xs">
+                <a href="#suite-matrix" class="hidden md:inline-block text-text-secondary hover:text-white transition-colors px-2 py-1">
+                    Modules (7)
+                </a>
+                <a href="#benchmarks" class="hidden md:inline-block text-text-secondary hover:text-white transition-colors px-2 py-1">
+                    Architecture Specs
+                </a>
+                <a href="#installation" class="hidden md:inline-block text-text-secondary hover:text-white transition-colors px-2 py-1">
+                    Quick Start
+                </a>
+                <a href="https://github.com/1SHAMAY1/Unreal-Essential-Suite" target="_blank" rel="noopener noreferrer" 
+                   class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded border border-border-medium bg-surface-1 hover:border-white text-white transition-colors">
+                    <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+                        <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+                    </svg>
+                    <span>GitHub Suite</span>
+                </a>
+            </nav>
         </div>
     </header>
 
-    <!-- ==================== CENTRAL 3D INTERACTION HINT ==================== -->
-    <div id="interaction-hint" class="absolute top-20 left-6 z-20 pointer-events-none transition-opacity duration-500 font-mono text-[11px] text-mono-400 flex flex-col gap-1 max-w-xs">
-        <div class="flex items-center gap-2 text-white font-semibold tracking-wider">
-            <span class="inline-block w-1 h-3 bg-white"></span>
-            INTERACTIVE 3D MESH
-        </div>
-        <p class="text-[10px] text-mono-500 leading-normal">
-            Drag to rotate orbital plane &bull; Scroll to zoom &bull; Click any 3D node or dock button to inspect technical specifications.
-        </p>
-    </div>
-
-    <!-- Active Node 3D Screen Crosshair Tag (Tracks 3D Cursor) -->
-    <div id="node-hover-tag" class="absolute z-30 pointer-events-none opacity-0 transition-opacity duration-150 font-mono text-[10px] bg-black/90 text-white border border-white/40 px-2.5 py-1 shadow-2xl backdrop-blur-sm -translate-x-1/2 -translate-y-12">
-        <span id="hover-tag-text">NODE</span>
-    </div>
-
-    <!-- ==================== TELEMETRY DRAWER (SLIDE-IN) ==================== -->
-    <aside id="telemetry-drawer" class="drawer-closed absolute top-0 right-0 bottom-0 z-40 w-full sm:w-[440px] bg-black/95 backdrop-blur-xl border-l border-white/15 flex flex-col justify-between shadow-[0_0_50px_rgba(0,0,0,0.9)]">
-        <!-- Drawer Header -->
-        <div class="p-6 border-b border-white/10 flex items-start justify-between">
-            <div>
-                <div class="flex items-center gap-2 mb-1.5">
-                    <span id="drawer-engine-badge" class="font-mono text-[10px] px-2 py-0.5 border border-white text-white font-semibold uppercase">
-                        UE 5.8+
-                    </span>
-                    <span id="drawer-category" class="font-mono text-[10px] text-mono-400 uppercase tracking-wider">
-                        Core Gameplay
-                    </span>
+    <!-- Hero Section -->
+    <section class="relative tech-grid border-b border-border-subtle py-16 sm:py-24 overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="max-w-3xl">
+                <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded border border-border-subtle bg-surface-0 font-mono text-xs text-text-secondary mb-6">
+                    <span class="w-1.5 h-1.5 rounded-full bg-engine-emerald animate-pulse"></span>
+                    <span>ENTERPRISE C++ GAMEPLAY INFRASTRUCTURE</span>
                 </div>
-                <h2 id="drawer-title" class="font-display text-xl font-bold text-white tracking-tight leading-snug">
-                    Plugin-Name
-                </h2>
+                
+                <h1 class="font-display text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white mb-6 leading-tight">
+                    Production Systems for Unreal Engine 5.
+                </h1>
+                
+                <p class="text-base sm:text-lg text-text-secondary leading-relaxed mb-8">
+                    A suite of 7 modular, network-replicated C++ frameworks engineered for multiplayer authority, zero tick overhead, and clean decoupled architecture. Tested headlessly with 86 passing automation suites.
+                </p>
+
+                <!-- Command Box -->
+                <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 max-w-2xl">
+                    <div class="flex-1 flex items-center justify-between px-3.5 py-2.5 rounded bg-surface-0 border border-border-medium font-mono text-xs text-text-primary overflow-x-auto">
+                        <span class="text-text-muted select-none mr-2">$</span>
+                        <code class="whitespace-nowrap flex-1" id="clone-cmd">git clone https://github.com/1SHAMAY1/Unreal-Essential-Suite.git</code>
+                        <button onclick="copyToClipboard('clone-cmd', this)" class="ml-3 px-2 py-1 rounded bg-surface-1 hover:bg-surface-2 border border-border-subtle text-text-secondary hover:text-white transition-colors" title="Copy to clipboard">
+                            Copy
+                        </button>
+                    </div>
+                    <a href="#suite-matrix" class="px-5 py-2.5 rounded bg-white hover:bg-zinc-200 text-black font-semibold text-xs font-mono uppercase tracking-wider text-center transition-colors">
+                        Browse 7 Modules
+                    </a>
+                </div>
             </div>
-            <!-- Close Button -->
-            <button id="close-drawer-btn" class="w-8 h-8 border border-white/20 hover:border-white text-mono-400 hover:text-white flex items-center justify-center font-mono text-xs transition-colors shrink-0">
-                ✕
-            </button>
+
+            <!-- Global Live Telemetry Counters -->
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-16 pt-8 border-t border-border-subtle font-mono">
+                <div class="p-4 rounded bg-surface-0/60 border border-border-subtle">
+                    <div class="text-2xl sm:text-3xl font-bold font-display text-white mb-1">7</div>
+                    <div class="text-xs text-text-muted uppercase tracking-wider">Independent Modules</div>
+                    <div class="text-[11px] text-text-secondary mt-1">Pre-compiled Win64 Included</div>
+                </div>
+                <div class="p-4 rounded bg-surface-0/60 border border-border-subtle">
+                    <div class="text-2xl sm:text-3xl font-bold font-display text-engine-emerald mb-1">86</div>
+                    <div class="text-xs text-text-muted uppercase tracking-wider">Automated Tests</div>
+                    <div class="text-[11px] text-text-secondary mt-1">100% Headless Pass Rate</div>
+                </div>
+                <div class="p-4 rounded bg-surface-0/60 border border-border-subtle">
+                    <div class="text-2xl sm:text-3xl font-bold font-display text-white mb-1">Zero</div>
+                    <div class="text-xs text-text-muted uppercase tracking-wider">Multicast RPC Flooding</div>
+                    <div class="text-[11px] text-text-secondary mt-1">FFastArray & RepNotify</div>
+                </div>
+                <div class="p-4 rounded bg-surface-0/60 border border-border-subtle">
+                    <div class="text-2xl sm:text-3xl font-bold font-display text-white mb-1">MIT</div>
+                    <div class="text-xs text-text-muted uppercase tracking-wider">Open Source License</div>
+                    <div class="text-[11px] text-text-secondary mt-1">Commercial & Indie Free</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Suite Matrix Section -->
+    <section id="suite-matrix" class="py-16 sm:py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- Filter and Search Header -->
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+            <div>
+                <div class="font-mono text-xs text-text-muted uppercase tracking-widest mb-2">ARCHITECTURAL REPOSITORY</div>
+                <h2 class="font-display text-3xl font-bold tracking-tight text-white">System Modules & Specifications</h2>
+            </div>
+
+            <!-- Controls: Filters & Search -->
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                <!-- Search bar -->
+                <div class="relative">
+                    <input type="text" id="plugin-search" placeholder="Filter by tag, class, feature..." 
+                           class="w-full sm:w-64 px-3.5 py-1.5 pl-9 rounded bg-surface-0 border border-border-medium text-xs font-mono text-white placeholder-text-muted focus:outline-none focus:border-white transition-colors"
+                           onkeyup="filterPlugins()">
+                    <svg class="w-3.5 h-3.5 text-text-muted absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                    </svg>
+                </div>
+
+                <!-- Category Tabs -->
+                <div class="flex items-center p-1 rounded bg-surface-0 border border-border-subtle font-mono text-xs overflow-x-auto" id="filter-tabs">
+                    <button onclick="setCategoryFilter('all', this)" class="filter-tab active px-2.5 py-1 rounded bg-surface-2 text-white">All (7)</button>
+                    <button onclick="setCategoryFilter('gameplay', this)" class="filter-tab px-2.5 py-1 rounded text-text-muted hover:text-white transition-colors">Core (2)</button>
+                    <button onclick="setCategoryFilter('network', this)" class="filter-tab px-2.5 py-1 rounded text-text-muted hover:text-white transition-colors">Multiplayer (3)</button>
+                    <button onclick="setCategoryFilter('tooling', this)" class="filter-tab px-2.5 py-1 rounded text-text-muted hover:text-white transition-colors">UI & Tools (2)</button>
+                </div>
+            </div>
         </div>
 
-        <!-- Drawer Scrollable Content -->
-        <div class="p-6 overflow-y-auto drawer-scroll space-y-6 flex-1 text-xs">
-            <!-- Technical Description -->
-            <div>
-                <div class="font-mono text-[10px] text-mono-500 uppercase tracking-widest mb-2">
-                    01 / OVERVIEW
+        <!-- Cards Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="plugin-grid">
+            
+            <!-- 1. Character Locomotion System -->
+            <div class="plugin-card group flex flex-col justify-between p-6 rounded-lg bg-surface-0 border border-border-subtle hover:border-border-medium transition-all duration-200"
+                 data-category="gameplay" data-keywords="locomotion parkour vault mantle climbing slide prone motion warping replicated ue5.3 ue5.4 ue5.5">
+                <div>
+                    <div class="flex items-center justify-between gap-2 mb-4">
+                        <span class="font-mono text-[11px] px-2 py-0.5 rounded border border-border-subtle text-text-secondary bg-surface-1">
+                            UE 5.3 &ndash; 5.5
+                        </span>
+                        <span class="font-mono text-[11px] px-2 py-0.5 rounded border border-white/20 text-white font-medium">
+                            Pre-Compiled Win64
+                        </span>
+                    </div>
+
+                    <h3 class="font-display text-xl font-bold text-white mb-2 group-hover:text-zinc-200 transition-colors">
+                        <a href="https://github.com/1SHAMAY1/Plugin-CharacterLocomotionSystem" target="_blank" rel="noopener noreferrer" class="hover:underline">
+                            Character Locomotion System
+                        </a>
+                    </h3>
+
+                    <p class="text-xs text-text-secondary leading-relaxed mb-6">
+                        Production traversal framework extending native <code class="text-white font-mono">UCharacterMovementComponent</code>. Delivers automated 3-point trace vaulting, mantle, freeform vertical climbing, and momentum sliding powered by Epic's Motion Warping.
+                    </p>
+
+                    <!-- Feature Tags -->
+                    <div class="flex flex-wrap gap-1.5 mb-6">
+                        <span class="font-mono text-[10px] px-2 py-0.5 rounded bg-surface-1 border border-border-subtle text-text-secondary">Motion Warping</span>
+                        <span class="font-mono text-[10px] px-2 py-0.5 rounded bg-surface-1 border border-border-subtle text-text-secondary">PrimaryDataAsset</span>
+                        <span class="font-mono text-[10px] px-2 py-0.5 rounded bg-surface-1 border border-border-subtle text-text-secondary">Network Replicated</span>
+                    </div>
+
+                    <!-- Key C++ Classes -->
+                    <div class="p-3 rounded bg-surface-1/70 border border-border-subtle font-mono text-[11px] text-text-muted mb-6">
+                        <span class="text-text-secondary block mb-1">Core Class Interface:</span>
+                        <code class="text-white">UNewCharacterMovementComponent</code><br>
+                        <code class="text-zinc-400">UVaultPrimaryDataAsset</code>
+                    </div>
                 </div>
-                <p id="drawer-desc" class="text-mono-300 font-sans leading-relaxed text-xs">
-                    Technical description will appear here.
+
+                <div class="pt-4 border-t border-border-subtle flex items-center justify-between gap-2 font-mono text-xs">
+                    <button onclick="openSpecModal('locomotion')" class="px-3 py-1.5 rounded border border-border-medium bg-surface-1 hover:border-white text-white transition-colors">
+                        Inspect Specs
+                    </button>
+                    <div class="flex items-center gap-2">
+                        <button onclick="openVideoModal('https://drive.google.com/file/d/1xRHF_Kcr_6u6GAkXdQFdyr21Jks6z8xJ/preview', 'Character Locomotion System Demo')" 
+                                class="px-2.5 py-1.5 rounded text-text-secondary hover:text-white hover:bg-surface-1 transition-colors flex items-center gap-1">
+                            <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                            <span>Video</span>
+                        </button>
+                        <a href="https://github.com/1SHAMAY1/Plugin-CharacterLocomotionSystem" target="_blank" rel="noopener noreferrer" 
+                           class="px-2.5 py-1.5 rounded text-text-secondary hover:text-white hover:bg-surface-1 transition-colors">
+                            Repo
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. Enhanced Camera System -->
+            <div class="plugin-card group flex flex-col justify-between p-6 rounded-lg bg-surface-0 border border-border-subtle hover:border-border-medium transition-all duration-200"
+                 data-category="gameplay" data-keywords="camera ads sprint fov stack priority collision gas gameplay tags ue5.3">
+                <div>
+                    <div class="flex items-center justify-between gap-2 mb-4">
+                        <span class="font-mono text-[11px] px-2 py-0.5 rounded border border-border-subtle text-text-secondary bg-surface-1">
+                            UE 5.3
+                        </span>
+                        <span class="font-mono text-[11px] px-2 py-0.5 rounded border border-white/20 text-white font-medium">
+                            Pre-Compiled Win64
+                        </span>
+                    </div>
+
+                    <h3 class="font-display text-xl font-bold text-white mb-2 group-hover:text-zinc-200 transition-colors">
+                        <a href="https://github.com/1SHAMAY1/Plugin-EnhancedCameraSystem" target="_blank" rel="noopener noreferrer" class="hover:underline">
+                            Enhanced Camera System
+                        </a>
+                    </h3>
+
+                    <p class="text-xs text-text-secondary leading-relaxed mb-6">
+                        Modular camera framework decoupling view behaviors from character blueprints. Features a prioritized push/pop camera stack, native collision recovery caching, and frame-rate independent lag smoothing with GAS tag activation.
+                    </p>
+
+                    <!-- Feature Tags -->
+                    <div class="flex flex-wrap gap-1.5 mb-6">
+                        <span class="font-mono text-[10px] px-2 py-0.5 rounded bg-surface-1 border border-border-subtle text-text-secondary">O(1) Priority Stack</span>
+                        <span class="font-mono text-[10px] px-2 py-0.5 rounded bg-surface-1 border border-border-subtle text-text-secondary">Anti-Jitter Lag</span>
+                        <span class="font-mono text-[10px] px-2 py-0.5 rounded bg-surface-1 border border-border-subtle text-text-secondary">GAS Tag Driven</span>
+                    </div>
+
+                    <!-- Key C++ Classes -->
+                    <div class="p-3 rounded bg-surface-1/70 border border-border-subtle font-mono text-[11px] text-text-muted mb-6">
+                        <span class="text-text-secondary block mb-1">Core Class Interface:</span>
+                        <code class="text-white">AEnhancedPlayerCameraManager</code><br>
+                        <code class="text-zinc-400">UCameraModeConfigBase</code>
+                    </div>
+                </div>
+
+                <div class="pt-4 border-t border-border-subtle flex items-center justify-between gap-2 font-mono text-xs">
+                    <button onclick="openSpecModal('camera')" class="px-3 py-1.5 rounded border border-border-medium bg-surface-1 hover:border-white text-white transition-colors">
+                        Inspect Specs
+                    </button>
+                    <div class="flex items-center gap-2">
+                        <button onclick="openVideoModal('https://drive.google.com/file/d/1wx_B7L23L61r-GTvXzo9LitP3IXeH-TE/preview', 'Enhanced Camera System Demo')" 
+                                class="px-2.5 py-1.5 rounded text-text-secondary hover:text-white hover:bg-surface-1 transition-colors flex items-center gap-1">
+                            <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                            <span>Video</span>
+                        </button>
+                        <a href="https://github.com/1SHAMAY1/Plugin-EnhancedCameraSystem" target="_blank" rel="noopener noreferrer" 
+                           class="px-2.5 py-1.5 rounded text-text-secondary hover:text-white hover:bg-surface-1 transition-colors">
+                            Repo
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. Gameplay Quest Framework -->
+            <div class="plugin-card group flex flex-col justify-between p-6 rounded-lg bg-surface-0 border border-border-subtle hover:border-border-medium transition-all duration-200"
+                 data-category="network" data-keywords="quest objectives state machine zero tick tag routing ffastarray network authority tests 33 ue5.8+">
+                <div>
+                    <div class="flex items-center justify-between gap-2 mb-4">
+                        <span class="font-mono text-[11px] px-2 py-0.5 rounded border border-engine-blue/40 text-blue-400 bg-blue-950/30">
+                            UE 5.8+ STRICT
+                        </span>
+                        <span class="font-mono text-[11px] px-2 py-0.5 rounded border border-engine-emerald/40 text-emerald-400 bg-emerald-950/30 flex items-center gap-1">
+                            <span class="w-1.5 h-1.5 rounded-full bg-engine-emerald"></span>
+                            33 Tests (100% Pass)
+                        </span>
+                    </div>
+
+                    <h3 class="font-display text-xl font-bold text-white mb-2 group-hover:text-zinc-200 transition-colors">
+                        <a href="https://github.com/1SHAMAY1/Plugin-GameplayQuestFramework" target="_blank" rel="noopener noreferrer" class="hover:underline">
+                            Gameplay Quest Framework
+                        </a>
+                    </h3>
+
+                    <p class="text-xs text-text-secondary leading-relaxed mb-6">
+                        Zero-tick, authoritative C++ quest system for MMORPG and story campaigns. Features inverted tag routing via <code class="text-white font-mono">UWorldSubsystem</code>, FFastArray dirty-delta net synchronization, and cross-world travel persistence.
+                    </p>
+
+                    <!-- Feature Tags -->
+                    <div class="flex flex-wrap gap-1.5 mb-6">
+                        <span class="font-mono text-[10px] px-2 py-0.5 rounded bg-surface-1 border border-border-subtle text-text-secondary">Zero-Tick Tag Subsystem</span>
+                        <span class="font-mono text-[10px] px-2 py-0.5 rounded bg-surface-1 border border-border-subtle text-text-secondary">FFastArray Net Deltas</span>
+                        <span class="font-mono text-[10px] px-2 py-0.5 rounded bg-surface-1 border border-border-subtle text-text-secondary">Dual Binary/JSON DB</span>
+                    </div>
+
+                    <!-- Key C++ Classes -->
+                    <div class="p-3 rounded bg-surface-1/70 border border-border-subtle font-mono text-[11px] text-text-muted mb-6">
+                        <span class="text-text-secondary block mb-1">Core Class Interface:</span>
+                        <code class="text-white">UGameplayQuestManagerComponent</code><br>
+                        <code class="text-zinc-400">UGameplayQuestEventSubsystem</code>
+                    </div>
+                </div>
+
+                <div class="pt-4 border-t border-border-subtle flex items-center justify-between gap-2 font-mono text-xs">
+                    <button onclick="openSpecModal('quest')" class="px-3 py-1.5 rounded border border-border-medium bg-surface-1 hover:border-white text-white transition-colors">
+                        Inspect Specs
+                    </button>
+                    <a href="https://github.com/1SHAMAY1/Plugin-GameplayQuestFramework" target="_blank" rel="noopener noreferrer" 
+                       class="px-2.5 py-1.5 rounded text-text-secondary hover:text-white hover:bg-surface-1 transition-colors">
+                        Repo & Guide
+                    </a>
+                </div>
+            </div>
+
+            <!-- 4. Gameplay Interaction Framework -->
+            <div class="plugin-card group flex flex-col justify-between p-6 rounded-lg bg-surface-0 border border-border-subtle hover:border-border-medium transition-all duration-200"
+                 data-category="network" data-keywords="interaction atomic contention repnotify anti-cheat hold verification 3-phase async tests 40 ue5.8+">
+                <div>
+                    <div class="flex items-center justify-between gap-2 mb-4">
+                        <span class="font-mono text-[11px] px-2 py-0.5 rounded border border-engine-blue/40 text-blue-400 bg-blue-950/30">
+                            UE 5.8+ STRICT
+                        </span>
+                        <span class="font-mono text-[11px] px-2 py-0.5 rounded border border-engine-emerald/40 text-emerald-400 bg-emerald-950/30 flex items-center gap-1">
+                            <span class="w-1.5 h-1.5 rounded-full bg-engine-emerald"></span>
+                            40 Tests (100% Pass)
+                        </span>
+                    </div>
+
+                    <h3 class="font-display text-xl font-bold text-white mb-2 group-hover:text-zinc-200 transition-colors">
+                        <a href="https://github.com/1SHAMAY1/Plugin-GameplayInteractionFramework" target="_blank" rel="noopener noreferrer" class="hover:underline">
+                            Gameplay Interaction Framework
+                        </a>
+                    </h3>
+
+                    <p class="text-xs text-text-secondary leading-relaxed mb-6">
+                        Authoritative multiplayer interaction engine. Powered by atomic contention locks, RepNotify change counter synchronization, anti-cheat hold latency verification, leased TTL auto-cleanup, and 3-phase async commit transaction safety.
+                    </p>
+
+                    <!-- Feature Tags -->
+                    <div class="flex flex-wrap gap-1.5 mb-6">
+                        <span class="font-mono text-[10px] px-2 py-0.5 rounded bg-surface-1 border border-border-subtle text-text-secondary">Atomic Contention Locks</span>
+                        <span class="font-mono text-[10px] px-2 py-0.5 rounded bg-surface-1 border border-border-subtle text-text-secondary">RepNotify (Zero Multicast)</span>
+                        <span class="font-mono text-[10px] px-2 py-0.5 rounded bg-surface-1 border border-border-subtle text-text-secondary">Anti-Cheat Hold Gating</span>
+                    </div>
+
+                    <!-- Key C++ Classes -->
+                    <div class="p-3 rounded bg-surface-1/70 border border-border-subtle font-mono text-[11px] text-text-muted mb-6">
+                        <span class="text-text-secondary block mb-1">Core Class Interface:</span>
+                        <code class="text-white">UInteractableComponent</code><br>
+                        <code class="text-zinc-400">UInteractionDetectorComponent</code>
+                    </div>
+                </div>
+
+                <div class="pt-4 border-t border-border-subtle flex items-center justify-between gap-2 font-mono text-xs">
+                    <button onclick="openSpecModal('interaction')" class="px-3 py-1.5 rounded border border-border-medium bg-surface-1 hover:border-white text-white transition-colors">
+                        Inspect Specs
+                    </button>
+                    <a href="https://github.com/1SHAMAY1/Plugin-GameplayInteractionFramework" target="_blank" rel="noopener noreferrer" 
+                       class="px-2.5 py-1.5 rounded text-text-secondary hover:text-white hover:bg-surface-1 transition-colors">
+                        Repo & Guide
+                    </a>
+                </div>
+            </div>
+
+            <!-- 5. Gameplay Inventory Framework -->
+            <div class="plugin-card group flex flex-col justify-between p-6 rounded-lg bg-surface-0 border border-border-subtle hover:border-border-medium transition-all duration-200"
+                 data-category="network" data-keywords="inventory equipment loot ffastarray mass entity fragments dynamic parameter bag tests 13 ue5.8+">
+                <div>
+                    <div class="flex items-center justify-between gap-2 mb-4">
+                        <span class="font-mono text-[11px] px-2 py-0.5 rounded border border-engine-blue/40 text-blue-400 bg-blue-950/30">
+                            UE 5.8+ STRICT
+                        </span>
+                        <span class="font-mono text-[11px] px-2 py-0.5 rounded border border-engine-emerald/40 text-emerald-400 bg-emerald-950/30 flex items-center gap-1">
+                            <span class="w-1.5 h-1.5 rounded-full bg-engine-emerald"></span>
+                            13 Tests (100% Pass)
+                        </span>
+                    </div>
+
+                    <h3 class="font-display text-xl font-bold text-white mb-2 group-hover:text-zinc-200 transition-colors">
+                        <a href="https://github.com/1SHAMAY1/Plugin-GameplayInventoryFramework" target="_blank" rel="noopener noreferrer" class="hover:underline">
+                            Gameplay Inventory Framework
+                        </a>
+                    </h3>
+
+                    <p class="text-xs text-text-secondary leading-relaxed mb-6">
+                        Modular inventory and world loot architecture. Implements polymorphic <code class="text-white font-mono">UInventoryItemFragment</code> DataAssets, isolated dynamic parameter bags (durability, attachments), multi-container transfers, and MassEntity ECS ground loot integration.
+                    </p>
+
+                    <!-- Feature Tags -->
+                    <div class="flex flex-wrap gap-1.5 mb-6">
+                        <span class="font-mono text-[10px] px-2 py-0.5 rounded bg-surface-1 border border-border-subtle text-text-secondary">Polymorphic Fragments</span>
+                        <span class="font-mono text-[10px] px-2 py-0.5 rounded bg-surface-1 border border-border-subtle text-text-secondary">Dynamic Parameter Bag</span>
+                        <span class="font-mono text-[10px] px-2 py-0.5 rounded bg-surface-1 border border-border-subtle text-text-secondary">Mass Entity Ground Loot</span>
+                    </div>
+
+                    <!-- Key C++ Classes -->
+                    <div class="p-3 rounded bg-surface-1/70 border border-border-subtle font-mono text-[11px] text-text-muted mb-6">
+                        <span class="text-text-secondary block mb-1">Core Class Interface:</span>
+                        <code class="text-white">UInventoryManagerComponent</code><br>
+                        <code class="text-zinc-400">UInventoryItemDefinition</code>
+                    </div>
+                </div>
+
+                <div class="pt-4 border-t border-border-subtle flex items-center justify-between gap-2 font-mono text-xs">
+                    <button onclick="openSpecModal('inventory')" class="px-3 py-1.5 rounded border border-border-medium bg-surface-1 hover:border-white text-white transition-colors">
+                        Inspect Specs
+                    </button>
+                    <a href="https://github.com/1SHAMAY1/Plugin-GameplayInventoryFramework" target="_blank" rel="noopener noreferrer" 
+                       class="px-2.5 py-1.5 rounded text-text-secondary hover:text-white hover:bg-surface-1 transition-colors">
+                        Repo & Guide
+                    </a>
+                </div>
+            </div>
+
+            <!-- 6. Common Frontend UI -->
+            <div class="plugin-card group flex flex-col justify-between p-6 rounded-lg bg-surface-0 border border-border-subtle hover:border-border-medium transition-all duration-200"
+                 data-category="tooling" data-keywords="commonui frontend settings registry key remapping loading screen slate enhanced input ue5.8+">
+                <div>
+                    <div class="flex items-center justify-between gap-2 mb-4">
+                        <span class="font-mono text-[11px] px-2 py-0.5 rounded border border-engine-blue/40 text-blue-400 bg-blue-950/30">
+                            UE 5.8+ STRICT
+                        </span>
+                        <span class="font-mono text-[11px] px-2 py-0.5 rounded border border-white/20 text-white font-medium">
+                            Comprehensive User Guide
+                        </span>
+                    </div>
+
+                    <h3 class="font-display text-xl font-bold text-white mb-2 group-hover:text-zinc-200 transition-colors">
+                        <a href="https://github.com/1SHAMAY1/Plugin-CommonFrontendUI" target="_blank" rel="noopener noreferrer" class="hover:underline">
+                            Common Frontend UI
+                        </a>
+                    </h3>
+
+                    <p class="text-xs text-text-secondary leading-relaxed mb-6">
+                        Modular frontend framework built on Epic's CommonUI and Enhanced Input. Provides a unified Settings Registry linked to GameUserSettings, runtime Key Remapping screen, activatable widget stacks, and zero-hitch Slate loading screens.
+                    </p>
+
+                    <!-- Feature Tags -->
+                    <div class="flex flex-wrap gap-1.5 mb-6">
+                        <span class="font-mono text-[10px] px-2 py-0.5 rounded bg-surface-1 border border-border-subtle text-text-secondary">CommonUI Widget Stacks</span>
+                        <span class="font-mono text-[10px] px-2 py-0.5 rounded bg-surface-1 border border-border-subtle text-text-secondary">GameUserSettings Registry</span>
+                        <span class="font-mono text-[10px] px-2 py-0.5 rounded bg-surface-1 border border-border-subtle text-text-secondary">Slate Loading Subsystem</span>
+                    </div>
+
+                    <!-- Key C++ Classes -->
+                    <div class="p-3 rounded bg-surface-1/70 border border-border-subtle font-mono text-[11px] text-text-muted mb-6">
+                        <span class="text-text-secondary block mb-1">Core Class Interface:</span>
+                        <code class="text-white">UCommonFrontendUI_Subsystem</code><br>
+                        <code class="text-zinc-400">UCommonFrontendLoadingScreenSubsystem</code>
+                    </div>
+                </div>
+
+                <div class="pt-4 border-t border-border-subtle flex items-center justify-between gap-2 font-mono text-xs">
+                    <button onclick="openSpecModal('commonui')" class="px-3 py-1.5 rounded border border-border-medium bg-surface-1 hover:border-white text-white transition-colors">
+                        Inspect Specs
+                    </button>
+                    <a href="https://github.com/1SHAMAY1/Plugin-CommonFrontendUI" target="_blank" rel="noopener noreferrer" 
+                       class="px-2.5 py-1.5 rounded text-text-secondary hover:text-white hover:bg-surface-1 transition-colors">
+                        Repo & Guide
+                    </a>
+                </div>
+            </div>
+
+            <!-- 7. Validate All Assets -->
+            <div class="plugin-card group flex flex-col justify-between p-6 rounded-lg bg-surface-0 border border-border-subtle hover:border-border-medium transition-all duration-200"
+                 data-category="tooling" data-keywords="validate assets linter editor utility prefix suffix auto-fix assetregistry ue5.3 ue5.4 ue5.5">
+                <div>
+                    <div class="flex items-center justify-between gap-2 mb-4">
+                        <span class="font-mono text-[11px] px-2 py-0.5 rounded border border-border-subtle text-text-secondary bg-surface-1">
+                            UE 5.3 &ndash; 5.5
+                        </span>
+                        <span class="font-mono text-[11px] px-2 py-0.5 rounded border border-white/20 text-white font-medium">
+                            Level Editor Toolbar
+                        </span>
+                    </div>
+
+                    <h3 class="font-display text-xl font-bold text-white mb-2 group-hover:text-zinc-200 transition-colors">
+                        <a href="https://github.com/1SHAMAY1/Plugin-ValidateAllAssets" target="_blank" rel="noopener noreferrer" class="hover:underline">
+                            Validate All Assets
+                        </a>
+                    </h3>
+
+                    <p class="text-xs text-text-secondary leading-relaxed mb-6">
+                        1-click Level Editor utility recursively auditing your project's <code class="text-white font-mono">/Game</code> folder for missing references, broken dependencies, and naming violations with automated in-place prefix/suffix renaming.
+                    </p>
+
+                    <!-- Feature Tags -->
+                    <div class="flex flex-wrap gap-1.5 mb-6">
+                        <span class="font-mono text-[10px] px-2 py-0.5 rounded bg-surface-1 border border-border-subtle text-text-secondary">IAssetRegistry Query</span>
+                        <span class="font-mono text-[10px] px-2 py-0.5 rounded bg-surface-1 border border-border-subtle text-text-secondary">1-Click Auto-Fix Rename</span>
+                        <span class="font-mono text-[10px] px-2 py-0.5 rounded bg-surface-1 border border-border-subtle text-text-secondary">Summary Audit Modal</span>
+                    </div>
+
+                    <!-- Key C++ Classes -->
+                    <div class="p-3 rounded bg-surface-1/70 border border-border-subtle font-mono text-[11px] text-text-muted mb-6">
+                        <span class="text-text-secondary block mb-1">Core Class Interface:</span>
+                        <code class="text-white">FValidateAllAssetsModule</code><br>
+                        <code class="text-zinc-400">UValidateAllAssetsSettings</code>
+                    </div>
+                </div>
+
+                <div class="pt-4 border-t border-border-subtle flex items-center justify-between gap-2 font-mono text-xs">
+                    <button onclick="openSpecModal('linter')" class="px-3 py-1.5 rounded border border-border-medium bg-surface-1 hover:border-white text-white transition-colors">
+                        Inspect Specs
+                    </button>
+                    <a href="https://github.com/1SHAMAY1/Plugin-ValidateAllAssets" target="_blank" rel="noopener noreferrer" 
+                       class="px-2.5 py-1.5 rounded text-text-secondary hover:text-white hover:bg-surface-1 transition-colors">
+                        Repo
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Architecture & Comparison Benchmarks Section -->
+    <section id="benchmarks" class="py-16 sm:py-24 border-t border-border-subtle bg-surface-0/40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="max-w-3xl mb-12">
+                <div class="font-mono text-xs text-text-muted uppercase tracking-widest mb-2">SYSTEM BENCHMARKS & PARADIGMS</div>
+                <h2 class="font-display text-3xl font-bold tracking-tight text-white mb-4">Engineering Architecture vs Standard Implementations</h2>
+                <p class="text-xs sm:text-sm text-text-secondary leading-relaxed">
+                    How the Unreal Essential Suite overcomes common performance pitfalls, tick bottlenecks, and network contention in large-scale Unreal Engine projects.
                 </p>
             </div>
 
-            <!-- Architectural Telemetry Pills -->
-            <div>
-                <div class="font-mono text-[10px] text-mono-500 uppercase tracking-widest mb-2.5">
-                    02 / ARCHITECTURAL PILLARS
-                </div>
-                <div id="drawer-pills" class="flex flex-wrap gap-1.5">
-                    <!-- Dynamic Pills -->
-                </div>
+            <div class="overflow-x-auto border border-border-subtle rounded-lg bg-surface-0 font-mono text-xs">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="border-b border-border-medium bg-surface-1 text-text-muted text-[11px] uppercase tracking-wider">
+                            <th class="p-4 sm:px-6">Domain / Capability</th>
+                            <th class="p-4 sm:px-6">Standard UE Implementation</th>
+                            <th class="p-4 sm:px-6 text-white font-bold">Unreal Essential Suite Solution</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-border-subtle text-text-secondary">
+                        <tr>
+                            <td class="p-4 sm:px-6 font-semibold text-white">Traversal & Parkour</td>
+                            <td class="p-4 sm:px-6 text-zinc-400">Manual Blueprint line traces; abrupt capsule teleportation.</td>
+                            <td class="p-4 sm:px-6 text-white">Automated 3-point trace + <strong>Motion Warping</strong> dynamic root target alignment.</td>
+                        </tr>
+                        <tr>
+                            <td class="p-4 sm:px-6 font-semibold text-white">Camera Behaviors</td>
+                            <td class="p-4 sm:px-6 text-zinc-400">Tightly coupled to Character Blueprint; brittle spring-arm toggles.</td>
+                            <td class="p-4 sm:px-6 text-white">Decoupled $O(1)$ prioritized stack in <strong>AEnhancedPlayerCameraManager</strong> with collision caching.</td>
+                        </tr>
+                        <tr>
+                            <td class="p-4 sm:px-6 font-semibold text-white">Quest Event Routing</td>
+                            <td class="p-4 sm:px-6 text-zinc-400">Per-frame actor tick polling; expensive world actor iterations.</td>
+                            <td class="p-4 sm:px-6 text-white"><strong>Zero-Tick</strong> inverted tag routing in <strong>UGameplayQuestEventSubsystem</strong>.</td>
+                        </tr>
+                        <tr>
+                            <td class="p-4 sm:px-6 font-semibold text-white">Network Replication</td>
+                            <td class="p-4 sm:px-6 text-zinc-400">High-frequency NetMulticast RPC storms; packet loss on late joiners.</td>
+                            <td class="p-4 sm:px-6 text-white"><strong>FFastArraySerializer</strong> struct dirty-deltas + client <strong>RepNotify</strong> rolling counters.</td>
+                        </tr>
+                        <tr>
+                            <td class="p-4 sm:px-6 font-semibold text-white">Concurrent Interactions</td>
+                            <td class="p-4 sm:px-6 text-zinc-400">Race conditions; multi-client desync; client speedhacking on hold keys.</td>
+                            <td class="p-4 sm:px-6 text-white">Atomic contention locks, leased lock TTL auto-recovery, and anti-cheat hold latency verification.</td>
+                        </tr>
+                        <tr>
+                            <td class="p-4 sm:px-6 font-semibold text-white">Item Data & Ground Loot</td>
+                            <td class="p-4 sm:px-6 text-zinc-400">Monolithic item classes; frame drops rendering hundreds of world actors.</td>
+                            <td class="p-4 sm:px-6 text-white">Polymorphic <strong>UInventoryItemFragment</strong> DataAssets + <strong>MassEntity ECS</strong> ground loot structs.</td>
+                        </tr>
+                        <tr>
+                            <td class="p-4 sm:px-6 font-semibold text-white">Asset Hygiene & Linting</td>
+                            <td class="p-4 sm:px-6 text-zinc-400">Manual asset inspection; packaging crashes caused by missing dependencies.</td>
+                            <td class="p-4 sm:px-6 text-white">1-Click <strong>IAssetRegistry</strong> recursive audit with automated in-place prefix/suffix correction.</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
+        </div>
+    </section>
 
-            <!-- Terminal Clone Command -->
-            <div>
-                <div class="font-mono text-[10px] text-mono-500 uppercase tracking-widest mb-2">
-                    03 / INSTALLATION (GIT)
-                </div>
-                <div class="bg-[#070709] border border-white/10 p-3 rounded font-mono text-[11px] text-mono-300 relative group">
-                    <div class="truncate text-white select-all" id="drawer-clone-cmd">
-                        git clone https://github.com/...
+    <!-- Installation & Setup Guide -->
+    <section id="installation" class="py-16 sm:py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-t border-border-subtle">
+        <div class="max-w-3xl mb-12">
+            <div class="font-mono text-xs text-text-muted uppercase tracking-widest mb-2">INTEGRATION WORKFLOW</div>
+            <h2 class="font-display text-3xl font-bold tracking-tight text-white mb-4">Quick Installation Guide</h2>
+            <p class="text-xs sm:text-sm text-text-secondary leading-relaxed">
+                All plugins are packaged with pre-compiled Win64 editor binaries (`.dll` + `.modules`), allowing Blueprint-only projects to launch immediately without installing Visual Studio.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 font-mono text-xs">
+            <!-- UE 5.8+ Setup -->
+            <div class="p-6 rounded-lg bg-surface-0 border border-border-subtle flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="text-white font-bold font-display text-base">For UE 5.8+ Modules (Root Plugins)</span>
+                        <span class="px-2 py-0.5 rounded border border-engine-blue/40 text-blue-400 bg-blue-950/30 text-[10px]">Root Plugins</span>
                     </div>
-                    <button id="drawer-copy-btn" class="mt-2.5 w-full py-1.5 border border-white/20 hover:border-white hover:bg-white hover:text-black font-mono text-[10px] text-white transition-all flex items-center justify-center gap-1.5">
-                        <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                        </svg>
-                        <span id="drawer-copy-label">COPY CLONE COMMAND</span>
-                    </button>
+                    <p class="text-text-secondary leading-relaxed mb-4">
+                        Quest, Interaction, Inventory, and Common Frontend UI feature root-level descriptors:
+                    </p>
+                    <div class="p-3.5 rounded bg-surface-1 border border-border-subtle text-text-primary mb-4 overflow-x-auto">
+                        <div class="text-text-muted mb-1 select-none"># Navigate to your project plugins directory:</div>
+                        <code>cd YourProject/Plugins</code><br><br>
+                        <div class="text-text-muted mb-1 select-none"># Clone any desired 5.8+ module:</div>
+                        <code>git clone https://github.com/1SHAMAY1/Plugin-GameplayQuestFramework.git</code><br>
+                        <code>git clone https://github.com/1SHAMAY1/Plugin-GameplayInteractionFramework.git</code><br>
+                        <code>git clone https://github.com/1SHAMAY1/Plugin-GameplayInventoryFramework.git</code><br>
+                        <code>git clone https://github.com/1SHAMAY1/Plugin-CommonFrontendUI.git</code>
+                    </div>
+                </div>
+                <div class="text-[11px] text-text-muted">
+                    Restart Unreal Editor. Modules appear ready under <span class="text-white">Edit &gt; Plugins</span>.
+                </div>
+            </div>
+
+            <!-- UE 5.3 - 5.5 Setup -->
+            <div class="p-6 rounded-lg bg-surface-0 border border-border-subtle flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="text-white font-bold font-display text-base">For UE 5.3 &ndash; 5.5 Modules (Version-Foldered)</span>
+                        <span class="px-2 py-0.5 rounded border border-border-subtle text-text-secondary bg-surface-1 text-[10px]">Foldered</span>
+                    </div>
+                    <p class="text-text-secondary leading-relaxed mb-4">
+                        Character Locomotion, Enhanced Camera, and Validate All Assets contain dedicated version sub-folders:
+                    </p>
+                    <div class="p-3.5 rounded bg-surface-1 border border-border-subtle text-text-primary mb-4 overflow-x-auto">
+                        <div class="text-text-muted mb-1 select-none"># Clone the repository:</div>
+                        <code>git clone https://github.com/1SHAMAY1/Plugin-CharacterLocomotionSystem.git</code><br><br>
+                        <div class="text-text-muted mb-1 select-none"># Copy your specific version folder (e.g. 5.4):</div>
+                        <code>cp -r Plugin-CharacterLocomotionSystem/5.4/CharacterLocomotionSystem YourProject/Plugins/</code>
+                    </div>
+                </div>
+                <div class="text-[11px] text-text-muted">
+                    Pre-compiled binaries for 5.3, 5.4, and 5.5 load automatically with zero build steps.
                 </div>
             </div>
         </div>
+    </section>
 
-        <!-- Drawer Footer Actions -->
-        <div class="p-6 border-t border-white/10 bg-black flex items-center gap-3">
-            <a id="drawer-demo-btn" href="#" class="hidden flex-1 py-2.5 border border-white/30 text-white hover:bg-white/10 font-mono text-xs font-semibold text-center transition-colors">
-                INTERACTIVE DEMO
-            </a>
-            <a id="drawer-github-btn" href="#" target="_blank" class="flex-1 py-2.5 bg-white text-black hover:bg-mono-100 font-mono text-xs font-semibold text-center transition-colors flex items-center justify-center gap-1.5">
-                <span>VIEW REPOSITORY</span>
-                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                </svg>
-            </a>
+    <!-- Technical Specification Drawer Modal -->
+    <div id="spec-modal" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-sm flex justify-end" onclick="closeSpecModalOnBackdrop(event)">
+        <div class="w-full max-w-2xl h-full bg-surface-0 border-l border-border-medium flex flex-col justify-between shadow-2xl overflow-y-auto" onclick="event.stopPropagation()">
+            <!-- Drawer Header -->
+            <div class="p-6 border-b border-border-subtle flex items-start justify-between sticky top-0 bg-surface-0/95 backdrop-blur z-20">
+                <div>
+                    <div class="flex items-center gap-2 mb-1.5 font-mono text-[11px]">
+                        <span id="modal-engine" class="px-2 py-0.5 rounded bg-surface-1 border border-border-subtle text-text-secondary"></span>
+                        <span id="modal-test-badge" class="px-2 py-0.5 rounded bg-surface-1 border border-border-subtle text-text-secondary"></span>
+                    </div>
+                    <h3 id="modal-title" class="font-display text-2xl font-bold text-white"></h3>
+                </div>
+                <button onclick="closeSpecModal()" class="p-2 rounded bg-surface-1 hover:bg-surface-2 border border-border-subtle text-text-secondary hover:text-white transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+
+            <!-- Drawer Body -->
+            <div class="p-6 space-y-6 flex-1 text-xs">
+                <div>
+                    <h4 class="font-mono text-[11px] text-text-muted uppercase tracking-widest mb-2">SYSTEM OVERVIEW</h4>
+                    <p id="modal-desc" class="text-text-secondary leading-relaxed text-sm"></p>
+                </div>
+
+                <div>
+                    <h4 class="font-mono text-[11px] text-text-muted uppercase tracking-widest mb-3">KEY HIGHLIGHTS</h4>
+                    <ul id="modal-highlights" class="space-y-2 text-text-secondary list-disc pl-4 leading-relaxed font-sans"></ul>
+                </div>
+
+                <div>
+                    <h4 class="font-mono text-[11px] text-text-muted uppercase tracking-widest mb-2">ARCHITECTURAL DATA FLOW</h4>
+                    <pre id="modal-flow" class="p-4 rounded bg-surface-1 border border-border-subtle font-mono text-[11px] text-zinc-300 overflow-x-auto whitespace-pre leading-normal"></pre>
+                </div>
+
+                <div>
+                    <h4 class="font-mono text-[11px] text-text-muted uppercase tracking-widest mb-2">C++ INTERFACES & EXPOSURE</h4>
+                    <pre id="modal-code" class="p-4 rounded bg-surface-1 border border-border-subtle font-mono text-[11px] text-emerald-400 overflow-x-auto whitespace-pre leading-normal"></pre>
+                </div>
+
+                <div>
+                    <h4 class="font-mono text-[11px] text-text-muted uppercase tracking-widest mb-2">CLONE COMMAND</h4>
+                    <div class="flex items-center justify-between p-3 rounded bg-surface-1 border border-border-subtle font-mono text-xs">
+                        <code id="modal-install" class="text-white overflow-x-auto"></code>
+                        <button onclick="copyToClipboard('modal-install', this)" class="ml-3 px-2 py-1 rounded bg-surface-2 text-text-secondary hover:text-white transition-colors">
+                            Copy
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Drawer Footer -->
+            <div class="p-6 border-t border-border-subtle bg-surface-1/50 flex items-center justify-between font-mono text-xs">
+                <a id="modal-repo-link" href="#" target="_blank" rel="noopener noreferrer" 
+                   class="px-4 py-2 rounded bg-white text-black font-semibold hover:bg-zinc-200 transition-colors">
+                    View GitHub Repository
+                </a>
+                <button onclick="closeSpecModal()" class="text-text-muted hover:text-white transition-colors">
+                    Close Drawer [Esc]
+                </button>
+            </div>
         </div>
-    </aside>
+    </div>
 
-    <!-- ==================== BOTTOM HUD DOCK ==================== -->
-    <footer class="relative z-20 w-full px-4 py-3 bg-black/80 backdrop-blur-md border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-3">
-        <!-- Module Selector Dock (7 Items) -->
-        <div class="flex items-center gap-1.5 overflow-x-auto max-w-full pb-1 sm:pb-0" id="module-dock">
-            <!-- Populated Dynamically or Hardcoded -->
-            <button class="dock-item px-3 py-1.5 border border-white/15 bg-black hover:border-white font-mono text-[11px] tracking-tight transition-all text-mono-300 whitespace-nowrap" data-module="cls">
-                [CLS] LOCOMOTION
-            </button>
-            <button class="dock-item px-3 py-1.5 border border-white/15 bg-black hover:border-white font-mono text-[11px] tracking-tight transition-all text-mono-300 whitespace-nowrap" data-module="ecs">
-                [ECS] CAMERA
-            </button>
-            <button class="dock-item px-3 py-1.5 border border-white/15 bg-black hover:border-white font-mono text-[11px] tracking-tight transition-all text-mono-300 whitespace-nowrap" data-module="gqf">
-                [GQF] QUESTS
-            </button>
-            <button class="dock-item px-3 py-1.5 border border-white/15 bg-black hover:border-white font-mono text-[11px] tracking-tight transition-all text-mono-300 whitespace-nowrap" data-module="gif">
-                [GIF] INTERACTION
-            </button>
-            <button class="dock-item px-3 py-1.5 border border-white/15 bg-black hover:border-white font-mono text-[11px] tracking-tight transition-all text-mono-300 whitespace-nowrap" data-module="invf">
-                [INVF] INVENTORY
-            </button>
-            <button class="dock-item px-3 py-1.5 border border-white/15 bg-black hover:border-white font-mono text-[11px] tracking-tight transition-all text-mono-300 whitespace-nowrap" data-module="cfui">
-                [CFUI] FRONTEND
-            </button>
-            <button class="dock-item px-3 py-1.5 border border-white/15 bg-black hover:border-white font-mono text-[11px] tracking-tight transition-all text-mono-300 whitespace-nowrap" data-module="vaa">
-                [VAA] VALIDATOR
-            </button>
+    <!-- Video Preview Modal -->
+    <div id="video-modal" class="fixed inset-0 z-50 hidden bg-black/90 backdrop-blur-md flex items-center justify-center p-4" onclick="closeVideoModalOnBackdrop(event)">
+        <div class="w-full max-w-4xl bg-surface-0 border border-border-medium rounded-lg overflow-hidden shadow-2xl" onclick="event.stopPropagation()">
+            <div class="p-4 border-b border-border-subtle flex items-center justify-between">
+                <h3 id="video-title" class="font-display text-base font-bold text-white">System Demonstration</h3>
+                <button onclick="closeVideoModal()" class="p-1 rounded bg-surface-1 hover:bg-surface-2 text-text-secondary hover:text-white transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+            <div class="aspect-video relative bg-black">
+                <iframe id="video-frame" src="" class="absolute inset-0 w-full h-full" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+            </div>
         </div>
+    </div>
 
-        <!-- Telemetry Status Line -->
-        <div class="hidden md:flex items-center gap-4 font-mono text-[10px] text-mono-500 whitespace-nowrap">
-            <span>RENDER: WEBGL 60FPS</span>
-            <span>&bull;</span>
-            <span>SHANKHARAJ DATTA &copy; 2026</span>
+    <!-- Footer -->
+    <footer class="border-t border-border-subtle bg-void py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-6 font-mono text-xs">
+            <div class="flex items-center gap-3">
+                <span class="w-2 h-2 bg-white rounded-none"></span>
+                <span class="text-text-secondary">UNREAL ESSENTIAL SUITE &copy; 2026 SHANKHARAJ DATTA.</span>
+                <span class="text-text-muted">DISTRIBUTED UNDER MIT LICENSE.</span>
+            </div>
+
+            <div class="flex items-center gap-4 text-text-secondary">
+                <a href="https://www.linkedin.com/in/shankharaj-datta-45921a28a/" target="_blank" rel="noopener noreferrer" class="hover:text-white transition-colors">
+                    LinkedIn
+                </a>
+                <span>&bull;</span>
+                <a href="https://github.com/1SHAMAY1" target="_blank" rel="noopener noreferrer" class="hover:text-white transition-colors">
+                    GitHub Profile
+                </a>
+                <span>&bull;</span>
+                <a href="#suite-matrix" class="hover:text-white transition-colors">
+                    Back to Top &uarr;
+                </a>
+            </div>
         </div>
     </footer>
 
-    <!-- Copy Toast Feedback -->
-    <div id="toast" class="toast-hidden fixed bottom-16 left-1/2 -translate-x-1/2 z-50 px-4 py-2 bg-white text-black font-mono text-xs font-semibold shadow-2xl border border-white flex items-center gap-2">
-        <span class="w-1.5 h-1.5 bg-black"></span>
-        <span id="toast-text">CLONE COMMAND COPIED</span>
-    </div>
-
-    <!-- ==================== 3D ENGINE SCRIPT ==================== -->
+    <!-- Interactive Specs Data & Logic Script -->
     <script>
-        // Module Data Dictionary
-        const MODULE_REGISTRY = {
-            cls: {
-                id: 'cls',
-                index: 0,
-                code: 'CLS',
-                name: 'Plugin-CharacterLocomotionSystem',
-                category: 'Movement & Parkour',
-                engine: 'UE 5.3 \u2013 5.5',
-                desc: 'Production-ready, network-replicated movement component derived directly from UCharacterMovementComponent. Features automated 3-point trace vaulting, mantle, high climbing, sliding, and tactical prone with client-side root motion prediction.',
-                pills: ['CMC Native', 'Motion Warping', 'Client Prediction', 'Data Assets', 'Pre-Compiled Win64'],
-                cloneUrl: 'https://github.com/1SHAMAY1/Plugin-CharacterLocomotionSystem.git',
-                repoUrl: 'https://github.com/1SHAMAY1/Plugin-CharacterLocomotionSystem',
-                demoUrl: 'locomotion.html',
-                meshColor: 0xFFFFFF
+        const PLUGIN_SPECS = {
+            locomotion: {
+                title: "Character Locomotion System (CLS)",
+                engine: "UE 5.3 | 5.4 | 5.5",
+                testBadge: "Network Replicated",
+                repo: "https://github.com/1SHAMAY1/Plugin-CharacterLocomotionSystem",
+                desc: "An enterprise C++ movement framework extending native UCharacterMovementComponent with fluid parkour, climbing, sliding, and tactical traversal powered by Epic's Motion Warping and PrimaryDataAsset architecture.",
+                highlights: [
+                    "Automated 3-point trace vaulting and mantle with Motion Warping synchronization.",
+                    "Freeform vertical climbing with surface normal detection and climb-up ledge exits.",
+                    "Momentum-conserving sliding with smooth dynamic camera eye-height interpolation.",
+                    "Modular, designer-first PrimaryDataAsset configurations for warp offsets and timing.",
+                    "Integrated predictive client simulation & server replay network replication."
+                ],
+                flow: `[Input: Sprint/Vault/Climb]
+  └── UNewCharacterMovementComponent
+        ├── Trace Surface Normal & Ledge Clearance
+        └── Resolve Traversal Mode (Vault / Mantle / Climb / Slide)
+              └── UMotionWarpingComponent
+                    ├── Read Offsets from PrimaryDataAsset
+                    └── Interpolate Capsule & Root Motion to Ledge`,
+                code: `// PrimaryDataAsset configuration interface:
+UCLASS(BlueprintType)
+class UVaultPrimaryDataAsset : public UPrimaryDataAsset
+{
+    GENERATED_BODY()
+public:
+    UPROPERTY(EditDefaultsOnly, Category = "Warp Targets")
+    FVector LandingOffset;
+
+    UPROPERTY(EditDefaultsOnly, Category = "Warp Targets")
+    FName TargetWarpName = "WarpPoint_Vault";
+
+    UPROPERTY(EditDefaultsOnly, Category = "Animation")
+    TObjectPtr<UAnimMontage> VaultMontage;
+};`,
+                install: "git clone https://github.com/1SHAMAY1/Plugin-CharacterLocomotionSystem.git"
             },
-            ecs: {
-                id: 'ecs',
-                index: 1,
-                code: 'ECS',
-                name: 'Plugin-EnhancedCameraSystem',
-                category: 'Dynamic Camera Stack',
-                engine: 'UE 5.3',
-                desc: 'Modular, data-driven camera modifier pipeline. Layer camera behaviors, procedural FOV zoom blending, responsive collision dampening, and procedural shakes via modular modifiers without hard actor references.',
-                pills: ['Modifier Stack', 'FOV Blending', 'Occlusion Dampening', 'Sequencer Ready', 'Pre-Compiled Win64'],
-                cloneUrl: 'https://github.com/1SHAMAY1/Plugin-EnhancedCameraSystem.git',
-                repoUrl: 'https://github.com/1SHAMAY1/Plugin-EnhancedCameraSystem',
-                demoUrl: 'camera.html',
-                meshColor: 0xCCCCCC
+            camera: {
+                title: "Enhanced Camera System (ECS)",
+                engine: "UE 5.3",
+                testBadge: "Data-Driven Stack",
+                repo: "https://github.com/1SHAMAY1/Plugin-EnhancedCameraSystem",
+                desc: "A modular, high-performance, runtime-switchable camera framework for Unreal Engine 5.3. Completely decouples camera behaviors from character blueprints with a prioritized push/pop camera stack.",
+                highlights: [
+                    "O(1) prioritized push/pop camera stack via AEnhancedPlayerCameraManager.",
+                    "LastCollisionLocation caching prevents harsh camera cuts during geometry occlusion.",
+                    "Frame-rate independent delta calculations guarantee smooth tracking at 30, 60, and 120+ FPS.",
+                    "Seamless GAS integration: push ADS/Sprint camera modes on ability activation and pop on end.",
+                    "Zero actor tick overhead by directly overriding UpdateCamera on APlayerCameraManager."
+                ],
+                flow: `[GAS Trigger / Input Action / Cinematic Trigger]
+  └── PushCameraMode(ConfigAsset, GameplayTag)
+        └── AEnhancedPlayerCameraManager
+              ├── Priority Camera Stack (O(1) Top Active Evaluation)
+              ├── Calculate Camera (Socket Offsets + Anti-Jitter Lag)
+              ├── Collision Cache & Occlusion Avoidance
+              └── Smooth View Target to Viewport`,
+                code: `// C++ Push Mode Example:
+if (AEnhancedPlayerCameraManager* CamMgr = Cast<AEnhancedPlayerCameraManager>(PlayerCameraManager))
+{
+    CamMgr->PushCameraMode(
+        ADSConfigAsset, 
+        FGameplayTag::RequestGameplayTag("Camera.State.ADS")
+    );
+    // When finished: CamMgr->PopCameraMode();
+}`,
+                install: "git clone https://github.com/1SHAMAY1/Plugin-EnhancedCameraSystem.git"
             },
-            gqf: {
-                id: 'gqf',
-                index: 2,
-                code: 'GQF',
-                name: 'Plugin-GameplayQuestFramework',
-                category: 'Quest State Machine',
-                engine: 'UE 5.8+',
-                desc: 'Zero-tick event-driven quest engine powered by native Gameplay Tags. Subscribes directly to hierarchical tags via an inverted tag index. Includes dual JSON/binary persistence, co-op sharing policies, and 33 automated tests.',
-                pills: ['Zero-Tick Tags', 'FFastArray Net', 'JSON & Binary Save', '33 Tests (100%)', 'Zero RPCs'],
-                cloneUrl: 'https://github.com/1SHAMAY1/Plugin-GameplayQuestFramework.git',
-                repoUrl: 'https://github.com/1SHAMAY1/Plugin-GameplayQuestFramework',
-                demoUrl: null,
-                meshColor: 0xFFFFFF
+            quest: {
+                title: "Gameplay Quest Framework",
+                engine: "UE 5.8+ STRICT",
+                testBadge: "33 Tests (100% Pass)",
+                repo: "https://github.com/1SHAMAY1/Plugin-GameplayQuestFramework",
+                desc: "A production-grade, zero-tick, modular, authoritative C++ quest framework engineered for single-player story campaigns, co-op adventures, and high-density MMORPG quest environments.",
+                highlights: [
+                    "Zero-tick inverted tag event routing: objectives subscribe to GameplayTags in UGameplayQuestEventSubsystem.",
+                    "Network authority powered by FFastArraySerializer dirty deltas and RepNotify delegates (zero multicast RPCs).",
+                    "Quests authored as UGameplayQuestDefinition PrimaryDataAssets with inline instanced objectives.",
+                    "UGameplayQuestDataSubsystem preserves active quest portfolios across level streaming and Server Travel.",
+                    "Dual persistence engine: compact binary serialization for USaveGame and JSON schema serialization for cloud DBs.",
+                    "33 comprehensive enterprise automation tests passing headlessly with 100% success rate."
+                ],
+                flow: `[World Event: Enemy Killed / Item Collected]
+  └── UGameplayQuestFunctionLibrary::BroadcastKillEvent
+        └── UGameplayQuestEventSubsystem (UWorldSubsystem)
+              ├── Inverted Tag Index: Maps Tag -> Subscribed Objectives
+              └── Zone Scope Validation
+                    └── UGameplayQuestManagerComponent (Server Authority)
+                          ├── FFastArraySerializer: Dirty Delta Bunches
+                          └── Client RepNotify: OnRep_CompletedQuestTags`,
+                code: `// Zero-Tick Tag Broadcasting:
+UGameplayQuestFunctionLibrary::BroadcastKillEvent(
+    WorldContextObject,
+    InstigatingPlayer,
+    FGameplayTag::RequestGameplayTag("Quest.Event.Kill.Dragon"),
+    TargetEnemyActor
+);`,
+                install: "git clone https://github.com/1SHAMAY1/Plugin-GameplayQuestFramework.git"
             },
-            gif: {
-                id: 'gif',
-                index: 3,
-                code: 'GIF',
-                name: 'Plugin-GameplayInteractionFramework',
-                category: 'Contextual Interaction',
-                engine: 'UE 5.8+',
-                desc: 'Server-authoritative interaction framework built with atomic contention locks, rolling ChangeCounters (zero Multicast RPCs), anti-speedhack hold verification, and cross-level persistence for seamless map travel.',
-                pills: ['RepNotify Locks', 'Anti-Cheat Timing', '3-Phase Commit', '40 Tests (100%)', 'Zero-Tick Sweep'],
-                cloneUrl: 'https://github.com/1SHAMAY1/Plugin-GameplayInteractionFramework.git',
-                repoUrl: 'https://github.com/1SHAMAY1/Plugin-GameplayInteractionFramework',
-                demoUrl: null,
-                meshColor: 0xEEEEEE
+            interaction: {
+                title: "Gameplay Interaction Framework",
+                engine: "UE 5.8+ STRICT",
+                testBadge: "40 Tests (100% Pass)",
+                repo: "https://github.com/1SHAMAY1/Plugin-GameplayInteractionFramework",
+                desc: "A high-performance, modular, authoritative C++ interaction framework engineered for strict multiplayer consistency, anti-cheat hold verification, and resilient cross-level state tracking.",
+                highlights: [
+                    "Atomic contention locks prevent race conditions when multiple players attempt simultaneous interaction.",
+                    "Server validates hold timing using round-trip latency compensation to block client speedhack exploits.",
+                    "Leased lock TTL auto-expiration and dynamic OnEndPlay bindings clean up state on client disconnects.",
+                    "3-phase async commit transaction safety (BeginAsyncInteraction, CommitAsyncInteraction, RollbackAsyncInteraction).",
+                    "Metroidvania cross-level persistence via UInteractionPersistenceSubsystem for WorldShared and InstigatorScoped states.",
+                    "40 verified automated unit, authority, animation, and stress tests passing headlessly."
+                ],
+                flow: `[Client Sweep: UInteractionDetectorComponent]
+  └── Directional Scoring (Angle + Distance + Priority)
+        └── Server RPC: TryAcquireInteraction
+              └── UInteractableComponent
+                    ├── Validate Range, LoS & GameplayTag Queries
+                    ├── Atomic Contention Lock & TTL Timer
+                    ├── Hold Anti-Cheat Verification (Round-Trip Latency)
+                    └── RepNotify State Broadcast to Clients (No Multicast)`,
+                code: `// Latent Blueprint Async Action Execution:
+UAsyncAction_PerformInteraction* Action = 
+    UAsyncAction_PerformInteraction::PerformInteractionAsync(
+        TargetInteractable,
+        InstigatorCharacter
+    );
+Action->OnCompleted.AddDynamic(this, &AMyPlayer::HandleCompleted);`,
+                install: "git clone https://github.com/1SHAMAY1/Plugin-GameplayInteractionFramework.git"
             },
-            invf: {
-                id: 'invf',
-                index: 4,
-                code: 'INVF',
-                name: 'Plugin-GameplayInventoryFramework',
-                category: 'Replicated Inventory',
-                engine: 'UE 5.8+',
-                desc: 'Data-driven fragment inventory and equipment orchestrator. Replicates dirty-delta slices via FFastArraySerializer, features dynamic parameter bags, and includes MassEntity ground loot structs for battle-royale density.',
-                pills: ['FFastArray Net', 'Fragment Defs', 'MassEntity Drops', '13 Tests (100%)', 'Spatial Index'],
-                cloneUrl: 'https://github.com/1SHAMAY1/Plugin-GameplayInventoryFramework.git',
-                repoUrl: 'https://github.com/1SHAMAY1/Plugin-GameplayInventoryFramework',
-                demoUrl: null,
-                meshColor: 0xDDDDDD
+            inventory: {
+                title: "Gameplay Inventory Framework",
+                engine: "UE 5.8+ STRICT",
+                testBadge: "13 Tests (100% Pass)",
+                repo: "https://github.com/1SHAMAY1/Plugin-GameplayInventoryFramework",
+                desc: "A production-grade, zero-tick, modular C++ inventory, equipment, and world loot framework engineered for multiplayer survival games, tactical shooters, and high-density MMORPGs.",
+                highlights: [
+                    "Polymorphic data-driven fragment architecture: items defined as reusable UInventoryItemFragment DataAssets.",
+                    "Runtime instances feature isolated dynamic parameter bags (FItemDynamicParam) for durability, ammo, and attachments.",
+                    "FFastArraySerializer delta serialization guarantees bandwidth efficiency with zero multicast RPC overhead.",
+                    "Multi-inventory orchestration for cross-container transfers, slot swapping, stack splitting, and auto-routing.",
+                    "High-volume Mass Entity ECS structs (FMassItemDropFragment) simulate thousands of ground items at negligible CPU cost.",
+                    "13 automated unit, integration, network, and subsystem tests passing headlessly."
+                ],
+                flow: `[World Loot / Chest / Actor]
+  └── UItemComponent (Server Authority)
+        └── Interacting Player
+              └── UInventoryManagerComponent
+                    ├── Atomic Transfers (TransferItem, SwapSlots, SplitStack)
+                    └── UInventoryComponent (Replicated Container)
+                          ├── FFastArraySerializer: Dirty Deltas
+                          └── UInventoryItemInstance
+                                ├── Const Definition (Fragments)
+                                └── Isolated Dynamic Parameter Bag`,
+                code: `// Dynamic Parameter Bag Inspection:
+UInventoryItemInstance* Item = InvComp->GetItemInSlot(0);
+float Durability = Item->GetDynamicFloatParam(
+    FGameplayTag::RequestGameplayTag("Item.Param.Durability"),
+    100.0f
+);`,
+                install: "git clone https://github.com/1SHAMAY1/Plugin-GameplayInventoryFramework.git"
             },
-            cfui: {
-                id: 'cfui',
-                index: 5,
-                code: 'CFUI',
-                name: 'Plugin-CommonFrontendUI',
-                category: 'CommonUI Navigation',
-                engine: 'UE 5.8+',
-                desc: 'Layered CommonUI stack architecture with dynamic Settings Registry (sliders, toggles, dropdowns, dependencies), interactive Enhanced Input key remapping, and zero-hitch Slate loading screens.',
-                pills: ['CommonUI Native', 'Settings Registry', 'Key Remap', 'Slate Loading', 'Async Actions'],
-                cloneUrl: 'https://github.com/1SHAMAY1/Plugin-CommonFrontendUI.git',
-                repoUrl: 'https://github.com/1SHAMAY1/Plugin-CommonFrontendUI',
-                demoUrl: null,
-                meshColor: 0xFFFFFF
+            commonui: {
+                title: "Common Frontend UI",
+                engine: "UE 5.8+ STRICT",
+                testBadge: "Complete User Guide",
+                repo: "https://github.com/1SHAMAY1/Plugin-CommonFrontendUI",
+                desc: "A modular, production-ready frontend framework for Unreal Engine 5.8+. Built on Epic's CommonUI and Enhanced Input systems, delivering decoupled multi-platform menus, settings, and navigation.",
+                highlights: [
+                    "Unified Settings Registry connecting directly to UGameUserSettings for video, audio, and gameplay preferences.",
+                    "Interactive Key Remapping screen built natively for Enhanced Input with keyboard and gamepad rebinding.",
+                    "Activatable Widget Stacks managing layered modal hierarchies without hardcoded asset references.",
+                    "Dedicated Slate Loading Screen subsystem preventing frame hitching during map travel and level streaming.",
+                    "Comprehensive 10-section USER_GUIDE.md documentation covering architecture, quickstart, and C++ workflows."
+                ],
+                flow: `[GameInstance / Player Controller]
+  └── UCommonFrontendUI_Subsystem
+        ├── Primary Layout Stack
+        │     ├── Main Menu Screen
+        │     ├── Options & Settings Registry (GameUserSettings)
+        │     ├── Key Remapping Screen (Enhanced Input)
+        │     └── Choice & Confirmation Modals
+        └── UCommonFrontendLoadingScreenSubsystem
+              └── Slate Zero-Hitch Loading Screen Interface`,
+                code: `// Push Widget to Activatable Stack:
+UCommonFrontendUI_Subsystem* UISubsystem = 
+    UCommonFrontendUI_Subsystem::Get(GetWorld());
+UISubsystem->PushFrontendWidget(
+    SettingsWidgetClass,
+    FGameplayTag::RequestGameplayTag("UI.Layer.Menu")
+);`,
+                install: "git clone https://github.com/1SHAMAY1/Plugin-CommonFrontendUI.git"
             },
-            vaa: {
-                id: 'vaa',
-                index: 6,
-                code: 'VAA',
-                name: 'Plugin-ValidateAllAssets',
-                category: 'Studio Asset Linter',
-                engine: 'UE 5.3 \u2013 5.5',
-                desc: 'One-click Editor Utility that recursively scans your /Game content directory via IAssetRegistry. Detects broken dependencies, missing collisions, unlinked textures, and enforces naming conventions with automated safe renaming.',
-                pills: ['1-Click Auto-Fix', 'AssetRegistry Audit', 'Prefix Enforcement', 'CI Cook Safety', 'Pre-Compiled Win64'],
-                cloneUrl: 'https://github.com/1SHAMAY1/Plugin-ValidateAllAssets.git',
-                repoUrl: 'https://github.com/1SHAMAY1/Plugin-ValidateAllAssets',
-                demoUrl: null,
-                meshColor: 0xCCCCCC
+            linter: {
+                title: "Validate All Assets",
+                engine: "UE 5.3 | 5.4 | 5.5",
+                testBadge: "Editor Utility Linter",
+                repo: "https://github.com/1SHAMAY1/Plugin-ValidateAllAssets",
+                desc: "A lightweight, 1-click Editor Utility plugin recursively auditing your /Game directory for missing references, broken dependencies, and naming convention violations with automated prefix and suffix correction.",
+                highlights: [
+                    "Missing reference detection: queries IAssetRegistry to locate corrupted or missing assets before packaging.",
+                    "Class categorization across Blueprints (BP_), Materials (M_, MI_), Meshes (SM_, SK_), Textures (T_), and Niagara (NS_).",
+                    "1-Click automated in-place renaming fixes non-compliant asset names instantly via LoadedAsset->Rename().",
+                    "Configurable rules per asset class located in Project Settings > Editor > ValidateAllAssetsSettings.",
+                    "Instant executive modal summary dialog detailing exact counts of valid assets and auto-fixed entries."
+                ],
+                flow: `[Toolbar Click: Validate All Assets]
+  └── IAssetRegistry Query (Recursive /Game)
+        ├── Iterate All FAssetData
+        ├── Detect Null Objects (Log Broken Reference)
+        └── Resolve Asset Class
+              ├── Verify Configured Prefix & Suffix
+              └── If Non-Compliant: LoadedAsset->Rename() In-Place
+                    └── Aggregate Summary Modal Dialog`,
+                code: `// Summary Output format:
+Asset validation complete.
+------------------------------------
+Valid Assets:        1,428
+Missing References:      0
+Missing Prefixes:       14 (Fixed: 14)
+Missing Suffixes:        3 (Fixed: 3)`,
+                install: "git clone https://github.com/1SHAMAY1/Plugin-ValidateAllAssets.git"
             }
         };
 
-        const MODULE_KEYS = Object.keys(MODULE_REGISTRY);
+        function openSpecModal(pluginId) {
+            const data = PLUGIN_SPECS[pluginId];
+            if (!data) return;
 
-        // Three.js Scene Variables
-        let scene, camera, renderer;
-        let orbitGroup, coreMesh, coreHalo;
-        let nodeMeshes = [];
-        let particles;
-        let raycaster, mouse;
-        let isDragging = false;
-        let previousMousePosition = { x: 0, y: 0 };
-        let autoRotate = true;
-        let activeModuleId = null;
-        let hoveredNode = null;
-        let targetCameraPosition = new THREE.Vector3(0, 7, 20);
-        let targetLookAt = new THREE.Vector3(0, 0, 0);
+            document.getElementById('modal-title').textContent = data.title;
+            document.getElementById('modal-engine').textContent = data.engine;
+            document.getElementById('modal-test-badge').textContent = data.testBadge;
+            document.getElementById('modal-desc').textContent = data.desc;
+            document.getElementById('modal-flow').textContent = data.flow;
+            document.getElementById('modal-code').textContent = data.code;
+            document.getElementById('modal-install').textContent = data.install;
+            document.getElementById('modal-repo-link').href = data.repo;
 
-        function initThree() {
-            const canvas = document.getElementById('webgl-canvas');
-            const width = window.innerWidth;
-            const height = window.innerHeight;
-
-            // Scene
-            scene = new THREE.Scene();
-            scene.fog = new THREE.FogExp2(0x000000, 0.025);
-
-            // Camera
-            camera = new THREE.PerspectiveCamera(50, width / height, 0.1, 1000);
-            camera.position.set(0, 7, 20);
-
-            // Renderer
-            renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
-            renderer.setSize(width, height);
-            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-
-            // Central Orbit Group
-            orbitGroup = new THREE.Group();
-            scene.add(orbitGroup);
-
-            // --- Unreal Central Core ---
-            const coreGeo = new THREE.IcosahedronGeometry(2.0, 1);
-            const coreMat = new THREE.MeshBasicMaterial({
-                color: 0xFFFFFF,
-                wireframe: true,
-                transparent: true,
-                opacity: 0.35
-            });
-            coreMesh = new THREE.Mesh(coreGeo, coreMat);
-            orbitGroup.add(coreMesh);
-
-            // Core Halo Ring
-            const haloGeo = new THREE.TorusGeometry(3.2, 0.02, 16, 100);
-            const haloMat = new THREE.MeshBasicMaterial({
-                color: 0xFFFFFF,
-                transparent: true,
-                opacity: 0.2
-            });
-            coreHalo = new THREE.Mesh(haloGeo, haloMat);
-            coreHalo.rotation.x = Math.PI / 2;
-            orbitGroup.add(coreHalo);
-
-            // Orbital Guide Rings (Thin Wire Circles)
-            [7.5, 10.5].forEach(radius => {
-                const ringGeo = new THREE.BufferGeometry();
-                const points = [];
-                for (let i = 0; i <= 128; i++) {
-                    const theta = (i / 128) * Math.PI * 2;
-                    points.push(new THREE.Vector3(Math.cos(theta) * radius, 0, Math.sin(theta) * radius));
-                }
-                ringGeo.setFromPoints(points);
-                const ringMat = new THREE.LineBasicMaterial({ color: 0xFFFFFF, transparent: true, opacity: 0.08 });
-                const ring = new THREE.Line(ringGeo, ringMat);
-                orbitGroup.add(ring);
+            const hlList = document.getElementById('modal-highlights');
+            hlList.innerHTML = '';
+            data.highlights.forEach(h => {
+                const li = document.createElement('li');
+                li.textContent = h;
+                hlList.appendChild(li);
             });
 
-            // --- 7 Orbiting Plugin Nodes ---
-            const orbitRadius = 9.5;
-            const nodeCount = MODULE_KEYS.length;
-
-            MODULE_KEYS.forEach((key, index) => {
-                const mod = MODULE_REGISTRY[key];
-                const angle = (index / nodeCount) * Math.PI * 2;
-                const yOffset = Math.sin(index * 1.8) * 1.8;
-
-                const nodeGroup = new THREE.Group();
-                nodeGroup.position.set(
-                    Math.cos(angle) * orbitRadius,
-                    yOffset,
-                    Math.sin(angle) * orbitRadius
-                );
-
-                // Geometric Solid Inner Mesh
-                const innerGeo = new THREE.OctahedronGeometry(0.7, 0);
-                const innerMat = new THREE.MeshBasicMaterial({
-                    color: 0x0A0A0A,
-                });
-                const innerMesh = new THREE.Mesh(innerGeo, innerMat);
-
-                // Wireframe Outer Cage
-                const wireGeo = new THREE.OctahedronGeometry(0.9, 0);
-                const wireMat = new THREE.MeshBasicMaterial({
-                    color: 0xFFFFFF,
-                    wireframe: true,
-                    transparent: true,
-                    opacity: 0.5
-                });
-                const wireMesh = new THREE.Mesh(wireGeo, wireMat);
-
-                // Interactive Hitbox Sphere
-                const hitGeo = new THREE.SphereGeometry(1.2, 12, 12);
-                const hitMat = new THREE.MeshBasicMaterial({ visible: false });
-                const hitMesh = new THREE.Mesh(hitGeo, hitMat);
-                hitMesh.userData = { moduleId: key };
-
-                nodeGroup.add(innerMesh);
-                nodeGroup.add(wireMesh);
-                nodeGroup.add(hitMesh);
-
-                // Connecting Filament Line to Core
-                const lineGeo = new THREE.BufferGeometry().setFromPoints([
-                    new THREE.Vector3(0, 0, 0),
-                    nodeGroup.position.clone()
-                ]);
-                const lineMat = new THREE.LineBasicMaterial({ color: 0xFFFFFF, transparent: true, opacity: 0.06 });
-                const filament = new THREE.Line(lineGeo, lineMat);
-                orbitGroup.add(filament);
-
-                nodeGroup.userData = {
-                    moduleId: key,
-                    wireMesh: wireMesh,
-                    baseY: yOffset,
-                    initialPosition: nodeGroup.position.clone()
-                };
-
-                orbitGroup.add(nodeGroup);
-                nodeMeshes.push(hitMesh);
-            });
-
-            // --- Background Dust Particles ---
-            const particleCount = 700;
-            const particleGeo = new THREE.BufferGeometry();
-            const particlePos = new Float32Array(particleCount * 3);
-
-            for (let i = 0; i < particleCount * 3; i += 3) {
-                particlePos[i] = (Math.random() - 0.5) * 80;
-                particlePos[i + 1] = (Math.random() - 0.5) * 50;
-                particlePos[i + 2] = (Math.random() - 0.5) * 80;
-            }
-            particleGeo.setAttribute('position', new THREE.BufferAttribute(particlePos, 3));
-            const particleMat = new THREE.PointsMaterial({
-                color: 0xFFFFFF,
-                size: 0.12,
-                transparent: true,
-                opacity: 0.4
-            });
-            particles = new THREE.Points(particleGeo, particleMat);
-            scene.add(particles);
-
-            // Raycaster & Mouse
-            raycaster = new THREE.Raycaster();
-            mouse = new THREE.Vector2();
-
-            // Event Listeners
-            setupEventListeners(canvas);
-
-            // Start Render Loop
-            animate();
+            const modal = document.getElementById('spec-modal');
+            modal.classList.remove('hidden');
+            document.body.classList.add('overflow-hidden');
         }
 
-        function setupEventListeners(canvas) {
-            window.addEventListener('resize', onWindowResize);
+        function closeSpecModal() {
+            const modal = document.getElementById('spec-modal');
+            modal.classList.add('hidden');
+            document.body.classList.remove('overflow-hidden');
+        }
 
-            // Drag Rotation on Canvas
-            canvas.addEventListener('mousedown', (e) => {
-                isDragging = true;
-                previousMousePosition = { x: e.clientX, y: e.clientY };
-            });
+        function closeSpecModalOnBackdrop(e) {
+            if (e.target.id === 'spec-modal') {
+                closeSpecModal();
+            }
+        }
 
-            window.addEventListener('mouseup', () => {
-                isDragging = false;
-            });
+        function openVideoModal(url, title) {
+            document.getElementById('video-title').textContent = title;
+            document.getElementById('video-frame').src = url;
+            document.getElementById('video-modal').classList.remove('hidden');
+            document.body.classList.add('overflow-hidden');
+        }
 
-            window.addEventListener('mousemove', (e) => {
-                const rect = canvas.getBoundingClientRect();
-                mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
-                mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+        function closeVideoModal() {
+            document.getElementById('video-frame').src = '';
+            document.getElementById('video-modal').classList.add('hidden');
+            document.body.classList.remove('overflow-hidden');
+        }
 
-                if (isDragging) {
-                    const deltaX = e.clientX - previousMousePosition.x;
-                    const deltaY = e.clientY - previousMousePosition.y;
+        function closeVideoModalOnBackdrop(e) {
+            if (e.target.id === 'video-modal') {
+                closeVideoModal();
+            }
+        }
 
-                    orbitGroup.rotation.y += deltaX * 0.005;
-                    orbitGroup.rotation.x += deltaY * 0.003;
-                    orbitGroup.rotation.x = Math.max(-0.6, Math.min(0.6, orbitGroup.rotation.x));
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeSpecModal();
+                closeVideoModal();
+            }
+            if (e.key === '/' && document.activeElement !== document.getElementById('plugin-search')) {
+                e.preventDefault();
+                document.getElementById('plugin-search').focus();
+            }
+        });
 
-                    previousMousePosition = { x: e.clientX, y: e.clientY };
-                }
+        function filterPlugins() {
+            const query = document.getElementById('plugin-search').value.toLowerCase().trim();
+            const cards = document.querySelectorAll('.plugin-card');
 
-                // Check Hover on Nodes
-                checkRaycastHover(e);
-            });
-
-            // Touch Support for Mobile
-            canvas.addEventListener('touchstart', (e) => {
-                if (e.touches.length === 1) {
-                    isDragging = true;
-                    previousMousePosition = { x: e.touches[0].clientX, y: e.touches[0].clientY };
-                }
-            }, { passive: true });
-
-            window.addEventListener('touchend', () => {
-                isDragging = false;
-            });
-
-            canvas.addEventListener('touchmove', (e) => {
-                if (isDragging && e.touches.length === 1) {
-                    const deltaX = e.touches[0].clientX - previousMousePosition.x;
-                    const deltaY = e.touches[0].clientY - previousMousePosition.y;
-
-                    orbitGroup.rotation.y += deltaX * 0.007;
-                    orbitGroup.rotation.x += deltaY * 0.004;
-                    orbitGroup.rotation.x = Math.max(-0.6, Math.min(0.6, orbitGroup.rotation.x));
-
-                    previousMousePosition = { x: e.touches[0].clientX, y: e.touches[0].clientY };
-                }
-            }, { passive: true });
-
-            // Wheel Zooming
-            canvas.addEventListener('wheel', (e) => {
-                targetCameraPosition.z += e.deltaY * 0.015;
-                targetCameraPosition.z = Math.max(12, Math.min(30, targetCameraPosition.z));
-            }, { passive: true });
-
-            // Click Raycasting
-            canvas.addEventListener('click', (e) => {
-                raycaster.setFromCamera(mouse, camera);
-                const intersects = raycaster.intersectObjects(nodeMeshes);
-
-                if (intersects.length > 0) {
-                    const moduleId = intersects[0].object.userData.moduleId;
-                    selectModule(moduleId);
+            cards.forEach(card => {
+                const text = card.textContent.toLowerCase() + " " + card.getAttribute('data-keywords').toLowerCase();
+                const currentCategory = document.querySelector('.filter-tab.active').getAttribute('onclick');
+                const catMatch = currentCategory.includes('all') || card.getAttribute('data-category') === currentCategory.split("'")[1];
+                
+                if (catMatch && (query === '' || text.includes(query))) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
                 }
             });
+        }
 
-            // Toggle Auto-Orbit Button
-            const toggleOrbitBtn = document.getElementById('toggle-orbit-btn');
-            toggleOrbitBtn.addEventListener('click', () => {
-                autoRotate = !autoRotate;
-                toggleOrbitBtn.innerHTML = autoRotate 
-                    ? '<span class="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span><span>AUTO-ORBIT: ON</span>' 
-                    : '<span class="w-1.5 h-1.5 rounded-full bg-mono-500"></span><span>AUTO-ORBIT: OFF</span>';
+        function setCategoryFilter(category, button) {
+            document.querySelectorAll('.filter-tab').forEach(btn => {
+                btn.classList.remove('active', 'bg-surface-2', 'text-white');
+                btn.classList.add('text-text-muted');
             });
 
-            // Reset Camera View Button
-            document.getElementById('reset-cam-btn').addEventListener('click', () => {
-                deselectModule();
-                targetCameraPosition.set(0, 7, 20);
-                targetLookAt.set(0, 0, 0);
-                orbitGroup.rotation.set(0, 0, 0);
-            });
+            button.classList.add('active', 'bg-surface-2', 'text-white');
+            button.classList.remove('text-text-muted');
 
-            // Dock Button Click Handlers
-            document.querySelectorAll('.dock-item').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const modId = btn.getAttribute('data-module');
-                    selectModule(modId);
-                });
-            });
+            filterPlugins();
+        }
 
-            // Drawer Close Button
-            document.getElementById('close-drawer-btn').addEventListener('click', () => {
-                deselectModule();
-            });
-
-            // Copy Clone Command in Drawer
-            document.getElementById('drawer-copy-btn').addEventListener('click', () => {
-                const cloneText = document.getElementById('drawer-clone-cmd').innerText;
-                navigator.clipboard.writeText(cloneText);
-                showToast('CLONE COMMAND COPIED');
-                const label = document.getElementById('drawer-copy-label');
-                label.textContent = 'COPIED TO CLIPBOARD!';
+        function copyToClipboard(elementId, button) {
+            const text = document.getElementById(elementId).textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                const originalText = button.textContent;
+                button.textContent = "Copied!";
+                button.classList.add('text-engine-emerald');
                 setTimeout(() => {
-                    label.textContent = 'COPY CLONE COMMAND';
+                    button.textContent = originalText;
+                    button.classList.remove('text-engine-emerald');
                 }, 2000);
             });
         }
-
-        function checkRaycastHover(e) {
-            const hoverTag = document.getElementById('node-hover-tag');
-            const hoverText = document.getElementById('hover-tag-text');
-
-            raycaster.setFromCamera(mouse, camera);
-            const intersects = raycaster.intersectObjects(nodeMeshes);
-
-            if (intersects.length > 0) {
-                const moduleId = intersects[0].object.userData.moduleId;
-                const mod = MODULE_REGISTRY[moduleId];
-                hoveredNode = intersects[0].object;
-
-                hoverText.textContent = `[${mod.code}] ${mod.name}`;
-                hoverTag.style.left = `${e.clientX}px`;
-                hoverTag.style.top = `${e.clientY}px`;
-                hoverTag.style.opacity = '1';
-                document.body.style.cursor = 'pointer';
-            } else {
-                hoveredNode = null;
-                hoverTag.style.opacity = '0';
-                document.body.style.cursor = 'default';
-            }
-        }
-
-        function onWindowResize() {
-            const width = window.innerWidth;
-            const height = window.innerHeight;
-            camera.aspect = width / height;
-            camera.updateProjectionMatrix();
-            renderer.setSize(width, height);
-        }
-
-        // ==================== SELECTION LOGIC ====================
-        function selectModule(moduleId) {
-            activeModuleId = moduleId;
-            const mod = MODULE_REGISTRY[moduleId];
-            if (!mod) return;
-
-            // Highlight Dock Item
-            document.querySelectorAll('.dock-item').forEach(btn => {
-                if (btn.getAttribute('data-module') === moduleId) {
-                    btn.classList.add('active');
-                } else {
-                    btn.classList.remove('active');
-                }
-            });
-
-            // Populate Drawer Data
-            document.getElementById('drawer-title').textContent = mod.name;
-            document.getElementById('drawer-category').textContent = mod.category;
-            document.getElementById('drawer-engine-badge').textContent = mod.engine;
-            document.getElementById('drawer-desc').textContent = mod.desc;
-            document.getElementById('drawer-clone-cmd').textContent = `git clone ${mod.cloneUrl}`;
-            document.getElementById('drawer-github-btn').href = mod.repoUrl;
-
-            // Optional Demo Button
-            const demoBtn = document.getElementById('drawer-demo-btn');
-            if (mod.demoUrl) {
-                demoBtn.href = mod.demoUrl;
-                demoBtn.classList.remove('hidden');
-            } else {
-                demoBtn.classList.add('hidden');
-            }
-
-            // Populate Telemetry Pills
-            const pillsContainer = document.getElementById('drawer-pills');
-            pillsContainer.innerHTML = '';
-            mod.pills.forEach(p => {
-                const span = document.createElement('span');
-                span.className = 'mono-pill';
-                span.textContent = p;
-                pillsContainer.appendChild(span);
-            });
-
-            // Open Drawer
-            const drawer = document.getElementById('telemetry-drawer');
-            drawer.classList.remove('drawer-closed');
-            drawer.classList.add('drawer-open');
-
-            // Adjust Camera Target to frame 3D node nicely
-            const nodeGroup = orbitGroup.children.find(child => child.userData && child.userData.moduleId === moduleId);
-            if (nodeGroup) {
-                const worldPos = new THREE.Vector3();
-                nodeGroup.getWorldPosition(worldPos);
-
-                // Position camera offset to view node with space on the right for drawer
-                targetLookAt.copy(worldPos);
-                targetCameraPosition.set(worldPos.x * 1.3, worldPos.y + 2, worldPos.z * 1.3 + 8);
-            }
-        }
-
-        function deselectModule() {
-            activeModuleId = null;
-            document.querySelectorAll('.dock-item').forEach(btn => btn.classList.remove('active'));
-
-            const drawer = document.getElementById('telemetry-drawer');
-            drawer.classList.remove('drawer-open');
-            drawer.classList.add('drawer-closed');
-
-            // Reset camera target
-            targetCameraPosition.set(0, 7, 20);
-            targetLookAt.set(0, 0, 0);
-        }
-
-        function showToast(msg) {
-            const toast = document.getElementById('toast');
-            document.getElementById('toast-text').textContent = msg;
-            toast.classList.remove('toast-hidden');
-            toast.classList.add('toast-visible');
-            setTimeout(() => {
-                toast.classList.remove('toast-visible');
-                toast.classList.add('toast-hidden');
-            }, 2200);
-        }
-
-        // ==================== ANIMATION LOOP ====================
-        let clock = new THREE.Clock();
-
-        function animate() {
-            requestAnimationFrame(animate);
-
-            const elapsedTime = clock.getElapsedTime();
-
-            // Core rotations
-            if (coreMesh) coreMesh.rotation.y = elapsedTime * 0.15;
-            if (coreHalo) coreHalo.rotation.z = -elapsedTime * 0.1;
-
-            // Slow Auto-Orbit when not dragging and drawer closed
-            if (autoRotate && !isDragging && !activeModuleId) {
-                orbitGroup.rotation.y += 0.002;
-            }
-
-            // Node bobbing and idle rotation
-            orbitGroup.children.forEach(child => {
-                if (child.userData && child.userData.wireMesh) {
-                    const isSelected = child.userData.moduleId === activeModuleId;
-                    const isHovered = hoveredNode && hoveredNode.userData.moduleId === child.userData.moduleId;
-
-                    // Idle spinning of wire cages
-                    child.userData.wireMesh.rotation.y += isSelected ? 0.04 : 0.015;
-                    child.userData.wireMesh.rotation.x += isSelected ? 0.02 : 0.008;
-
-                    // Subtle vertical floating wave
-                    child.position.y = child.userData.baseY + Math.sin(elapsedTime * 1.5 + child.userData.initialPosition.x) * 0.25;
-
-                    // Scale adjustment on hover or selection
-                    const targetScale = isSelected ? 1.4 : (isHovered ? 1.25 : 1.0);
-                    child.scale.lerp(new THREE.Vector3(targetScale, targetScale, targetScale), 0.1);
-
-                    // Opacity highlighting
-                    child.userData.wireMesh.material.opacity = isSelected ? 1.0 : (isHovered ? 0.85 : 0.45);
-                }
-            });
-
-            // Smooth Camera Interpolation (Damping)
-            camera.position.lerp(targetCameraPosition, 0.04);
-            const currentLookAt = new THREE.Vector3();
-            camera.getWorldDirection(currentLookAt);
-            camera.lookAt(targetLookAt);
-
-            // Particle drift
-            if (particles) {
-                particles.rotation.y = elapsedTime * 0.02;
-            }
-
-            renderer.render(scene, camera);
-        }
-
-        // Initialize on load
-        window.addEventListener('DOMContentLoaded', initThree);
     </script>
 </body>
-
 </html>
