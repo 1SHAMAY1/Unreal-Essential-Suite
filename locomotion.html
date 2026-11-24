@@ -4,184 +4,159 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Character Locomotion System | Unreal Essential Suite</title>
+    <title>Character Locomotion System - Unreal Essential Suite</title>
+    
+    <meta name="description" content="Production-ready, network-replicated movement component for UE 5.3 - 5.5. Supports vaulting, climbing, sliding, and mantle with motion warping.">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        gold: {
-                            50: '#F9F5EA',
-                            100: '#F1E9CE',
-                            200: '#E4D3A1',
-                            300: '#D6BD73',
-                            400: '#C9A645',
-                            500: '#D4AF37',
-                            600: '#AA8C2C',
-                            700: '#71560E',
-                            800: '#524010',
-                            900: '#3D300C',
+                        obsidian: {
+                            DEFAULT: '#08090D',
+                            surface: '#11131A',
+                            hover: '#171A24',
                         },
-                        black: {
-                            DEFAULT: '#050505',
-                            900: '#0A0A0A',
-                            800: '#121212',
-                            700: '#1A1A1A',
+                        amber: {
+                            forge: '#F59E0B',
+                            light: '#FBBF24',
                         }
                     },
                     fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
+                        display: ['"Space Grotesk"', 'sans-serif'],
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        mono: ['"JetBrains Mono"', 'monospace'],
                     }
                 }
             }
         }
     </script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style type="text/tailwindcss">
+    <style>
         body {
-            font-family: 'Inter', sans-serif;
-            @apply bg-black text-gray-300;
-        }
-
-        .btn-primary {
-            @apply inline-flex items-center justify-center rounded-xl bg-white text-black font-semibold px-6 py-3 transition-transform hover:scale-105 active:scale-95 duration-200;
-        }
-
-        .btn-secondary {
-            @apply inline-flex items-center justify-center rounded-xl bg-white/5 text-white font-medium border border-white/10 px-6 py-3 transition-colors hover:bg-white/10 hover:border-white/20 duration-200;
-        }
-
-        .animate-fade-in {
-            animation: fadeIn 1s ease-out forwards;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+            background-color: #08090D;
+            color: #94A3B8;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-image: 
+                radial-gradient(circle at 50% 0%, rgba(245, 158, 11, 0.06) 0%, transparent 60%),
+                radial-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 100% 100%, 28px 28px;
         }
     </style>
 </head>
 
-<body class="antialiased selection:bg-gold-500/30 selection:text-white">
+<body class="selection:bg-amber-forge/30 selection:text-white antialiased min-h-screen flex flex-col justify-between">
 
-    <!-- Navigation -->
-    <header class="fixed top-0 left-0 right-0 z-50 bg-black/80 backdrop-blur-md border-b border-white/5">
-        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-20">
-                <a href="index.html"
-                    class="text-sm font-medium text-gray-400 hover:text-white flex items-center gap-2 transition-colors">
+    <!-- Header Navigation -->
+    <header class="sticky top-0 z-50 bg-[#08090D]/85 backdrop-blur-md border-b border-white/5">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <a href="index.html" class="text-xs font-mono text-gray-400 hover:text-white flex items-center gap-2 transition-colors">
                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                     </svg>
                     Back to Suite
                 </a>
-                <div class="text-white font-semibold">Unreal Essential Suite</div>
-                <a href="camera.html"
-                    class="text-sm font-medium text-gold-400 hover:text-gold-300 flex items-center gap-2 transition-colors">
+                <span class="font-display font-bold text-white text-sm">Character Locomotion System</span>
+                <a href="camera.html" class="text-xs font-mono text-amber-forge hover:text-amber-light flex items-center gap-1.5 transition-colors">
                     Next: Camera
-                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
                     </svg>
                 </a>
             </div>
         </div>
     </header>
 
-    <main class="pt-24 pb-20">
-        <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-5xl">
+    <main class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
 
-            <!-- Header -->
-            <div class="mb-12 animate-fade-in">
-                <div
-                    class="inline-block px-3 py-1 rounded-full bg-gold-500/10 text-gold-500 text-xs font-semibold uppercase tracking-wider mb-4 border border-gold-500/20">
-                    v1.0 Available
-                </div>
-                <h1 class="text-4xl md:text-6xl font-bold text-white mb-6">Character Locomotion System</h1>
-                <p class="text-xl text-gray-400 leading-relaxed max-w-2xl">
-                    A production-ready, network-replicated movement component for UE5. Supports climbing, mantle,
-                    sliding, and prone states without the bloat of other marketplace assets.
-                </p>
+        <!-- Title Block -->
+        <div class="mb-10">
+            <div class="flex items-center gap-2 mb-4">
+                <span class="px-2.5 py-1 rounded-md bg-amber-forge/10 border border-amber-forge/30 text-amber-forge text-xs font-mono">
+                    UE 5.3 &ndash; 5.5
+                </span>
+                <span class="px-2.5 py-1 rounded-md bg-white/5 border border-white/10 text-gray-400 text-xs font-mono">
+                    Production v1.0
+                </span>
             </div>
-
-            <!-- Main Media -->
-            <div class="rounded-2xl overflow-hidden border border-white/10 bg-black-800 shadow-2xl mb-16 animate-fade-in"
-                style="animation-delay: 0.1s">
-                <div class="aspect-video relative">
-                    <iframe src="https://drive.google.com/file/d/1xRHF_Kcr_6u6GAkXdQFdyr21Jks6z8xJ/preview"
-                        class="absolute inset-0 w-full h-full" frameborder="0" allow="autoplay; encrypted-media"
-                        allowfullscreen></iframe>
-                </div>
-            </div>
-
-            <!-- Features -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 mb-16 animate-fade-in" style="animation-delay: 0.2s">
-                <div>
-                    <h3 class="text-2xl font-semibold text-white mb-6">Key Features</h3>
-                    <ul class="space-y-4">
-                        <li class="flex items-start">
-                            <svg class="w-6 h-6 text-gold-500 mr-3 shrink-0" fill="none" viewBox="0 0 24 24"
-                                stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M5 13l4 4L19 7" />
-                            </svg>
-                            <span class="text-gray-300"><strong>Full Replication:</strong> Every state transition is
-                                predicted on client and validated on server.</span>
-                        </li>
-                        <li class="flex items-start">
-                            <svg class="w-6 h-6 text-gold-500 mr-3 shrink-0" fill="none" viewBox="0 0 24 24"
-                                stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M5 13l4 4L19 7" />
-                            </svg>
-                            <span class="text-gray-300"><strong>Motion Warping:</strong> Integrates seamlessly with UE5
-                                Motion Warping for perfect alignment on vaults.</span>
-                        </li>
-                        <li class="flex items-start">
-                            <svg class="w-6 h-6 text-gold-500 mr-3 shrink-0" fill="none" viewBox="0 0 24 24"
-                                stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M5 13l4 4L19 7" />
-                            </svg>
-                            <span class="text-gray-300"><strong>Native Inheritance:</strong> Derived from standard
-                                `UCharacterMovementComponent` for maximum compatibility.</span>
-                        </li>
-                    </ul>
-                </div>
-
-                <div class="bg-white/5 rounded-2xl p-8 border border-white/5">
-                    <h3 class="text-xl font-semibold text-white mb-4">Installation</h3>
-                    <div
-                        class="bg-black rounded-lg p-4 font-mono text-sm text-gray-400 mb-6 overflow-x-auto border border-white/10">
-                        git clone https://github.com/1SHAMAY1/Plugin-CharacterLocomotionSystem.git Plugins/Locomotion
-                    </div>
-                    <div class="flex flex-col gap-3">
-                        <a href="https://github.com/1SHAMAY1/Plugin-CharacterLocomotionSystem.git" target="_blank"
-                            class="btn-primary w-full text-center">
-                            View Source Code
-                        </a>
-                        <a href="https://github.com/1SHAMAY1/Plugin-CharacterLocomotionSystem/issues" target="_blank"
-                            class="btn-secondary w-full text-center">
-                            Report Issue
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-    </main>
-
-    <footer class="py-12 border-t border-white/5 bg-black">
-        <div class="container mx-auto px-4 text-center">
-            <p class="text-gray-600 text-sm">
-                &copy; 2025 Unreal Essential Suite. Released under the MIT License.
+            <h1 class="font-display text-3xl sm:text-5xl font-bold text-white tracking-tight mb-4">
+                Character Locomotion System
+            </h1>
+            <p class="text-base text-gray-400 leading-relaxed max-w-3xl">
+                A production-ready, network-replicated movement component derived from <code class="text-white font-mono text-xs">UCharacterMovementComponent</code>. Supports automated 3-point trace vaulting, mantle, sliding, and high climbing with root motion prediction.
             </p>
         </div>
+
+        <!-- Video Showcase Player -->
+        <div class="rounded-xl overflow-hidden border border-white/10 bg-[#11131A] shadow-2xl mb-12">
+            <div class="aspect-video relative">
+                <iframe src="https://drive.google.com/file/d/1xRHF_Kcr_6u6GAkXdQFdyr21Jks6z8xJ/preview"
+                    class="absolute inset-0 w-full h-full" frameborder="0" allow="autoplay; encrypted-media"
+                    allowfullscreen></iframe>
+            </div>
+        </div>
+
+        <!-- Technical Highlights & Installation -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+            <!-- Features -->
+            <div class="p-6 rounded-xl bg-[#11131A] border border-white/5">
+                <h2 class="font-display text-lg font-bold text-white mb-4">Core Architectural Features</h2>
+                <ul class="space-y-3.5 text-xs text-gray-300">
+                    <li class="flex items-start gap-2.5">
+                        <span class="w-1.5 h-1.5 rounded-full bg-amber-forge mt-1.5 shrink-0"></span>
+                        <span><strong>Full Network Prediction:</strong> Every locomotion state transition is predicted on client and authoritative on server.</span>
+                    </li>
+                    <li class="flex items-start gap-2.5">
+                        <span class="w-1.5 h-1.5 rounded-full bg-amber-forge mt-1.5 shrink-0"></span>
+                        <span><strong>Motion Warping Integration:</strong> Seamlessly syncs with Epic's Motion Warping plugin for clean, procedural alignment during mantles and vaults.</span>
+                    </li>
+                    <li class="flex items-start gap-2.5">
+                        <span class="w-1.5 h-1.5 rounded-full bg-amber-forge mt-1.5 shrink-0"></span>
+                        <span><strong>Data-Asset Driven:</strong> Traversal speeds, obstacle trace heights, and collision adjustments configured in modular Data Assets.</span>
+                    </li>
+                    <li class="flex items-start gap-2.5">
+                        <span class="w-1.5 h-1.5 rounded-full bg-amber-forge mt-1.5 shrink-0"></span>
+                        <span><strong>Pre-Compiled Binaries:</strong> Tracked Win64 binaries for UE 5.3, 5.4, and 5.5 ready to run without compiling C++.</span>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Installation Box -->
+            <div class="p-6 rounded-xl bg-[#11131A] border border-white/5 flex flex-col justify-between">
+                <div>
+                    <h2 class="font-display text-lg font-bold text-white mb-2">Installation</h2>
+                    <p class="text-xs text-gray-400 mb-4">Clone the repository and copy your engine version folder into your project's <code class="text-white font-mono">Plugins/</code> folder:</p>
+                    <div class="bg-black rounded-lg p-3.5 font-mono text-xs text-gray-300 border border-white/10 mb-6 overflow-x-auto">
+                        git clone https://github.com/1SHAMAY1/Plugin-CharacterLocomotionSystem.git
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <a href="https://github.com/1SHAMAY1/Plugin-CharacterLocomotionSystem" target="_blank"
+                        class="px-4 py-2 rounded-lg bg-amber-forge text-black hover:bg-amber-light font-semibold text-xs transition-colors flex items-center justify-center gap-1.5 w-full">
+                        <span>Source Code on GitHub</span>
+                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-white/5 py-8 text-center text-xs font-mono text-gray-500">
+        &copy; 2026 Unreal Essential Suite. Released under the MIT License.
     </footer>
+
 </body>
 
 </html>

@@ -4,10 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Unreal Essential Suite - Open-Source UE5 Toolkit</title>
+    <title>Unreal Essential Suite - Modular Unreal Engine 5 Plugins</title>
     
-    <!-- SEO & Social Meta Tags -->
-    <meta name="description" content="Unreal Essential Suite - Production-ready, modular UE5 C++ & Blueprint plugins for locomotion, camera, quests, interaction, inventory, CommonUI, and asset linting.">
+    <!-- SEO & Open Graph Meta Tags -->
+    <meta name="description" content="Production-ready, modular UE5 C++ & Blueprint plugins for locomotion, camera, quests, interaction, inventory, CommonUI, and asset linting.">
     <meta name="keywords" content="Unreal Engine 5, UE5 Plugins, Locomotion, CommonUI, Inventory System, Quest System, Game Development, Open Source">
     <meta name="author" content="Shankharaj Datta">
     <meta property="og:type" content="website">
@@ -17,409 +17,835 @@
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Unreal Essential Suite - Modular UE5 Toolkit">
     <meta name="twitter:description" content="Build better games with 7 production-grade, network-replicated UE5 modules.">
-    
+
+    <!-- Fonts: Space Grotesk (Display), Plus Jakarta Sans (Body), JetBrains Mono (Code/Telemetry) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        gold: {
-                            50: '#F9F5EA',
-                            100: '#F1E9CE',
-                            200: '#E4D3A1',
-                            300: '#D6BD73',
-                            400: '#C9A645',
-                            500: '#D4AF37', /* Champagne Gold */
-                            600: '#AA8C2C',
-                            700: '#71560E',
-                            800: '#524010',
-                            900: '#3D300C',
+                        obsidian: {
+                            DEFAULT: '#08090D',
+                            surface: '#11131A',
+                            hover: '#171A24',
+                            elevated: '#1D212E',
                         },
-                        black: {
-                            DEFAULT: '#050505',
-                            900: '#0A0A0A',
-                            800: '#121212',
-                            700: '#1A1A1A',
+                        amber: {
+                            forge: '#F59E0B',
+                            light: '#FBBF24',
+                            glow: 'rgba(245, 158, 11, 0.15)',
+                        },
+                        cyan: {
+                            tech: '#06B6D4',
+                            glow: 'rgba(6, 182, 212, 0.15)',
+                        },
+                        emerald: {
+                            status: '#10B981',
                         }
                     },
                     fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
+                        display: ['"Space Grotesk"', 'sans-serif'],
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        mono: ['"JetBrains Mono"', 'monospace'],
                     }
                 }
             }
         }
     </script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style type="text/tailwindcss">
+
+    <style>
+        :root {
+            --bg-base: #08090D;
+            --bg-surface: #11131A;
+            --border-subtle: rgba(255, 255, 255, 0.08);
+            --border-hover: rgba(245, 158, 11, 0.35);
+            --accent-gold: #F59E0B;
+        }
+
         body {
-            font-family: 'Inter', sans-serif;
-            @apply bg-black text-gray-300;
+            background-color: var(--bg-base);
+            color: #94A3B8;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-image: 
+                radial-gradient(circle at 50% 0%, rgba(245, 158, 11, 0.06) 0%, transparent 60%),
+                radial-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 100% 100%, 28px 28px;
         }
 
-        .section-title {
-            @apply text-3xl md:text-4xl font-semibold tracking-tight text-white mb-3;
+        /* Subtle focus ring */
+        a:focus-visible, button:focus-visible, input:focus-visible {
+            outline: 2px solid var(--accent-gold);
+            outline-offset: 2px;
         }
 
-        .section-subtitle {
-            @apply text-lg text-gray-400 font-normal;
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #08090D;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1E2230;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #F59E0B;
         }
 
-        .clean-card {
-            @apply bg-white/[0.03] rounded-2xl border border-white/10 p-6 md:p-8 transition-all duration-300 hover:border-gold-500/40 hover:bg-white/[0.05] hover:shadow-2xl hover:shadow-gold-500/10 hover:-translate-y-1 flex flex-col justify-between;
+        /* Card Architecture */
+        .plugin-card {
+            background: rgba(17, 19, 26, 0.75);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 14px;
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .plugin-card:hover {
+            border-color: rgba(245, 158, 11, 0.45);
+            box-shadow: 0 16px 36px -10px rgba(0, 0, 0, 0.6), 0 0 24px -4px rgba(245, 158, 11, 0.12);
+            transform: translateY(-2px);
         }
 
-        .btn-primary {
-            @apply inline-flex items-center justify-center gap-2 rounded-xl bg-white text-black font-semibold px-6 py-3 transition-transform hover:scale-105 active:scale-95 duration-200 text-sm;
-        }
-        
-        .btn-secondary {
-            @apply inline-flex items-center justify-center gap-2 rounded-xl bg-white/5 text-white font-medium border border-white/10 px-6 py-3 transition-colors hover:bg-white/10 hover:border-white/20 duration-200 text-sm;
-        }
-
-        .btn-outline-sm {
-            @apply inline-flex items-center justify-center gap-1.5 rounded-lg bg-white/5 text-white text-xs font-medium border border-white/10 px-3.5 py-2 transition-all hover:bg-gold-500 hover:text-black hover:border-gold-500;
+        .telemetry-chip {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            padding: 3px 8px;
+            border-radius: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.03);
+            color: #94A3B8;
         }
 
-        .tag-pill {
-            @apply inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-medium border;
+        .filter-btn.active {
+            background-color: #F59E0B;
+            color: #08090D;
+            border-color: #F59E0B;
+            font-weight: 600;
         }
 
-        .animate-on-scroll {
+        /* Toast feedback */
+        #toast {
+            visibility: hidden;
             opacity: 0;
-            transform: translateY(20px);
-            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: opacity 0.2s ease, transform 0.2s ease;
+            transform: translateY(10px);
         }
-        .animate-on-scroll.visible {
+        #toast.show {
+            visibility: visible;
             opacity: 1;
             transform: translateY(0);
         }
     </style>
 </head>
 
-<body class="antialiased overflow-x-hidden selection:bg-gold-500/30 selection:text-white">
+<body class="selection:bg-amber-forge/30 selection:text-white antialiased min-h-screen flex flex-col justify-between">
 
-    <!-- Navigation -->
-    <header class="fixed top-0 left-0 right-0 z-50 bg-black/80 backdrop-blur-md border-b border-white/5">
-        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-20">
-                <a href="index.html" class="text-xl font-bold tracking-tight text-white flex items-center gap-2">
-                    <div class="w-2.5 h-2.5 rounded-full bg-gold-500"></div>
-                    Unreal Essential Suite
+    <!-- Top Navigation Bar -->
+    <header class="sticky top-0 z-50 bg-[#08090D]/85 backdrop-blur-md border-b border-white/5">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- Brand Logo & Title -->
+                <a href="index.html" class="flex items-center gap-3 group">
+                    <div class="w-8 h-8 rounded-lg bg-amber-forge/10 border border-amber-forge/30 flex items-center justify-center text-amber-forge transition-colors group-hover:bg-amber-forge group-hover:text-black">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+                        </svg>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="font-display font-bold text-white text-base tracking-tight leading-none group-hover:text-amber-forge transition-colors">
+                            Unreal Essential Suite
+                        </span>
+                        <span class="font-mono text-[10px] text-gray-500 tracking-wider">
+                            v1.0 &bull; 7 MODULES
+                        </span>
+                    </div>
                 </a>
-                <nav class="hidden md:flex items-center gap-8">
-                    <a href="#about"
-                        class="text-sm font-medium text-gray-400 hover:text-white transition-colors">Architecture</a>
-                    <a href="#plugins"
-                        class="text-sm font-medium text-gray-400 hover:text-white transition-colors">Plugins</a>
+
+                <!-- Navigation Links -->
+                <nav class="hidden md:flex items-center gap-6 text-sm font-medium">
+                    <a href="#suite" class="text-gray-400 hover:text-white transition-colors">Plugins</a>
+                    <a href="#architecture" class="text-gray-400 hover:text-white transition-colors">Architecture</a>
+                    <a href="#quickstart" class="text-gray-400 hover:text-white transition-colors">Installation</a>
                     <a href="https://github.com/1SHAMAY1/Unreal-Essential-Suite" target="_blank"
-                        class="text-sm font-medium text-gray-400 hover:text-white flex items-center gap-1.5 transition-colors">
-                        <span>GitHub</span>
-                        <svg class="w-4 h-4 text-gray-500" fill="currentColor" viewBox="0 0 24 24">
+                        class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-white/5 border border-white/10 text-white hover:bg-amber-forge hover:text-black hover:border-amber-forge transition-all duration-200 text-xs font-mono">
+                        <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
                             <path fill-rule="evenodd" clip-rule="evenodd"
                                 d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" />
                         </svg>
+                        <span>GitHub Suite</span>
                     </a>
                 </nav>
             </div>
         </div>
     </header>
 
-    <main>
-        <!-- Clean Hero Section -->
-        <section class="relative min-h-[85vh] flex items-center justify-center px-4 pt-24 pb-16">
-            <div
-                class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-gold-900/15 via-black to-black pointer-events-none">
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
+
+        <!-- Hero Section -->
+        <section class="text-center max-w-4xl mx-auto mb-16">
+            <!-- Engine Capability Badge -->
+            <div class="inline-flex items-center gap-2.5 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-mono text-gray-300 mb-6">
+                <span class="w-2 h-2 rounded-full bg-emerald-status animate-pulse"></span>
+                <span>Unreal Engine 5.3 &ndash; 5.5 | 5.8+ Production Ready</span>
             </div>
 
-            <div class="container mx-auto text-center max-w-4xl relative z-10 animate-on-scroll">
-                <div
-                    class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-medium text-gold-400 mb-8">
-                    <span class="relative flex h-2 w-2">
-                        <span
-                            class="animate-ping absolute inline-flex h-full w-full rounded-full bg-gold-400 opacity-75"></span>
-                        <span class="relative inline-flex rounded-full h-2 w-2 bg-gold-500"></span>
-                    </span>
-                    Suite v1.0 • 7 Production Modules
-                </div>
+            <!-- Primary Headline -->
+            <h1 class="font-display text-4xl sm:text-5xl md:text-6xl font-bold text-white tracking-tight leading-[1.1] mb-6">
+                Modular Gameplay Frameworks for Unreal Engine 5
+            </h1>
 
-                <h1 class="text-5xl md:text-7xl font-bold text-white tracking-tight drop-shadow-xl mb-6 leading-tight">
-                    Build <span
-                        class="text-transparent bg-clip-text bg-gradient-to-r from-gold-200 via-gold-400 to-gold-500">Better</span>
-                    Games.
-                </h1>
+            <!-- Technical Subtitle -->
+            <p class="text-base sm:text-lg text-gray-400 font-normal leading-relaxed max-w-2xl mx-auto mb-8">
+                Seven production-grade, network-replicated C++ & Blueprint plugins. Decoupled architecture, zero-tick event routing, and pre-compiled Win64 editor binaries.
+            </p>
 
-                <p class="text-xl md:text-2xl text-gray-400 font-light leading-relaxed mb-10 max-w-2xl mx-auto">
-                    A suite of professional, open-source C++ & Blueprint modules for Unreal Engine 5. Engineered for network replication, modularity, and rapid prototyping.
-                </p>
-
-                <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
-                    <a href="#plugins" class="btn-primary w-full sm:w-auto">
-                        Explore All 7 Plugins
-                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                        </svg>
-                    </a>
-                    <a href="https://github.com/1SHAMAY1/Unreal-Essential-Suite" target="_blank"
-                        class="btn-secondary w-full sm:w-auto">
-                        Suite on GitHub
-                    </a>
-                </div>
+            <!-- Quick Action Buttons -->
+            <div class="flex flex-wrap items-center justify-center gap-3">
+                <a href="#suite" class="px-5 py-2.5 rounded-lg bg-amber-forge text-black font-semibold text-sm hover:bg-amber-light transition-all duration-200">
+                    Explore 7 Modules
+                </a>
+                <a href="#quickstart" class="px-5 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white font-medium text-sm hover:bg-white/10 hover:border-white/20 transition-all duration-200">
+                    Installation Guide
+                </a>
+                <a href="https://github.com/1SHAMAY1/Unreal-Essential-Suite" target="_blank" class="px-4 py-2.5 rounded-lg bg-transparent text-gray-400 hover:text-white text-sm font-mono flex items-center gap-1.5 transition-colors">
+                    <span>MIT Licensed</span>
+                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    </svg>
+                </a>
             </div>
         </section>
 
-        <!-- Features Grid -->
-        <section id="about" class="py-20 border-t border-white/5">
-            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    <div class="clean-card animate-on-scroll delay-100">
-                        <div
-                            class="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center mb-6 text-gold-400">
-                            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                    d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                            </svg>
-                        </div>
-                        <h3 class="text-xl font-semibold text-white mb-3">Modular Architecture</h3>
-                        <p class="text-gray-400 text-sm leading-relaxed">Independent plugins with zero tight coupling. Drop individual modules directly into your project's <code class="text-gold-400 font-mono text-xs">Plugins/</code> directory.</p>
-                    </div>
-                    <div class="clean-card animate-on-scroll delay-200">
-                        <div
-                            class="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center mb-6 text-gold-400">
-                            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                    d="M13 10V3L4 14h7v7l9-11h-7z" />
-                            </svg>
-                        </div>
-                        <h3 class="text-xl font-semibold text-white mb-3">Blueprint Native</h3>
-                        <p class="text-gray-400 text-sm leading-relaxed">High-performance C++ cores exposed cleanly through Blueprint nodes and Gameplay Events, empowering rapid iteration without sacrificing frames.</p>
-                    </div>
-                    <div class="clean-card animate-on-scroll delay-300">
-                        <div
-                            class="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center mb-6 text-gold-400">
-                            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                    d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                        </div>
-                        <h3 class="text-xl font-semibold text-white mb-3">Replication Ready</h3>
-                        <p class="text-gray-400 text-sm leading-relaxed">Engineered for multiplayer from the start. Client-side prediction, server validation, and efficient RPCs ensure smooth network performance.</p>
-                    </div>
+        <!-- Interactive Filter & Live Search Toolbar -->
+        <section id="suite" class="mb-8 pt-4">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 rounded-xl bg-obsidian-surface border border-white/5 mb-6">
+                <!-- Category Tabs -->
+                <div class="flex flex-wrap items-center gap-1.5" id="category-filters">
+                    <button class="filter-btn active px-3 py-1.5 rounded-md text-xs font-mono transition-colors border border-transparent" data-filter="all">
+                        All Modules <span class="opacity-70">(7)</span>
+                    </button>
+                    <button class="filter-btn px-3 py-1.5 rounded-md text-xs font-mono text-gray-400 hover:text-white hover:bg-white/5 transition-colors border border-transparent" data-filter="gameplay">
+                        Core Gameplay <span class="opacity-70">(3)</span>
+                    </button>
+                    <button class="filter-btn px-3 py-1.5 rounded-md text-xs font-mono text-gray-400 hover:text-white hover:bg-white/5 transition-colors border border-transparent" data-filter="movement-camera">
+                        Movement & Camera <span class="opacity-70">(2)</span>
+                    </button>
+                    <button class="filter-btn px-3 py-1.5 rounded-md text-xs font-mono text-gray-400 hover:text-white hover:bg-white/5 transition-colors border border-transparent" data-filter="ui">
+                        UI Architecture <span class="opacity-70">(1)</span>
+                    </button>
+                    <button class="filter-btn px-3 py-1.5 rounded-md text-xs font-mono text-gray-400 hover:text-white hover:bg-white/5 transition-colors border border-transparent" data-filter="tools">
+                        Studio Tools <span class="opacity-70">(1)</span>
+                    </button>
                 </div>
+
+                <!-- Instant Search Input -->
+                <div class="relative w-full md:w-72">
+                    <input type="text" id="plugin-search" placeholder="Filter by keyword or tag..."
+                        class="w-full bg-[#08090D] border border-white/10 rounded-lg px-3.5 py-1.5 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-amber-forge transition-colors font-mono">
+                    <svg class="w-3.5 h-3.5 text-gray-500 absolute right-3 top-2.5 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Active Results Counter -->
+            <div class="flex items-center justify-between text-xs font-mono text-gray-500 px-1 mb-4">
+                <span>SHOWING <span id="visible-count" class="text-white font-semibold">7</span> OF 7 PLUGINS</span>
+                <span class="hidden sm:inline">PRE-COMPILED WIN64 BINARIES INCLUDED</span>
             </div>
         </section>
 
         <!-- Plugins Showcase Grid -->
-        <section id="plugins" class="py-24 bg-black border-t border-white/5">
-            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex flex-col md:flex-row items-start md:items-end justify-between mb-16 gap-6 animate-on-scroll">
-                    <div>
-                        <div class="inline-block px-3 py-1 rounded-full bg-gold-500/10 text-gold-500 text-xs font-semibold uppercase tracking-wider mb-3 border border-gold-500/20">
-                            Production Ready
+        <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-20" id="plugins-container">
+
+            <!-- Card 1: Character Locomotion System -->
+            <article class="plugin-card p-6 flex flex-col justify-between" data-category="movement-camera" data-engine="5.3-5.5" data-search="locomotion character movement parkour climbing mantle sliding cmc replication 5.3 5.4 5.5">
+                <div>
+                    <div class="flex items-center justify-between gap-2 mb-4">
+                        <div class="w-9 h-9 rounded-lg bg-amber-forge/10 border border-amber-forge/30 flex items-center justify-center text-amber-forge">
+                            <!-- Locomotion Icon -->
+                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                            </svg>
                         </div>
-                        <h2 class="section-title">Core Plugin Suite</h2>
-                        <p class="section-subtitle">Seven modular systems to supercharge your Unreal Engine 5 production pipeline.</p>
+                        <div class="flex items-center gap-2">
+                            <span class="telemetry-chip text-amber-forge border-amber-forge/30 bg-amber-forge/5">UE 5.3 &ndash; 5.5</span>
+                            <span class="telemetry-chip text-emerald-400 border-emerald-500/20">v1.0</span>
+                        </div>
                     </div>
-                    <div class="text-sm text-gray-500">
-                        All modules include pre-compiled Win64 binaries & full source
+
+                    <h3 class="font-display text-lg font-bold text-white mb-1">
+                        Plugin-CharacterLocomotionSystem
+                    </h3>
+                    <p class="font-mono text-xs text-amber-forge/80 mb-3">
+                        Parkour & Networked Traversal Component
+                    </p>
+                    <p class="text-xs text-gray-400 leading-relaxed mb-4">
+                        Full networked movement component derived from <code class="text-white">UCharacterMovementComponent</code>. Supports automated 3-point trace vaulting, mantle, high climbing, sliding, and prone with client prediction.
+                    </p>
+
+                    <!-- Telemetry Pills -->
+                    <div class="flex flex-wrap gap-1.5 mb-6">
+                        <span class="telemetry-chip">CMC Native</span>
+                        <span class="telemetry-chip">Motion Warping</span>
+                        <span class="telemetry-chip">Client Prediction</span>
+                        <span class="telemetry-chip">Data Assets</span>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-
-                    <!-- Plugin 1: Character Locomotion System -->
-                    <div class="clean-card animate-on-scroll">
-                        <div>
-                            <div class="flex items-center justify-between mb-4">
-                                <span class="tag-pill bg-gold-500/10 text-gold-400 border-gold-500/30">Locomotion</span>
-                                <span class="text-xs text-gray-500 font-mono">UE 5.3 – 5.5</span>
-                            </div>
-                            <h3 class="text-xl font-bold text-white mb-2">Plugin-CharacterLocomotionSystem</h3>
-                            <p class="text-gray-400 text-sm leading-relaxed mb-6">
-                                Network-replicated movement component derived from <code class="text-xs text-gold-400 font-mono">UCharacterMovementComponent</code>. Supports climbing, mantle, sliding, and prone states with client prediction.
-                            </p>
-                        </div>
-                        <div class="pt-4 border-t border-white/5 flex items-center justify-between gap-2">
-                            <a href="locomotion.html" class="btn-outline-sm text-gray-300">
-                                Interactive Demo
-                            </a>
-                            <a href="https://github.com/1SHAMAY1/Plugin-CharacterLocomotionSystem" target="_blank" class="btn-outline-sm bg-white/10 text-white">
-                                GitHub
-                                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                                </svg>
-                            </a>
-                        </div>
+                <!-- Action Toolbar -->
+                <div class="pt-4 border-t border-white/5 flex items-center justify-between gap-2">
+                    <button onclick="copyClone('https://github.com/1SHAMAY1/Plugin-CharacterLocomotionSystem.git', this)" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white text-xs font-mono transition-colors">
+                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                        </svg>
+                        <span>Clone</span>
+                    </button>
+                    <div class="flex items-center gap-2">
+                        <a href="locomotion.html" class="px-3 py-1.5 rounded-md bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white text-xs font-medium transition-colors">
+                            Demo
+                        </a>
+                        <a href="https://github.com/1SHAMAY1/Plugin-CharacterLocomotionSystem" target="_blank" class="px-3 py-1.5 rounded-md bg-amber-forge text-black hover:bg-amber-light font-semibold text-xs transition-colors flex items-center gap-1">
+                            GitHub
+                            <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                            </svg>
+                        </a>
                     </div>
-
-                    <!-- Plugin 2: Enhanced Camera System -->
-                    <div class="clean-card animate-on-scroll delay-100">
-                        <div>
-                            <div class="flex items-center justify-between mb-4">
-                                <span class="tag-pill bg-gold-500/10 text-gold-400 border-gold-500/30">Camera</span>
-                                <span class="text-xs text-gray-500 font-mono">UE 5.3</span>
-                            </div>
-                            <h3 class="text-xl font-bold text-white mb-2">Plugin-EnhancedCameraSystem</h3>
-                            <p class="text-gray-400 text-sm leading-relaxed mb-6">
-                                Data-driven camera modifier stack for UE5. Layer camera behaviors, smooth FOV zoom transitions, occlusion lag dampening, and procedural shakes via modular modifiers.
-                            </p>
-                        </div>
-                        <div class="pt-4 border-t border-white/5 flex items-center justify-between gap-2">
-                            <a href="camera.html" class="btn-outline-sm text-gray-300">
-                                Interactive Demo
-                            </a>
-                            <a href="https://github.com/1SHAMAY1/Plugin-EnhancedCameraSystem" target="_blank" class="btn-outline-sm bg-white/10 text-white">
-                                GitHub
-                                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                                </svg>
-                            </a>
-                        </div>
-                    </div>
-
-                    <!-- Plugin 3: Gameplay Quest Framework -->
-                    <div class="clean-card animate-on-scroll delay-200">
-                        <div>
-                            <div class="flex items-center justify-between mb-4">
-                                <span class="tag-pill bg-emerald-500/10 text-emerald-400 border-emerald-500/30">Quest Engine</span>
-                                <span class="text-xs text-gray-500 font-mono">UE 5.8+</span>
-                            </div>
-                            <h3 class="text-xl font-bold text-white mb-2">Plugin-GameplayQuestFramework</h3>
-                            <p class="text-gray-400 text-sm leading-relaxed mb-6">
-                                Event-driven, zero-tick quest state machine. Powered by native Gameplay Tags, branchable sub-objectives, and verified by 33 automated unit tests for production reliability.
-                            </p>
-                        </div>
-                        <div class="pt-4 border-t border-white/5 flex items-center justify-end gap-2">
-                            <a href="https://github.com/1SHAMAY1/Plugin-GameplayQuestFramework" target="_blank" class="btn-outline-sm bg-white/10 text-white w-full text-center">
-                                View on GitHub
-                                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                                </svg>
-                            </a>
-                        </div>
-                    </div>
-
-                    <!-- Plugin 4: Gameplay Interaction Framework -->
-                    <div class="clean-card animate-on-scroll">
-                        <div>
-                            <div class="flex items-center justify-between mb-4">
-                                <span class="tag-pill bg-blue-500/10 text-blue-400 border-blue-500/30">Interaction</span>
-                                <span class="text-xs text-gray-500 font-mono">UE 5.8+</span>
-                            </div>
-                            <h3 class="text-xl font-bold text-white mb-2">Plugin-GameplayInteractionFramework</h3>
-                            <p class="text-gray-400 text-sm leading-relaxed mb-6">
-                                Lightweight, multiplayer-ready interaction system. Features server trace verification, contextual prompts, instantaneous and hold-to-interact modes, and clean interface messaging.
-                            </p>
-                        </div>
-                        <div class="pt-4 border-t border-white/5 flex items-center justify-end gap-2">
-                            <a href="https://github.com/1SHAMAY1/Plugin-GameplayInteractionFramework" target="_blank" class="btn-outline-sm bg-white/10 text-white w-full text-center">
-                                View on GitHub
-                                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                                </svg>
-                            </a>
-                        </div>
-                    </div>
-
-                    <!-- Plugin 5: Gameplay Inventory Framework -->
-                    <div class="clean-card animate-on-scroll delay-100">
-                        <div>
-                            <div class="flex items-center justify-between mb-4">
-                                <span class="tag-pill bg-purple-500/10 text-purple-400 border-purple-500/30">Inventory</span>
-                                <span class="text-xs text-gray-500 font-mono">UE 5.8+</span>
-                            </div>
-                            <h3 class="text-xl font-bold text-white mb-2">Plugin-GameplayInventoryFramework</h3>
-                            <p class="text-gray-400 text-sm leading-relaxed mb-6">
-                                Server-authoritative inventory and equipment component. Built for multiplayer item replication, stack management, Data Asset item definitions, and container looting.
-                            </p>
-                        </div>
-                        <div class="pt-4 border-t border-white/5 flex items-center justify-end gap-2">
-                            <a href="https://github.com/1SHAMAY1/Plugin-GameplayInventoryFramework" target="_blank" class="btn-outline-sm bg-white/10 text-white w-full text-center">
-                                View on GitHub
-                                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                                </svg>
-                            </a>
-                        </div>
-                    </div>
-
-                    <!-- Plugin 6: Common Frontend UI -->
-                    <div class="clean-card animate-on-scroll delay-200">
-                        <div>
-                            <div class="flex items-center justify-between mb-4">
-                                <span class="tag-pill bg-rose-500/10 text-rose-400 border-rose-500/30">CommonUI</span>
-                                <span class="text-xs text-gray-500 font-mono">UE 5.8+</span>
-                            </div>
-                            <h3 class="text-xl font-bold text-white mb-2">Plugin-CommonFrontendUI</h3>
-                            <p class="text-gray-400 text-sm leading-relaxed mb-6">
-                                Production menu architecture built on Epic's CommonUI. Layered UI stack management, modal dialogue routing, multiplatform input handling, and automatic gamepad focus.
-                            </p>
-                        </div>
-                        <div class="pt-4 border-t border-white/5 flex items-center justify-end gap-2">
-                            <a href="https://github.com/1SHAMAY1/Plugin-CommonFrontendUI" target="_blank" class="btn-outline-sm bg-white/10 text-white w-full text-center">
-                                View on GitHub
-                                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                                </svg>
-                            </a>
-                        </div>
-                    </div>
-
-                    <!-- Plugin 7: Validate All Assets -->
-                    <div class="clean-card animate-on-scroll md:col-span-2 lg:col-span-3">
-                        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
-                            <div class="max-w-2xl">
-                                <div class="flex items-center gap-2 mb-3">
-                                    <span class="tag-pill bg-cyan-500/10 text-cyan-400 border-cyan-500/30">Studio Utility</span>
-                                    <span class="text-xs text-gray-500 font-mono">UE 5.3 – 5.5</span>
-                                </div>
-                                <h3 class="text-2xl font-bold text-white mb-2">Plugin-ValidateAllAssets</h3>
-                                <p class="text-gray-400 text-sm leading-relaxed">
-                                    One-click automated asset validation tool for studio teams. Recursively audits your Content directory to catch missing materials, null collision meshes, broken references, and texture budget violations before packaging.
-                                </p>
-                            </div>
-                            <div class="shrink-0">
-                                <a href="https://github.com/1SHAMAY1/Plugin-ValidateAllAssets" target="_blank" class="btn-primary">
-                                    View on GitHub
-                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                                    </svg>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-
                 </div>
+            </article>
+
+            <!-- Card 2: Enhanced Camera System -->
+            <article class="plugin-card p-6 flex flex-col justify-between" data-category="movement-camera" data-engine="5.3" data-search="camera stack modifiers shakes fov sequencer cinematic ecs 5.3">
+                <div>
+                    <div class="flex items-center justify-between gap-2 mb-4">
+                        <div class="w-9 h-9 rounded-lg bg-amber-forge/10 border border-amber-forge/30 flex items-center justify-center text-amber-forge">
+                            <!-- Camera Icon -->
+                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                            </svg>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="telemetry-chip text-amber-forge border-amber-forge/30 bg-amber-forge/5">UE 5.3</span>
+                            <span class="telemetry-chip text-emerald-400 border-emerald-500/20">v1.0</span>
+                        </div>
+                    </div>
+
+                    <h3 class="font-display text-lg font-bold text-white mb-1">
+                        Plugin-EnhancedCameraSystem
+                    </h3>
+                    <p class="font-mono text-xs text-amber-forge/80 mb-3">
+                        Data-Driven Camera Modifier Stack
+                    </p>
+                    <p class="text-xs text-gray-400 leading-relaxed mb-4">
+                        Modular camera modifier stack architecture. Dynamically layer camera behaviors, procedural FOV zoom blending, responsive collision dampening, and procedural shakes without tight coupling.
+                    </p>
+
+                    <!-- Telemetry Pills -->
+                    <div class="flex flex-wrap gap-1.5 mb-6">
+                        <span class="telemetry-chip">Modifier Stack</span>
+                        <span class="telemetry-chip">FOV Blending</span>
+                        <span class="telemetry-chip">Occlusion Dampening</span>
+                        <span class="telemetry-chip">Sequencer Ready</span>
+                    </div>
+                </div>
+
+                <!-- Action Toolbar -->
+                <div class="pt-4 border-t border-white/5 flex items-center justify-between gap-2">
+                    <button onclick="copyClone('https://github.com/1SHAMAY1/Plugin-EnhancedCameraSystem.git', this)" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white text-xs font-mono transition-colors">
+                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                        </svg>
+                        <span>Clone</span>
+                    </button>
+                    <div class="flex items-center gap-2">
+                        <a href="camera.html" class="px-3 py-1.5 rounded-md bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white text-xs font-medium transition-colors">
+                            Demo
+                        </a>
+                        <a href="https://github.com/1SHAMAY1/Plugin-EnhancedCameraSystem" target="_blank" class="px-3 py-1.5 rounded-md bg-amber-forge text-black hover:bg-amber-light font-semibold text-xs transition-colors flex items-center gap-1">
+                            GitHub
+                            <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            </article>
+
+            <!-- Card 3: Gameplay Quest Framework -->
+            <article class="plugin-card p-6 flex flex-col justify-between" data-category="gameplay" data-engine="5.8" data-search="quest objectives state machine gameplaytags tags zero-tick persistence tests 5.8 5.8+ gqf">
+                <div>
+                    <div class="flex items-center justify-between gap-2 mb-4">
+                        <div class="w-9 h-9 rounded-lg bg-cyan-tech/10 border border-cyan-tech/30 flex items-center justify-center text-cyan-tech">
+                            <!-- Quest Icon -->
+                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="telemetry-chip text-cyan-tech border-cyan-tech/30 bg-cyan-tech/5">UE 5.8+</span>
+                            <span class="telemetry-chip text-emerald-400 border-emerald-500/20">33 Tests Pass</span>
+                        </div>
+                    </div>
+
+                    <h3 class="font-display text-lg font-bold text-white mb-1">
+                        Plugin-GameplayQuestFramework
+                    </h3>
+                    <p class="font-mono text-xs text-cyan-tech/80 mb-3">
+                        Zero-Tick Tag Quest State Machine
+                    </p>
+                    <p class="text-xs text-gray-400 leading-relaxed mb-4">
+                        Event-driven, zero-tick quest engine. Subscribes directly to hierarchical GameplayTags via an inverted tag index. Includes dual JSON/binary persistence, co-op sharing policies, and Slate debug HUD.
+                    </p>
+
+                    <!-- Telemetry Pills -->
+                    <div class="flex flex-wrap gap-1.5 mb-6">
+                        <span class="telemetry-chip">Zero-Tick Tags</span>
+                        <span class="telemetry-chip">FFastArray</span>
+                        <span class="telemetry-chip">JSON & Binary Save</span>
+                        <span class="telemetry-chip">33 Tests (100%)</span>
+                    </div>
+                </div>
+
+                <!-- Action Toolbar -->
+                <div class="pt-4 border-t border-white/5 flex items-center justify-between gap-2">
+                    <button onclick="copyClone('https://github.com/1SHAMAY1/Plugin-GameplayQuestFramework.git', this)" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white text-xs font-mono transition-colors">
+                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                        </svg>
+                        <span>Clone</span>
+                    </button>
+                    <a href="https://github.com/1SHAMAY1/Plugin-GameplayQuestFramework" target="_blank" class="px-3 py-1.5 rounded-md bg-cyan-tech text-black hover:bg-cyan-400 font-semibold text-xs transition-colors flex items-center gap-1">
+                        View GitHub
+                        <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                        </svg>
+                    </a>
+                </div>
+            </article>
+
+            <!-- Card 4: Gameplay Interaction Framework -->
+            <article class="plugin-card p-6 flex flex-col justify-between" data-category="gameplay" data-engine="5.8" data-search="interaction interactable lock repnotify server authority hold anti-cheat 5.8 5.8+ gif">
+                <div>
+                    <div class="flex items-center justify-between gap-2 mb-4">
+                        <div class="w-9 h-9 rounded-lg bg-cyan-tech/10 border border-cyan-tech/30 flex items-center justify-center text-cyan-tech">
+                            <!-- Interaction Icon -->
+                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" />
+                            </svg>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="telemetry-chip text-cyan-tech border-cyan-tech/30 bg-cyan-tech/5">UE 5.8+</span>
+                            <span class="telemetry-chip text-emerald-400 border-emerald-500/20">40 Tests Pass</span>
+                        </div>
+                    </div>
+
+                    <h3 class="font-display text-lg font-bold text-white mb-1">
+                        Plugin-GameplayInteractionFramework
+                    </h3>
+                    <p class="font-mono text-xs text-cyan-tech/80 mb-3">
+                        Authoritative RepNotify Interaction Core
+                    </p>
+                    <p class="text-xs text-gray-400 leading-relaxed mb-4">
+                        Server-authoritative interaction framework built with atomic contention locks, rolling ChangeCounters (zero Multicast RPCs), anti-speedhack hold verification, and cross-level persistence.
+                    </p>
+
+                    <!-- Telemetry Pills -->
+                    <div class="flex flex-wrap gap-1.5 mb-6">
+                        <span class="telemetry-chip">RepNotify Locks</span>
+                        <span class="telemetry-chip">Anti-Cheat Timing</span>
+                        <span class="telemetry-chip">3-Phase Commit</span>
+                        <span class="telemetry-chip">40 Tests (100%)</span>
+                    </div>
+                </div>
+
+                <!-- Action Toolbar -->
+                <div class="pt-4 border-t border-white/5 flex items-center justify-between gap-2">
+                    <button onclick="copyClone('https://github.com/1SHAMAY1/Plugin-GameplayInteractionFramework.git', this)" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white text-xs font-mono transition-colors">
+                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                        </svg>
+                        <span>Clone</span>
+                    </button>
+                    <a href="https://github.com/1SHAMAY1/Plugin-GameplayInteractionFramework" target="_blank" class="px-3 py-1.5 rounded-md bg-cyan-tech text-black hover:bg-cyan-400 font-semibold text-xs transition-colors flex items-center gap-1">
+                        View GitHub
+                        <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                        </svg>
+                    </a>
+                </div>
+            </article>
+
+            <!-- Card 5: Gameplay Inventory Framework -->
+            <article class="plugin-card p-6 flex flex-col justify-between" data-category="gameplay" data-engine="5.8" data-search="inventory item equipment ffastarray mass massentity container loot 5.8 5.8+">
+                <div>
+                    <div class="flex items-center justify-between gap-2 mb-4">
+                        <div class="w-9 h-9 rounded-lg bg-cyan-tech/10 border border-cyan-tech/30 flex items-center justify-center text-cyan-tech">
+                            <!-- Inventory Icon -->
+                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                            </svg>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="telemetry-chip text-cyan-tech border-cyan-tech/30 bg-cyan-tech/5">UE 5.8+</span>
+                            <span class="telemetry-chip text-emerald-400 border-emerald-500/20">13 Tests Pass</span>
+                        </div>
+                    </div>
+
+                    <h3 class="font-display text-lg font-bold text-white mb-1">
+                        Plugin-GameplayInventoryFramework
+                    </h3>
+                    <p class="font-mono text-xs text-cyan-tech/80 mb-3">
+                        FFastArray & MassEntity Replicated Loot
+                    </p>
+                    <p class="text-xs text-gray-400 leading-relaxed mb-4">
+                        Data-driven fragment inventory and equipment orchestrator. Replicates dirty-delta slices via <code class="text-white">FFastArraySerializer</code>, features dynamic parameter bags, and includes MassEntity ground loot structs.
+                    </p>
+
+                    <!-- Telemetry Pills -->
+                    <div class="flex flex-wrap gap-1.5 mb-6">
+                        <span class="telemetry-chip">FFastArray Net</span>
+                        <span class="telemetry-chip">Fragment Defs</span>
+                        <span class="telemetry-chip">MassEntity Drops</span>
+                        <span class="telemetry-chip">13 Tests (100%)</span>
+                    </div>
+                </div>
+
+                <!-- Action Toolbar -->
+                <div class="pt-4 border-t border-white/5 flex items-center justify-between gap-2">
+                    <button onclick="copyClone('https://github.com/1SHAMAY1/Plugin-GameplayInventoryFramework.git', this)" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white text-xs font-mono transition-colors">
+                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                        </svg>
+                        <span>Clone</span>
+                    </button>
+                    <a href="https://github.com/1SHAMAY1/Plugin-GameplayInventoryFramework" target="_blank" class="px-3 py-1.5 rounded-md bg-cyan-tech text-black hover:bg-cyan-400 font-semibold text-xs transition-colors flex items-center gap-1">
+                        View GitHub
+                        <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                        </svg>
+                    </a>
+                </div>
+            </article>
+
+            <!-- Card 6: Common Frontend UI -->
+            <article class="plugin-card p-6 flex flex-col justify-between" data-category="ui" data-engine="5.8" data-search="commonui ui frontend settings registry key remapping loading screen slate 5.8 5.8+">
+                <div>
+                    <div class="flex items-center justify-between gap-2 mb-4">
+                        <div class="w-9 h-9 rounded-lg bg-cyan-tech/10 border border-cyan-tech/30 flex items-center justify-center text-cyan-tech">
+                            <!-- UI Icon -->
+                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" />
+                            </svg>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="telemetry-chip text-cyan-tech border-cyan-tech/30 bg-cyan-tech/5">UE 5.8+</span>
+                            <span class="telemetry-chip text-amber-forge border-amber-forge/30 bg-amber-forge/5">CommonUI</span>
+                        </div>
+                    </div>
+
+                    <h3 class="font-display text-lg font-bold text-white mb-1">
+                        Plugin-CommonFrontendUI
+                    </h3>
+                    <p class="font-mono text-xs text-cyan-tech/80 mb-3">
+                        CommonUI Frontend & Loading Subsystem
+                    </p>
+                    <p class="text-xs text-gray-400 leading-relaxed mb-4">
+                        Layered CommonUI stack architecture with dynamic Settings Registry (sliders, toggles, dropdowns, dependencies), interactive Enhanced Input key remapping, and zero-hitch Slate loading screens.
+                    </p>
+
+                    <!-- Telemetry Pills -->
+                    <div class="flex flex-wrap gap-1.5 mb-6">
+                        <span class="telemetry-chip">Stack Routing</span>
+                        <span class="telemetry-chip">Settings Registry</span>
+                        <span class="telemetry-chip">Key Remapping</span>
+                        <span class="telemetry-chip">Slate Loading</span>
+                    </div>
+                </div>
+
+                <!-- Action Toolbar -->
+                <div class="pt-4 border-t border-white/5 flex items-center justify-between gap-2">
+                    <button onclick="copyClone('https://github.com/1SHAMAY1/Plugin-CommonFrontendUI.git', this)" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white text-xs font-mono transition-colors">
+                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                        </svg>
+                        <span>Clone</span>
+                    </button>
+                    <a href="https://github.com/1SHAMAY1/Plugin-CommonFrontendUI" target="_blank" class="px-3 py-1.5 rounded-md bg-cyan-tech text-black hover:bg-cyan-400 font-semibold text-xs transition-colors flex items-center gap-1">
+                        View GitHub
+                        <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                        </svg>
+                    </a>
+                </div>
+            </article>
+
+            <!-- Card 7: Validate All Assets (Full Width Accent) -->
+            <article class="plugin-card p-6 md:col-span-2 lg:col-span-3 flex flex-col md:flex-row md:items-center justify-between gap-6" data-category="tools" data-engine="5.3-5.5" data-search="validate assets linting audit references renaming missing collision editor utility 5.3 5.4 5.5">
+                <div class="max-w-2xl">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-9 h-9 rounded-lg bg-amber-forge/10 border border-amber-forge/30 flex items-center justify-center text-amber-forge shrink-0">
+                            <!-- Validator Icon -->
+                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                            </svg>
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <h3 class="font-display text-lg font-bold text-white">Plugin-ValidateAllAssets</h3>
+                                <span class="telemetry-chip text-amber-forge border-amber-forge/30 bg-amber-forge/5">UE 5.3 &ndash; 5.5</span>
+                            </div>
+                            <span class="font-mono text-xs text-amber-forge/80">Automated Studio Asset Audit & Linter</span>
+                        </div>
+                    </div>
+                    <p class="text-xs text-gray-400 leading-relaxed mb-4">
+                        One-click Editor Utility that recursively scans your <code class="text-white">/Game</code> content directory via <code class="text-white">IAssetRegistry</code>. Detects broken dependencies, missing collisions, unlinked textures, and enforces naming conventions with automated safe in-place renaming.
+                    </p>
+                    <div class="flex flex-wrap gap-1.5">
+                        <span class="telemetry-chip">1-Click Auto-Fix</span>
+                        <span class="telemetry-chip">AssetRegistry Query</span>
+                        <span class="telemetry-chip">Prefix / Suffix Enforcement</span>
+                        <span class="telemetry-chip">CI Cook Safety</span>
+                    </div>
+                </div>
+
+                <div class="flex flex-row md:flex-col items-center md:items-end justify-between gap-3 shrink-0 pt-4 md:pt-0 border-t md:border-t-0 border-white/5">
+                    <button onclick="copyClone('https://github.com/1SHAMAY1/Plugin-ValidateAllAssets.git', this)" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white text-xs font-mono transition-colors">
+                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                        </svg>
+                        <span>Clone</span>
+                    </button>
+                    <a href="https://github.com/1SHAMAY1/Plugin-ValidateAllAssets" target="_blank" class="px-4 py-2 rounded-lg bg-amber-forge text-black hover:bg-amber-light font-semibold text-xs transition-colors flex items-center gap-1.5">
+                        <span>View on GitHub</span>
+                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                        </svg>
+                    </a>
+                </div>
+            </article>
+
+        </section>
+
+        <!-- Interactive Architecture Section -->
+        <section id="architecture" class="mb-20 p-8 rounded-2xl bg-obsidian-surface border border-white/5">
+            <div class="max-w-3xl mb-8">
+                <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-md bg-cyan-tech/10 text-cyan-tech text-xs font-mono mb-3 border border-cyan-tech/20">
+                    ENGINE ARCHITECTURE
+                </div>
+                <h2 class="font-display text-2xl sm:text-3xl font-bold text-white mb-2">
+                    Built for Separation of Concerns
+                </h2>
+                <p class="text-sm text-gray-400 leading-relaxed">
+                    Unlike monolithic marketplace packs, every module in Unreal Essential Suite runs on independent lifecycle hooks. Enable only the modules your game requires without pulling unwanted dependencies into your cooked builds.
+                </p>
+            </div>
+
+            <!-- Architecture Diagram Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="p-5 rounded-xl bg-[#08090D] border border-white/5">
+                    <div class="font-mono text-xs text-amber-forge mb-1">01 / TRAVERSAL & PERSPECTIVE</div>
+                    <h3 class="font-display text-base font-bold text-white mb-2">Locomotion & Camera</h3>
+                    <p class="text-xs text-gray-400 leading-relaxed">
+                        Extends native <code class="text-white">UCharacterMovementComponent</code> with 3-point trace vaulting, sliding, and mantle, paired with a stackable modifier camera pipeline.
+                    </p>
+                </div>
+                <div class="p-5 rounded-xl bg-[#08090D] border border-white/5">
+                    <div class="font-mono text-xs text-cyan-tech mb-1">02 / STATE & REPLICATION</div>
+                    <h3 class="font-display text-base font-bold text-white mb-2">Quests, Interaction & Loot</h3>
+                    <p class="text-xs text-gray-400 leading-relaxed">
+                        Zero-tick tag event dispatch, atomic contention locks, and <code class="text-white">FFastArraySerializer</code> dirty-delta net serialization. Built for high-tickrate servers.
+                    </p>
+                </div>
+                <div class="p-5 rounded-xl bg-[#08090D] border border-white/5">
+                    <div class="font-mono text-xs text-emerald-400 mb-1">03 / PRESENTATION & INTEGRITY</div>
+                    <h3 class="font-display text-base font-bold text-white mb-2">CommonUI & Asset QA</h3>
+                    <p class="text-xs text-gray-400 leading-relaxed">
+                        Data-driven settings registry, gamepad navigation, zero-hitch Slate map transitions, and automated asset registry auditing before packaging.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quickstart Terminal Section -->
+        <section id="quickstart" class="mb-16 p-8 rounded-2xl bg-[#08090D] border border-white/10">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-6">
+                <div>
+                    <h2 class="font-display text-xl sm:text-2xl font-bold text-white mb-1">Quick Installation</h2>
+                    <p class="text-xs text-gray-400">Clone directly into your project's <code class="text-white font-mono">Plugins/</code> folder.</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="setTerminalSnippet('5.8', this)" class="term-tab active px-3 py-1 rounded bg-amber-forge text-black text-xs font-mono font-semibold">
+                        UE 5.8+ Plugins
+                    </button>
+                    <button onclick="setTerminalSnippet('legacy', this)" class="term-tab px-3 py-1 rounded bg-white/5 text-gray-400 hover:text-white text-xs font-mono">
+                        UE 5.3 &ndash; 5.5 Plugins
+                    </button>
+                </div>
+            </div>
+
+            <!-- Terminal Box -->
+            <div class="relative bg-black rounded-xl p-4 font-mono text-xs text-gray-300 border border-white/10 overflow-x-auto">
+                <div class="flex items-center justify-between mb-3 text-gray-500 border-b border-white/5 pb-2">
+                    <div class="flex items-center gap-1.5">
+                        <span class="w-2.5 h-2.5 rounded-full bg-red-500/80"></span>
+                        <span class="w-2.5 h-2.5 rounded-full bg-yellow-500/80"></span>
+                        <span class="w-2.5 h-2.5 rounded-full bg-green-500/80"></span>
+                        <span class="ml-2 text-[10px] text-gray-500">bash &bull; bash/zsh</span>
+                    </div>
+                    <button onclick="copySnippetText(this)" class="inline-flex items-center gap-1 text-[11px] text-amber-forge hover:text-amber-light">
+                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                        </svg>
+                        <span>Copy snippet</span>
+                    </button>
+                </div>
+                <pre id="terminal-content" class="leading-relaxed text-gray-300"><code><span class="text-gray-500"># Navigate to your project's Plugins folder:</span>
+cd YourProject/Plugins
+
+<span class="text-gray-500"># Clone any UE 5.8+ module directly into Plugins:</span>
+git clone https://github.com/1SHAMAY1/Plugin-GameplayQuestFramework.git
+git clone https://github.com/1SHAMAY1/Plugin-GameplayInteractionFramework.git
+git clone https://github.com/1SHAMAY1/Plugin-GameplayInventoryFramework.git
+git clone https://github.com/1SHAMAY1/Plugin-CommonFrontendUI.git</code></pre>
             </div>
         </section>
 
     </main>
 
-    <footer class="py-12 border-t border-white/5 bg-black">
-        <div class="container mx-auto px-4 text-center">
-            <p class="text-gray-500 text-sm">
-                &copy; 2025 Unreal Essential Suite. Released under the <a href="https://github.com/1SHAMAY1/Unreal-Essential-Suite/blob/master/LICENSE"
-                    class="text-gray-400 hover:text-white underline decoration-white/20">MIT License</a>.
-            </p>
+    <!-- Global Toast Notification -->
+    <div id="toast" class="fixed bottom-6 right-6 z-50 flex items-center gap-2 px-4 py-2.5 rounded-lg bg-amber-forge text-black font-semibold text-xs shadow-2xl pointer-events-none">
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+        </svg>
+        <span id="toast-msg">Copied to clipboard!</span>
+    </div>
+
+    <!-- Footer -->
+    <footer class="border-t border-white/5 bg-[#08090D] py-8 mt-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono text-gray-500">
+            <div>
+                &copy; 2026 Unreal Essential Suite. Engineered by <a href="https://www.linkedin.com/in/shankharaj-datta-45921a28a/" target="_blank" class="text-white hover:text-amber-forge transition-colors underline decoration-white/20">Shankharaj Datta</a>.
+            </div>
+            <div class="flex items-center gap-6">
+                <a href="https://github.com/1SHAMAY1/Unreal-Essential-Suite/blob/master/LICENSE" class="hover:text-white transition-colors">MIT License</a>
+                <a href="https://github.com/1SHAMAY1/Unreal-Essential-Suite" target="_blank" class="hover:text-white transition-colors">GitHub Repository</a>
+            </div>
         </div>
     </footer>
 
+    <!-- Interactive Client Script -->
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('visible');
-                    }
-                });
-            }, { threshold: 0.1 });
+        // Category and Search Filtering
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        const searchInput = document.getElementById('plugin-search');
+        const cards = document.querySelectorAll('.plugin-card');
+        const visibleCountSpan = document.getElementById('visible-count');
 
-            document.querySelectorAll('.animate-on-scroll').forEach((el) => {
-                observer.observe(el);
+        let currentFilter = 'all';
+        let searchQuery = '';
+
+        function updateCardVisibility() {
+            let visibleCount = 0;
+            cards.forEach(card => {
+                const category = card.getAttribute('data-category');
+                const searchData = (card.getAttribute('data-search') || '').toLowerCase();
+                const cardText = card.innerText.toLowerCase();
+
+                const matchesCategory = currentFilter === 'all' || category === currentFilter;
+                const matchesSearch = !searchQuery || searchData.includes(searchQuery) || cardText.includes(searchQuery);
+
+                if (matchesCategory && matchesSearch) {
+                    card.style.display = 'flex';
+                    visibleCount++;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+            visibleCountSpan.textContent = visibleCount;
+        }
+
+        filterButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                filterButtons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentFilter = btn.getAttribute('data-filter');
+                updateCardVisibility();
             });
         });
+
+        searchInput.addEventListener('input', (e) => {
+            searchQuery = e.target.value.trim().toLowerCase();
+            updateCardVisibility();
+        });
+
+        // Clipboard Copy Helper
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toast-msg');
+            toastMsg.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2200);
+        }
+
+        function copyClone(url, btn) {
+            navigator.clipboard.writeText(`git clone ${url}`);
+            showToast('Clone command copied to clipboard!');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = `
+                <svg class="w-3.5 h-3.5 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+                <span class="text-white">Copied!</span>
+            `;
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+            }, 1800);
+        }
+
+        function copySnippetText(btn) {
+            const snippet = document.getElementById('terminal-content').innerText;
+            navigator.clipboard.writeText(snippet);
+            showToast('Snippet copied to clipboard!');
+        }
+
+        function setTerminalSnippet(type, btn) {
+            document.querySelectorAll('.term-tab').forEach(t => {
+                t.classList.remove('active', 'bg-amber-forge', 'text-black', 'font-semibold');
+                t.classList.add('bg-white/5', 'text-gray-400');
+            });
+            btn.classList.add('active', 'bg-amber-forge', 'text-black', 'font-semibold');
+            btn.classList.remove('bg-white/5', 'text-gray-400');
+
+            const contentEl = document.getElementById('terminal-content');
+            if (type === '5.8') {
+                contentEl.innerHTML = `<code><span class="text-gray-500"># Navigate to your project's Plugins folder:</span>
+cd YourProject/Plugins
+
+<span class="text-gray-500"># Clone any UE 5.8+ module directly into Plugins:</span>
+git clone https://github.com/1SHAMAY1/Plugin-GameplayQuestFramework.git
+git clone https://github.com/1SHAMAY1/Plugin-GameplayInteractionFramework.git
+git clone https://github.com/1SHAMAY1/Plugin-GameplayInventoryFramework.git
+git clone https://github.com/1SHAMAY1/Plugin-CommonFrontendUI.git</code>`;
+            } else {
+                contentEl.innerHTML = `<code><span class="text-gray-500"># For UE 5.3 &ndash; 5.5 modules, clone and copy the engine folder:</span>
+git clone https://github.com/1SHAMAY1/Plugin-CharacterLocomotionSystem.git
+git clone https://github.com/1SHAMAY1/Plugin-EnhancedCameraSystem.git
+git clone https://github.com/1SHAMAY1/Plugin-ValidateAllAssets.git
+
+<span class="text-gray-500"># Example: Copy the 5.3 folder into your Plugins/ directory:</span>
+cp -r Plugin-CharacterLocomotionSystem/5.3/CharacterLocomotionSystem YourProject/Plugins/</code>`;
+            }
+        }
     </script>
 </body>
 
